@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-page text-ink font-body antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display text-navy;
+  }
+
+  /* Visible, consistent focus states everywhere */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid theme('colors.brass.DEFAULT');
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  ::selection {
+    background: theme('colors.brass.light');
+    color: theme('colors.navy.dark');
+  }
+}
+
+@layer components {
+  /* The recurring "article tab" motif — a monospace stamp used on
+     rights, laws, and glossary cards to tie the whole site together. */
+  .article-tab {
+    @apply inline-flex items-center gap-1.5 font-mono text-[11px] tracking-wide uppercase
+           text-brass-dark bg-brass/10 border border-brass/30 rounded-sm px-2 py-1;
+  }
+
+  .rule-divider {
+    @apply relative h-[3px] w-16;
+    background-image: repeating-linear-gradient(
+      to right,
+      theme('colors.brass.DEFAULT') 0,
+      theme('colors.brass.DEFAULT') 6px,
+      transparent 6px,
+      transparent 10px
+    );
+  }
+
+  .card-surface {
+    @apply bg-paper border border-border rounded-md shadow-card;
+  }
+
+  .container-content {
+    @apply max-w-content mx-auto px-5 sm:px-8;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
