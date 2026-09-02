@@ -4,7 +4,7 @@
 // the default local dev address, so this works out of the box with
 // `python manage.py runserver` on 127.0.0.1:8000.
 
-const RAW_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api'
+const RAW_BASE = import.meta.env.VITE_API_BASE_URL || '/api'
 export const API_BASE_URL = RAW_BASE.replace(/\/$/, '')
 
 async function request(path, options = {}) {

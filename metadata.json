@@ -1,0 +1,8 @@
+{
+  "name": "Nyaya — Know Your Rights, Understand the Law",
+  "description": "Understand Indian laws and your fundamental rights in simple language.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
