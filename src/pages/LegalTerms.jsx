@@ -73,22 +73,25 @@ export default function LegalTerms() {
                   </h2>
                   <p className="mt-2 text-sm leading-relaxed text-ink/70">{term.definition}</p>
 
-                  <div className="mt-4 flex flex-wrap items-center gap-3">
-                    <button
-                      type="button"
-                      className="text-sm font-medium text-brass-dark hover:text-navy"
-                    >
-                      Learn more
-                    </button>
-                    {related.map((law) => (
+                  <div className="mt-4 flex flex-wrap items-center gap-2">
+                    {related.length > 0 ? (
+                      related.map((law) => (
+                        <Link
+                          key={law.id}
+                          to={`/laws/${law.id}`}
+                          className="article-tab hover:border-navy hover:text-navy hover:bg-navy/5 transition-colors"
+                        >
+                          {law.name} →
+                        </Link>
+                      ))
+                    ) : (
                       <Link
-                        key={law.id}
-                        to={`/laws/${law.id}`}
-                        className="article-tab hover:border-brass hover:text-navy"
+                        to={`/search?q=${encodeURIComponent(term.term)}`}
+                        className="text-xs font-medium text-brass-dark hover:text-navy transition-colors inline-flex items-center gap-1"
                       >
-                        {law.name}
+                        Search related provisions →
                       </Link>
-                    ))}
+                    )}
                   </div>
                 </article>
               )

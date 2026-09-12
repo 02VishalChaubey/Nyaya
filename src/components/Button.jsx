@@ -7,6 +7,10 @@ const VARIANTS = {
     'bg-transparent text-navy border border-navy/30 hover:border-navy hover:bg-navy/5',
   ghost:
     'bg-transparent text-navy hover:bg-navy/5 border border-transparent',
+  enmachi:
+    'bg-cyan-500 text-slate-950 font-semibold hover:bg-cyan-400 active:bg-cyan-600 border border-cyan-400 shadow-md shadow-cyan-500/20',
+  secondaryDark:
+    'bg-slate-900/80 text-slate-100 border border-slate-700/90 hover:border-cyan-400/70 hover:bg-slate-800 backdrop-blur-xs',
 }
 
 const SIZES = {

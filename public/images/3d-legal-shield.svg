@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="100%" height="100%">
+  <defs>
+    <!-- 3D Occlusion Shadow -->
+    <radialGradient id="shieldShadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#020617" stop-opacity="0.85" />
+      <stop offset="60%" stop-color="#090E17" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- 3D Titanium Armor Facet Gradients -->
+    <linearGradient id="armorLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F8FAFC" />
+      <stop offset="25%" stop-color="#CBD5E1" />
+      <stop offset="60%" stop-color="#64748B" />
+      <stop offset="100%" stop-color="#334155" />
+    </linearGradient>
+
+    <linearGradient id="armorDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#475569" />
+      <stop offset="50%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+
+    <!-- Deep Sapphire Crystal Inlay -->
+    <linearGradient id="sapphireCore" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0369A1" />
+      <stop offset="35%" stop-color="#0C4A6E" />
+      <stop offset="70%" stop-color="#082F49" />
+      <stop offset="100%" stop-color="#020617" />
+    </linearGradient>
+
+    <!-- 3D Polished Brass Gavel Band -->
+    <linearGradient id="gavelBrass" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#78350F" />
+      <stop offset="30%" stop-color="#FDE047" />
+      <stop offset="60%" stop-color="#EAB308" />
+      <stop offset="85%" stop-color="#CA8A04" />
+      <stop offset="100%" stop-color="#78350F" />
+    </linearGradient>
+
+    <!-- 3D Polished Wood Gavel Head -->
+    <linearGradient id="gavelWood" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#451A03" />
+      <stop offset="40%" stop-color="#78350F" />
+      <stop offset="70%" stop-color="#361502" />
+      <stop offset="100%" stop-color="#1A0901" />
+    </linearGradient>
+
+    <filter id="neonShield" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="7" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 3D Ground Shadow -->
+  <ellipse cx="300" cy="520" rx="200" ry="45" fill="url(#shieldShadow)" />
+
+  <!-- 3D CITIZEN PROTECTION SHIELD (Angled in Perspective) -->
+  <g transform="translate(240, 260) rotate(-4)">
+    <!-- Back Outer Armor Ridge (Beveled 3D Extrusion) -->
+    <path d="M 0 -195 L 140 -125 L 125 70 L 0 195 L -125 70 L -140 -125 Z" fill="url(#armorDark)" />
+    <!-- 3D Edge Bevel Left -->
+    <path d="M 0 -195 L -140 -125 L -125 70 L 0 195 L 0 175 L -105 60 L -115 -110 L 0 -175 Z" fill="url(#armorDark)" opacity="0.9" />
+    <!-- 3D Edge Bevel Right (Catching Light) -->
+    <path d="M 0 -195 L 140 -125 L 125 70 L 0 195 L 0 175 L 105 60 L 115 -110 L 0 -175 Z" fill="url(#armorLight)" />
+
+    <!-- Inner Shield Plate (Polished Titanium) -->
+    <path d="M 0 -175 L 115 -110 L 105 60 L 0 175 L -105 60 L -115 -110 Z" fill="#0F172A" />
+
+    <!-- Sapphire Crystal Center Field -->
+    <path d="M 0 -150 L 95 -95 L 85 45 L 0 150 L -85 45 L -95 -95 Z" fill="url(#sapphireCore)" stroke="#38BDF8" stroke-width="2" />
+
+    <!-- Glowing Cybernetic Chevron & Circuit Paths -->
+    <g filter="url(#neonShield)" stroke-linecap="round">
+      <path d="M -60 -70 L 0 -30 L 60 -70" stroke="#38BDF8" stroke-width="3" fill="none" />
+      <path d="M -50 -20 L 0 15 L 50 -20" stroke="#38BDF8" stroke-width="3.5" fill="none" />
+      <path d="M -40 30 L 0 60 L 40 30" stroke="#818CF8" stroke-width="2.5" fill="none" />
+      
+      <!-- Central Glowing Scales Emblem on Shield -->
+      <line x1="0" y1="-85" x2="0" y2="-45" stroke="#FFFFFF" stroke-width="3" />
+      <line x1="-25" y1="-75" x2="25" y2="-75" stroke="#FFFFFF" stroke-width="2.5" />
+      <circle cx="-25" cy="-60" r="5" fill="#38BDF8" />
+      <circle cx="25" cy="-60" r="5" fill="#38BDF8" />
+      <circle cx="0" cy="-85" r="4" fill="#FDE047" />
+    </g>
+
+    <!-- Gloss Specular Diagonal Light Sweep Across Shield -->
+    <path d="M -40 -140 L 40 -140 L -40 130 L -75 130 Z" fill="#FFFFFF" opacity="0.12" />
+  </g>
+
+  <!-- 3D JUDGE'S GAVEL & SOUND BLOCK (Overlapping in Foreground) -->
+  <!-- 3D Octagonal Sound Block (Lower Right) -->
+  <g transform="translate(380, 440)">
+    <!-- Block Base Shadow -->
+    <ellipse cx="0" cy="40" rx="90" ry="24" fill="#020617" opacity="0.6" />
+    <!-- 3D Block Rim & Thickness -->
+    <path d="M -70 10 L 0 25 L 70 10 L 70 28 L 0 45 L -70 28 Z" fill="url(#gavelWood)" />
+    <!-- Upper Sound Block Platform -->
+    <polygon points="-70,10 0,-8 70,10 0,28" fill="#582307" stroke="#9A3412" stroke-width="1.5" />
+    <!-- Gilt Brass Inlay Ring -->
+    <ellipse cx="0" cy="10" rx="42" ry="12" fill="none" stroke="url(#gavelBrass)" stroke-width="2" />
+  </g>
+
+  <!-- Floating 3D Gavel (Dramatic Perspective Angle) -->
+  <g transform="translate(380, 310) rotate(-32)">
+    <!-- Gavel Shadow on Shield / Block -->
+    <ellipse cx="20" cy="70" rx="40" ry="14" fill="#020617" opacity="0.45" />
+
+    <!-- 3D Cylindrical Wooden Handle -->
+    <path d="M -8 20 L 8 20 L 6 150 L -6 150 Z" fill="url(#gavelWood)" />
+    <!-- Handle Specular Streak -->
+    <line x1="-1" y1="20" x2="-1" y2="150" stroke="#B45309" stroke-width="2" opacity="0.6" />
+    <!-- Handle Pommel Sphere -->
+    <circle cx="0" cy="155" r="10" fill="url(#gavelBrass)" />
+
+    <!-- 3D Gavel Mallet Head -->
+    <!-- Main Wood Barrel -->
+    <rect x="-65" y="-18" width="130" height="36" rx="6" fill="url(#gavelWood)" />
+    <!-- Wood Highlight Streak -->
+    <line x1="-60" y1="-8" x2="60" y2="-8" stroke="#D97706" stroke-width="2" opacity="0.5" />
+
+    <!-- Left Striking Beveled Face -->
+    <ellipse cx="-65" cy="0" rx="8" ry="18" fill="#2E1003" stroke="url(#gavelBrass)" stroke-width="2" />
+    <!-- Right Striking Beveled Face -->
+    <ellipse cx="65" cy="0" rx="8" ry="18" fill="#78350F" stroke="url(#gavelBrass)" stroke-width="2" />
+
+    <!-- Center Brass Decorative Ribs & Inlay Band -->
+    <rect x="-14" y="-19" width="28" height="38" rx="2" fill="url(#gavelBrass)" />
+    <line x1="0" y1="-19" x2="0" y2="19" stroke="#FEF08A" stroke-width="2" opacity="0.8" />
+  </g>
+</svg>

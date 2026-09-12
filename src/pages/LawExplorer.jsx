@@ -77,6 +77,16 @@ export default function LawExplorer() {
         title="Explore Indian Laws"
         subtitle="Browse by category, or search for a specific statute, section, or topic."
         size="md"
+        image={
+          <div className="flex h-36 w-36 sm:h-44 sm:w-44 items-center justify-center">
+            <img
+              src="/images/3d-court-pillars.svg"
+              alt="3D Pillars of Law"
+              referrerPolicy="no-referrer"
+              className="h-full w-full object-contain drop-shadow-xl"
+            />
+          </div>
+        }
       >
         <SearchBar
           size="lg"

@@ -32,13 +32,16 @@ export default function Navbar() {
       <div className="container-content flex h-16 items-center justify-between">
         <NavLink
           to="/"
-          className="flex items-center gap-2 font-display text-lg font-semibold text-navy"
+          className="flex items-center gap-2.5 font-display text-lg font-semibold text-navy group"
           onClick={() => setOpen(false)}
         >
-          <span className="flex h-8 w-8 items-center justify-center rounded-sm bg-navy text-paper">
-            <Scale size={17} aria-hidden="true" />
+          <span className="flex h-9 w-9 items-center justify-center rounded-md bg-[#0A111E] text-cyan-400 border border-slate-700 shadow-xs group-hover:border-cyan-400/50 transition-colors">
+            <Scale size={18} aria-hidden="true" className="text-cyan-400" />
           </span>
-          Nyaya
+          <div className="flex flex-col">
+            <span className="leading-tight font-bold tracking-tight text-navy">Enmachi</span>
+            <span className="font-sans text-[10px] font-medium tracking-wide text-ink/60">न्याय • विधि • ज्ञान</span>
+          </div>
         </NavLink>
 
         {/* Desktop nav */}

@@ -74,7 +74,7 @@ export default function Search() {
 
   return (
     <>
-      <Hero eyebrow="Search Nyaya" title="What are you looking for?" size="md">
+      <Hero eyebrow="Search Enmachi" title="What are you looking for?" size="md">
         <SearchBar
           size="lg"
           placeholder='e.g. "What is an FIR?"'

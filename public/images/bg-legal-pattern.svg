@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%" opacity="0.06">
+  <defs>
+    <radialGradient id="patGlow1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0284C7" stop-opacity="0.8" />
+      <stop offset="70%" stop-color="#0F172A" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#020617" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="patGlow2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#D97706" stop-opacity="0.6" />
+      <stop offset="60%" stop-color="#78350F" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Ambient Light Orbs -->
+  <circle cx="200" cy="200" r="350" fill="url(#patGlow1)" />
+  <circle cx="1000" cy="600" r="400" fill="url(#patGlow2)" />
+
+  <!-- Subtle Perspective Grid Floor Lines -->
+  <g stroke="#0F172A" stroke-width="0.75" opacity="0.6">
+    <line x1="0" y1="400" x2="1200" y2="400" />
+    <line x1="0" y1="460" x2="1200" y2="460" />
+    <line x1="0" y1="540" x2="1200" y2="540" />
+    <line x1="0" y1="640" x2="1200" y2="640" />
+    <line x1="0" y1="760" x2="1200" y2="760" />
+
+    <!-- Isometric Angled Perspective Rays converging to high vanishing point -->
+    <line x1="600" y1="300" x2="-200" y2="800" />
+    <line x1="600" y1="300" x2="0" y2="800" />
+    <line x1="600" y1="300" x2="200" y2="800" />
+    <line x1="600" y1="300" x2="400" y2="800" />
+    <line x1="600" y1="300" x2="600" y2="800" />
+    <line x1="600" y1="300" x2="800" y2="800" />
+    <line x1="600" y1="300" x2="1000" y2="800" />
+    <line x1="600" y1="300" x2="1200" y2="800" />
+    <line x1="600" y1="300" x2="1400" y2="800" />
+  </g>
+
+  <!-- Concentric Guilloche / Sovereign Dharma Wheels -->
+  <g transform="translate(600, 260)" stroke="#334155" stroke-width="0.8" fill="none" opacity="0.5">
+    <circle cx="0" cy="0" r="160" stroke-dasharray="4,6" />
+    <circle cx="0" cy="0" r="220" stroke-dasharray="1,4" />
+    <circle cx="0" cy="0" r="290" />
+    <circle cx="0" cy="0" r="380" stroke-dasharray="8,8" />
+  </g>
+</svg>

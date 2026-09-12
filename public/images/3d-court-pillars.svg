@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="100%" height="100%">
+  <defs>
+    <radialGradient id="pillarShadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#020617" stop-opacity="0.8" />
+      <stop offset="60%" stop-color="#090E17" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0" />
+    </radialGradient>
+
+    <linearGradient id="marbleLight" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1E293B" />
+      <stop offset="25%" stop-color="#64748B" />
+      <stop offset="50%" stop-color="#CBD5E1" />
+      <stop offset="75%" stop-color="#475569" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+
+    <linearGradient id="pedestalSlab" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#334155" />
+      <stop offset="50%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+
+    <linearGradient id="cyberRoof" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="40%" stop-color="#0284C7" />
+      <stop offset="80%" stop-color="#0369A1" />
+      <stop offset="100%" stop-color="#082F49" />
+    </linearGradient>
+
+    <filter id="courtGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 3D Ground Occlusion Shadow -->
+  <ellipse cx="300" cy="510" rx="220" ry="48" fill="url(#pillarShadow)" />
+
+  <!-- 3D Layered Steps / Pedestal Foundation -->
+  <!-- Tier 1 (Lowest step) -->
+  <polygon points="70,480 300,530 530,480 300,430" fill="#0F172A" />
+  <polygon points="70,480 300,530 300,545 70,495" fill="#020617" />
+  <polygon points="300,530 530,480 530,495 300,545" fill="#1E293B" />
+
+  <!-- Tier 2 (Middle step) -->
+  <polygon points="100,460 300,505 500,460 300,415" fill="#1E293B" />
+  <polygon points="100,460 300,505 300,520 100,475" fill="#0F172A" />
+  <polygon points="300,505 500,460 500,475 300,520" fill="#334155" />
+
+  <!-- Tier 3 (Main Plinth) -->
+  <polygon points="130,440 300,480 470,440 300,400" fill="url(#pedestalSlab)" />
+  <polygon points="130,440 300,480 300,495 130,455" fill="#090E17" />
+  <polygon points="300,480 470,440 470,455 300,495" fill="#475569" />
+
+  <!-- Glowing Cyan Floor Grid Inlay -->
+  <polygon points="145,438 300,474 455,438 300,402" fill="#0A111E" stroke="#38BDF8" stroke-width="1.5" />
+  <line x1="222" y1="420" x2="378" y2="456" stroke="#0284C7" stroke-width="1" opacity="0.6" />
+  <line x1="378" y1="420" x2="222" y2="456" stroke="#0284C7" stroke-width="1" opacity="0.6" />
+
+  <!-- Four 3D Classical-Cyber Pillars -->
+  <!-- Pillar 1 (Far Left) -->
+  <g transform="translate(170, 200)">
+    <!-- Base -->
+    <ellipse cx="0" cy="235" rx="20" ry="7" fill="#64748B" />
+    <path d="M -16 25 L 16 25 L 16 235 L -16 235 Z" fill="url(#marbleLight)" />
+    <!-- Fluting highlight -->
+    <line x1="-5" y1="25" x2="-5" y2="235" stroke="#FFFFFF" stroke-width="1.5" opacity="0.5" />
+    <!-- Capital -->
+    <ellipse cx="0" cy="25" rx="22" ry="7" fill="#94A3B8" />
+  </g>
+
+  <!-- Pillar 2 (Center Left) -->
+  <g transform="translate(255, 215)">
+    <ellipse cx="0" cy="235" rx="22" ry="8" fill="#64748B" />
+    <path d="M -18 25 L 18 25 L 18 235 L -18 235 Z" fill="url(#marbleLight)" />
+    <line x1="-5" y1="25" x2="-5" y2="235" stroke="#FFFFFF" stroke-width="2" opacity="0.6" />
+    <ellipse cx="0" cy="25" rx="24" ry="8" fill="#CBD5E1" />
+  </g>
+
+  <!-- Pillar 3 (Center Right) -->
+  <g transform="translate(345, 215)">
+    <ellipse cx="0" cy="235" rx="22" ry="8" fill="#64748B" />
+    <path d="M -18 25 L 18 25 L 18 235 L -18 235 Z" fill="url(#marbleLight)" />
+    <line x1="-5" y1="25" x2="-5" y2="235" stroke="#FFFFFF" stroke-width="2" opacity="0.6" />
+    <ellipse cx="0" cy="25" rx="24" ry="8" fill="#CBD5E1" />
+  </g>
+
+  <!-- Pillar 4 (Far Right) -->
+  <g transform="translate(430, 200)">
+    <ellipse cx="0" cy="235" rx="20" ry="7" fill="#64748B" />
+    <path d="M -16 25 L 16 25 L 16 235 L -16 235 Z" fill="url(#marbleLight)" />
+    <line x1="-5" y1="25" x2="-5" y2="235" stroke="#FFFFFF" stroke-width="1.5" opacity="0.5" />
+    <ellipse cx="0" cy="25" rx="22" ry="7" fill="#94A3B8" />
+  </g>
+
+  <!-- 3D Entablature & Pediment (Roof Structure) -->
+  <!-- Architrave Beam -->
+  <polygon points="120,200 300,230 480,200 300,170" fill="#475569" />
+  <polygon points="120,200 300,230 300,245 120,215" fill="#1E293B" />
+  <polygon points="300,230 480,200 480,215 300,245" fill="#64748B" />
+
+  <!-- Triangular 3D Pediment -->
+  <!-- Front Left Gable -->
+  <polygon points="110,195 300,100 300,225" fill="url(#cyberRoof)" />
+  <!-- Front Right Gable -->
+  <polygon points="300,100 490,195 300,225" fill="#0C4A6E" />
+  <!-- Gable Rim & Cornice -->
+  <polyline points="110,195 300,100 490,195" stroke="#38BDF8" stroke-width="4" fill="none" />
+  <line x1="110" y1="195" x2="490" y2="195" stroke="#FDE047" stroke-width="3" />
+
+  <!-- Pediment Tympanum Emblem: Floating 3D Cyber Scales -->
+  <g transform="translate(300, 170)" filter="url(#courtGlow)">
+    <circle cx="0" cy="0" r="22" fill="#0B132B" stroke="#38BDF8" stroke-width="2" />
+    <!-- Scales glyph -->
+    <line x1="0" y1="-14" x2="0" y2="14" stroke="#FFFFFF" stroke-width="2" />
+    <line x1="-12" y1="-8" x2="12" y2="-8" stroke="#FFFFFF" stroke-width="2" />
+    <circle cx="-12" cy="-2" r="3.5" fill="#38BDF8" />
+    <circle cx="12" cy="-2" r="3.5" fill="#38BDF8" />
+    <circle cx="0" cy="-14" r="2" fill="#FDE047" />
+  </g>
+</svg>

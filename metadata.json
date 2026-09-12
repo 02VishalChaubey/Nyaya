@@ -1,6 +1,6 @@
 {
-  "name": "Nyaya — Know Your Rights, Understand the Law",
-  "description": "Understand Indian laws and your fundamental rights in simple language.",
+  "name": "Enmachi — Indian Law & Fundamental Rights in Plain Language",
+  "description": "Enmachi: A public legal-information platform helping citizens understand Indian laws, fundamental rights, and legal remedies with the wisdom of the judge.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

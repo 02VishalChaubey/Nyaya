@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="100%" height="100%">
+  <defs>
+    <!-- 3D Studio Lighting & Material Gradients -->
+    <radialGradient id="aoShadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#020617" stop-opacity="0.75" />
+      <stop offset="60%" stop-color="#090E17" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Chrome & Titanium Cylinder 3D Gradients -->
+    <linearGradient id="metalPillar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="25%" stop-color="#334155" />
+      <stop offset="50%" stop-color="#94A3B8" />
+      <stop offset="70%" stop-color="#475569" />
+      <stop offset="90%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+
+    <linearGradient id="goldBeam" x1="0%" y1="0%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#D97706" />
+      <stop offset="30%" stop-color="#FDE047" />
+      <stop offset="60%" stop-color="#EAB308" />
+      <stop offset="85%" stop-color="#CA8A04" />
+      <stop offset="100%" stop-color="#78350F" />
+    </linearGradient>
+
+    <linearGradient id="cyanNeon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="50%" stop-color="#0EA5E9" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+
+    <linearGradient id="pan3DLeft" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="30%" stop-color="#1E293B" />
+      <stop offset="70%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+
+    <linearGradient id="pan3DRight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FDE047" />
+      <stop offset="30%" stop-color="#27272A" />
+      <stop offset="70%" stop-color="#18181B" />
+      <stop offset="100%" stop-color="#EAB308" />
+    </linearGradient>
+
+    <radialGradient id="glowingSphereCyan" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="25%" stop-color="#7DD3FC" />
+      <stop offset="60%" stop-color="#0284C7" />
+      <stop offset="100%" stop-color="#0369A1" />
+    </radialGradient>
+
+    <radialGradient id="glowingSphereGold" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#FEF08A" />
+      <stop offset="30%" stop-color="#FACC15" />
+      <stop offset="70%" stop-color="#CA8A04" />
+      <stop offset="100%" stop-color="#854D0E" />
+    </radialGradient>
+
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Ground 3D Occlusion Shadow -->
+  <ellipse cx="300" cy="515" rx="210" ry="48" fill="url(#aoShadow)" />
+  <ellipse cx="300" cy="510" rx="140" ry="30" fill="#020617" opacity="0.6" />
+
+  <!-- 3D Pedestal / Base Cylinder -->
+  <!-- Bottom tier -->
+  <ellipse cx="300" cy="495" rx="130" ry="32" fill="#1E293B" />
+  <path d="M 170 480 C 170 498 430 498 430 480 L 430 495 C 430 513 170 513 170 495 Z" fill="url(#metalPillar)" />
+  <ellipse cx="300" cy="480" rx="130" ry="32" fill="#334155" />
+  <!-- Bevel highlight -->
+  <ellipse cx="300" cy="477" rx="126" ry="30" fill="none" stroke="#64748B" stroke-width="2" opacity="0.6" />
+
+  <!-- Middle tier cylinder -->
+  <path d="M 210 440 C 210 458 390 458 390 440 L 390 470 C 390 488 210 488 210 470 Z" fill="url(#metalPillar)" />
+  <ellipse cx="300" cy="440" rx="90" ry="24" fill="#475569" />
+  <ellipse cx="300" cy="438" rx="87" ry="22" fill="#1E293B" />
+
+  <!-- 3D Central Pillar Column -->
+  <path d="M 282 170 L 318 170 L 318 435 L 282 435 Z" fill="url(#metalPillar)" />
+  <!-- Pillar Specular Highlight Streak -->
+  <line x1="294" y1="170" x2="294" y2="435" stroke="#FFFFFF" stroke-width="3" opacity="0.5" />
+  <!-- Pillar Accent Rings -->
+  <ellipse cx="300" cy="300" rx="21" ry="6" fill="#FDE047" opacity="0.9" />
+  <ellipse cx="300" cy="220" rx="20" ry="6" fill="#38BDF8" opacity="0.9" />
+  <ellipse cx="300" cy="380" rx="23" ry="7" fill="#38BDF8" opacity="0.7" />
+
+  <!-- Pillar Cap & Crown Gem -->
+  <ellipse cx="300" cy="170" rx="22" ry="7" fill="#64748B" />
+  <circle cx="300" cy="150" r="18" fill="url(#glowingSphereCyan)" filter="url(#softGlow)" />
+  <ellipse cx="295" cy="144" rx="5" ry="3" fill="#FFFFFF" opacity="0.8" />
+
+  <!-- 3D Horizontal Balance Beam with Depth -->
+  <!-- Shadow of beam -->
+  <path d="M 90 225 Q 300 215 510 225 L 510 236 Q 300 226 90 236 Z" fill="#0F172A" opacity="0.7" />
+  <!-- Main 3D Beam -->
+  <path d="M 90 215 Q 300 205 510 215 L 510 227 Q 300 217 90 227 Z" fill="url(#goldBeam)" />
+  <!-- Upper bevel highlight -->
+  <path d="M 92 215 Q 300 205 508 215" stroke="#FEF08A" stroke-width="2.5" fill="none" />
+  <!-- Pivot sphere -->
+  <circle cx="300" cy="215" r="12" fill="url(#glowingSphereGold)" />
+
+  <!-- LEFT SCALE SYSTEM (Cyan / Liberty & Rights) -->
+  <g transform="translate(110, 222)">
+    <!-- 3D Suspension Rods -->
+    <line x1="0" y1="0" x2="-45" y2="120" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round" />
+    <line x1="0" y1="0" x2="45" y2="120" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round" />
+    <line x1="0" y1="0" x2="0" y2="125" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+    
+    <!-- 3D Hanging Pan -->
+    <!-- Pan Outer Body -->
+    <path d="M -60 120 C -60 165 60 165 60 120 Z" fill="url(#pan3DLeft)" />
+    <!-- Pan Inner Rim & Interior Bowl -->
+    <ellipse cx="0" cy="120" rx="60" ry="16" fill="#0C1527" stroke="#38BDF8" stroke-width="3" />
+    <ellipse cx="0" cy="122" rx="52" ry="12" fill="#060C16" />
+    <!-- Specular rim highlight -->
+    <path d="M -54 122 C -30 134 30 134 54 122" stroke="#7DD3FC" stroke-width="2" fill="none" opacity="0.8" />
+
+    <!-- 3D Glowing Weight / Legal Power Orb resting in pan -->
+    <ellipse cx="0" cy="128" rx="24" ry="8" fill="#020617" opacity="0.5" />
+    <circle cx="0" cy="108" r="22" fill="url(#glowingSphereCyan)" filter="url(#softGlow)" />
+    <ellipse cx="-6" cy="100" rx="7" ry="4" fill="#FFFFFF" opacity="0.8" />
+  </g>
+
+  <!-- RIGHT SCALE SYSTEM (Gold / Law & Justice) -->
+  <g transform="translate(490, 222)">
+    <!-- 3D Suspension Rods -->
+    <line x1="0" y1="0" x2="-45" y2="120" stroke="#D97706" stroke-width="2.5" stroke-linecap="round" />
+    <line x1="0" y1="0" x2="45" y2="120" stroke="#D97706" stroke-width="2.5" stroke-linecap="round" />
+    <line x1="0" y1="0" x2="0" y2="125" stroke="#FDE047" stroke-width="2" stroke-linecap="round" opacity="0.8" />
+
+    <!-- 3D Hanging Pan -->
+    <!-- Pan Outer Body -->
+    <path d="M -60 120 C -60 165 60 165 60 120 Z" fill="url(#pan3DRight)" />
+    <!-- Pan Inner Rim & Interior Bowl -->
+    <ellipse cx="0" cy="120" rx="60" ry="16" fill="#18181B" stroke="#FACC15" stroke-width="3" />
+    <ellipse cx="0" cy="122" rx="52" ry="12" fill="#0A0A0C" />
+    <!-- Specular rim highlight -->
+    <path d="M -54 122 C -30 134 30 134 54 122" stroke="#FEF08A" stroke-width="2" fill="none" opacity="0.8" />
+
+    <!-- 3D Glowing Weight / Constitutional Seal Orb resting in pan -->
+    <ellipse cx="0" cy="128" rx="24" ry="8" fill="#020617" opacity="0.5" />
+    <circle cx="0" cy="108" r="22" fill="url(#glowingSphereGold)" filter="url(#softGlow)" />
+    <ellipse cx="-6" cy="100" rx="7" ry="4" fill="#FFFFFF" opacity="0.8" />
+  </g>
+</svg>

@@ -6,7 +6,10 @@ export default function LawCard({ law }) {
   const category = categories.find((c) => c.id === law.category)
 
   return (
-    <article className="card-surface flex h-full flex-col p-6 transition-shadow hover:shadow-cardHover">
+    <Link
+      to={`/laws/${law.id}`}
+      className="card-surface group flex h-full flex-col p-6 transition-all hover:shadow-cardHover hover:border-navy/40 focus:outline-none focus:ring-2 focus:ring-navy block cursor-pointer"
+    >
       <div className="flex items-center gap-2">
         <span className="article-tab">{law.year}</span>
         {category && (
@@ -16,17 +19,14 @@ export default function LawCard({ law }) {
         )}
       </div>
 
-      <h3 className="mt-3 font-display text-lg font-semibold leading-snug text-navy">
+      <h3 className="mt-3 font-display text-lg font-semibold leading-snug text-navy group-hover:text-brass-dark transition-colors">
         {law.name}
       </h3>
       <p className="mt-2 flex-1 text-sm leading-relaxed text-ink/70">{law.description}</p>
 
-      <Link
-        to={`/laws/${law.id}`}
-        className="mt-5 inline-flex items-center gap-1.5 self-start rounded-sm border border-navy/20 px-4 py-2 text-sm font-medium text-navy hover:border-navy hover:bg-navy/5 transition-colors"
-      >
-        View Law <ArrowRight size={15} aria-hidden="true" />
-      </Link>
-    </article>
+      <div className="mt-5 inline-flex items-center gap-1.5 self-start rounded-sm border border-navy/20 px-4 py-2 text-sm font-medium text-navy group-hover:border-navy group-hover:bg-navy/5 transition-colors">
+        View Law <ArrowRight size={15} aria-hidden="true" className="group-hover:translate-x-0.5 transition-transform" />
+      </div>
+    </Link>
   )
 }

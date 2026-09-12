@@ -7,12 +7,13 @@ export default function Footer() {
       <div className="container-content py-12">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <div className="flex items-center gap-2 font-display text-lg font-semibold text-paper">
-              <span className="flex h-7 w-7 items-center justify-center rounded-sm bg-brass/20 text-brass-light">
+            <div className="flex items-center gap-2.5 font-display text-lg font-semibold text-paper">
+              <span className="flex h-7 w-7 items-center justify-center rounded-sm bg-cyan-950/80 border border-cyan-500/30 text-cyan-400">
                 <Scale size={15} aria-hidden="true" />
               </span>
-              Nyaya
+              <span>Enmachi</span>
             </div>
+            <p className="mt-1 text-xs font-sans font-medium text-cyan-400/90">न्याय • विधि • ज्ञान • The Wisdom of the Judge</p>
             <p className="mt-3 text-sm leading-relaxed text-paper/60">
               A public-information platform for understanding Indian laws and
               fundamental rights in plain language.
@@ -55,7 +56,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 flex flex-col gap-2 border-t border-paper/10 pt-6 text-xs text-paper/40 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Nyaya. All content is for educational use.</p>
+          <p>© {new Date().getFullYear()} Enmachi. All content is for educational use.</p>
           <p>Not affiliated with the Government of India.</p>
         </div>
       </div>

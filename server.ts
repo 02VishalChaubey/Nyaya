@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
+import { GoogleGenAI, Type } from '@google/genai';
 
 const app = express();
 const PORT = 3000;
@@ -10,68 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 // In-Memory Database for Indian Legal Awareness System
-const rightsData = [
-  {
-    id: 'equality',
-    icon: 'Scale',
-    title: 'Right to Equality',
-    articles: 'Articles 14–18',
-    summary:
-      'Guarantees that every person is equal before the law and prohibits discrimination on grounds such as religion, race, caste, sex, or place of birth.',
-    example:
-      'Example: a government office cannot refuse to process your application because of your caste or religion.',
-  },
-  {
-    id: 'freedom',
-    icon: 'Wind',
-    title: 'Right to Freedom',
-    articles: 'Articles 19–22',
-    summary:
-      'Covers freedom of speech, assembly, movement, and the right to practise any profession, along with protections around arrest and detention.',
-    example:
-      'Example: you generally have the right to express an opinion publicly, within reasonable restrictions defined by law.',
-  },
-  {
-    id: 'exploitation',
-    icon: 'ShieldOff',
-    title: 'Right against Exploitation',
-    articles: 'Articles 23–24',
-    summary:
-      'Prohibits human trafficking, forced labour, and the employment of children below fourteen years in hazardous work.',
-    example:
-      'Example: an employer cannot force someone to work without fair wages or consent.',
-  },
-  {
-    id: 'religion',
-    icon: 'Landmark',
-    title: 'Right to Freedom of Religion',
-    articles: 'Articles 25–28',
-    summary:
-      'Protects the freedom of conscience and the right to freely profess, practise, and propagate any religion.',
-    example:
-      'Example: a person cannot be compelled to follow a religious practice against their will.',
-  },
-  {
-    id: 'cultural-educational',
-    icon: 'BookOpen',
-    title: 'Cultural & Educational Rights',
-    articles: 'Articles 29–30',
-    summary:
-      'Protects the right of any community to conserve its language, script, and culture, and to establish educational institutions.',
-    example:
-      'Example: a linguistic minority can run its own school to teach in its native language.',
-  },
-  {
-    id: 'constitutional-remedies',
-    icon: 'Gavel',
-    title: 'Right to Constitutional Remedies',
-    articles: 'Article 32',
-    summary:
-      'Allows individuals to directly approach the courts if any of their fundamental rights are violated — often described as the provision that gives the other rights their force.',
-    example:
-      'Example: if a fundamental right is violated, a person may petition the courts for enforcement.',
-  },
-];
+import { fundamentalRights as rightsData } from './src/data/rights.js';
 
 const categoriesData = [
   {
@@ -715,117 +655,260 @@ app.get('/api/search/', (req, res) => {
   });
 });
 
+let aiClient: GoogleGenAI | null = null;
+function getGenAI(): GoogleGenAI | null {
+  if (aiClient) return aiClient;
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (apiKey) {
+    aiClient = new GoogleGenAI({ apiKey });
+    return aiClient;
+  }
+  return null;
+}
+
+function getFallbackSituationResult(category?: string, description?: string) {
+  if (category === 'cyber') {
+    return {
+      legalArea: 'Cyber Law & Digital Consumer Protection',
+      areaDescription:
+        'Online fraud, identity theft, unauthorized transactions, or cyber harassment in India fall primarily under the Information Technology Act and criminal provisions of the Bharatiya Nyaya Sanhita.',
+      relevantLaws: [
+        {
+          lawName: 'Information Technology Act, 2000',
+          section: 'Section 66C & 66D — Identity theft and cheating by personation',
+          explanation:
+            'Punishes identity theft, fraudulent password or credential misuse, and cheating using any computer resource.',
+        },
+        {
+          lawName: 'Bharatiya Nyaya Sanhita, 2023',
+          section: 'Section 318 — Cheating',
+          explanation:
+            'Covers deception causing wrongful loss or inducing delivery of property in physical or electronic contexts.',
+        },
+      ],
+      remedies: [
+        {
+          title: 'Report on National Cyber Crime Reporting Portal',
+          description:
+            'File an incident immediately at cybercrime.gov.in or dial helpline 1930 to freeze fraudulent transactions.',
+        },
+        {
+          title: 'Bank Fraud Alert & Chargeback',
+          description:
+            'Notify your bank within 72 hours for zero customer liability under RBI guidelines on unauthorized electronic banking transactions.',
+        },
+      ],
+      penalties: [
+        {
+          title: 'Imprisonment and fine under IT Act',
+          description:
+            'Section 66D prescribes imprisonment of up to three years and a monetary fine.',
+        },
+        {
+          title: 'Account freezing and restitution',
+          description:
+            'Investigating agencies can freeze destination bank accounts and recover misappropriated sums.',
+        },
+      ],
+      receivedCategory: category,
+    };
+  }
+
+  if (category === 'workplace') {
+    return {
+      legalArea: 'Labour & Employment Law',
+      areaDescription:
+        'Matters concerning wrongful termination, unpaid wages, gratuity withholding, or unsafe workplace conditions fall under Indian industrial and labour legislations.',
+      relevantLaws: [
+        {
+          lawName: 'Payment of Wages Act, 1936',
+          section: 'Section 15 — Claims arising out of deductions from wages',
+          explanation:
+            'Allows an employee to apply to the appointed Authority for recovery of delayed or illegally deducted wages.',
+        },
+        {
+          lawName: 'Industrial Disputes Act, 1947',
+          section: 'Section 2A & 25F — Retrenchment & Individual Dispute',
+          explanation:
+            'Requires prior notice or pay in lieu of notice and retrenchment compensation before terminating employment.',
+        },
+      ],
+      remedies: [
+        {
+          title: 'Complaint to the Labour Commissioner',
+          description:
+            'Approach the local or state Labour Commissioner or conciliation officer for dispute resolution.',
+        },
+        {
+          title: 'Legal notice for unpaid dues',
+          description:
+            'Issue a formal legal notice demanding payment of salary, earned leaves, and full and final settlement.',
+        },
+      ],
+      penalties: [
+        {
+          title: 'Statutory interest and penalties',
+          description:
+            'Labour authorities can award statutory compensation and impose monetary penalties on non-compliant employers.',
+        },
+      ],
+      receivedCategory: category,
+    };
+  }
+
+  return {
+    legalArea: 'Consumer & Civil Contract Remedies',
+    areaDescription:
+      'Based on the general pattern of what you described, this may fall under consumer protection or contract-related law. This provides an educational starting point for understanding applicable rights in India.',
+    relevantLaws: [
+      {
+        lawName: 'Consumer Protection Act, 2019',
+        section: 'Section 35 — Manner of filing complaint',
+        explanation:
+          'Describes the simple procedure for consumers to file a complaint regarding deficient goods or services before the District Commission.',
+      },
+      {
+        lawName: 'Indian Contract Act, 1872',
+        section: 'Section 73 — Compensation for breach',
+        explanation:
+          'Establishes the right to compensation for loss or damage caused naturally by a breach of contractual obligation.',
+      },
+    ],
+    remedies: [
+      {
+        title: 'Consumer Forum Complaint (e-Daakhil)',
+        description:
+          'File an online grievance via edaakhil.nic.in or register with the National Consumer Helpline (1915).',
+      },
+      {
+        title: 'Civil suit for breach or damages',
+        description:
+          'Where contractual agreements exist, parties may seek specific performance or monetary damages in civil court.',
+      },
+    ],
+    penalties: [
+      {
+        title: 'Compensation to the affected party',
+        description:
+          'Forums or civil courts may direct payment of actual losses plus compensation for mental harassment.',
+      },
+      {
+        title: 'Refund or replacement order',
+        description:
+          'Consumer commissions can direct refund of purchase price, rectification of defect, or replacement of goods.',
+      },
+    ],
+    receivedCategory: category,
+  };
+}
+
+async function analyzeSituationWithGemini(description: string, category?: string) {
+  const ai = getGenAI();
+  if (!ai) {
+    return null;
+  }
+
+  const prompt = `You are an educational legal-information advisor specializing in Indian law (Bharatiya Nyaya Sanhita 2023, Bharatiya Nagarik Suraksha Sanhita 2023, Consumer Protection Act 2019, IT Act 2000, Indian Contract Act 1872, Constitution of India, Labour laws, etc.).
+A citizen has shared this situation:
+Description: "${description}"
+Category context: "${category || 'General'}"
+
+Analyze this situation and provide educational legal information in plain, straightforward English:
+1. Identify the primary legalArea (short, clear title).
+2. Write a 2-3 sentence plain-language areaDescription explaining the applicable legal domain.
+3. List 2-3 relevantLaws (each with lawName, specific section or article, and a 1-2 sentence plain-language explanation of what it provides).
+4. List 2-3 realistic remedies (title and description of what steps the citizen can explore, such as filing an FIR/e-FIR, consumer forum/e-Daakhil, sending a legal notice, national consumer helpline, cybercrime portal, etc.).
+5. List 2-3 possible penalties or outcomes for the wrongdoer (title and description).
+
+Keep the language accessible, objective, educational, and respectful.`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.8-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            legalArea: { type: Type.STRING },
+            areaDescription: { type: Type.STRING },
+            relevantLaws: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  lawName: { type: Type.STRING },
+                  section: { type: Type.STRING },
+                  explanation: { type: Type.STRING },
+                },
+                required: ['lawName', 'section', 'explanation'],
+              },
+            },
+            remedies: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  title: { type: Type.STRING },
+                  description: { type: Type.STRING },
+                },
+                required: ['title', 'description'],
+              },
+            },
+            penalties: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  title: { type: Type.STRING },
+                  description: { type: Type.STRING },
+                },
+                required: ['title', 'description'],
+              },
+            },
+          },
+          required: ['legalArea', 'areaDescription', 'relevantLaws', 'remedies', 'penalties'],
+        },
+      },
+    });
+
+    if (response.text) {
+      const parsed = JSON.parse(response.text);
+      return {
+        ...parsed,
+        receivedCategory: category,
+      };
+    }
+  } catch (err) {
+    console.error('Gemini situation analysis error:', err);
+  }
+  return null;
+}
+
+const handleSituationAnalysis = async (req: express.Request, res: express.Response) => {
+  const description = (req.body.description || '').trim();
+  const category = req.body.category;
+
+  if (!description) {
+    return res.status(400).json({ detail: 'description is required.' });
+  }
+
+  // First try Gemini AI
+  const aiResult = await analyzeSituationWithGemini(description, category);
+  if (aiResult) {
+    return res.json(aiResult);
+  }
+
+  // Fallback to structured offline legal responses
+  const fallback = getFallbackSituationResult(category, description);
+  res.json(fallback);
+};
+
 // POST /api/situations/analyze/
-app.post('/api/situations/analyze', (req, res) => {
-  const description = (req.body.description || '').trim();
-  const category = req.body.category;
+app.post('/api/situations/analyze', handleSituationAnalysis);
+app.post('/api/situations/analyze/', handleSituationAnalysis);
 
-  if (!description) {
-    return res.status(400).json({ detail: 'description is required.' });
-  }
-
-  const result = {
-    legalArea: 'Consumer / Contract dispute',
-    areaDescription:
-      'Based on the general pattern of what you described, this may fall under consumer protection or contract-related law. This is only a starting point for your own reading — not a legal determination.',
-    relevantLaws: [
-      {
-        lawName: 'Consumer Protection Act, 2019',
-        section: 'Section 35 — Manner of filing complaint',
-        explanation:
-          'Describes the process for a consumer to file a complaint about defective goods or deficient services.',
-      },
-      {
-        lawName: 'Indian Contract Act, 1872',
-        section: 'Section 73 — Compensation for breach',
-        explanation:
-          'Describes the general principle of compensation when one party fails to honour an agreement.',
-      },
-    ],
-    remedies: [
-      {
-        title: 'Consumer complaint',
-        description:
-          'A complaint may be filed with the relevant consumer forum describing the loss suffered.',
-      },
-      {
-        title: 'Civil suit for breach of contract',
-        description:
-          'A civil suit may be an option if there was a written or verbal agreement that was not honoured.',
-      },
-    ],
-    penalties: [
-      {
-        title: 'Compensation to the affected party',
-        description:
-          'Courts or forums may direct the responsible party to pay compensation for proven loss.',
-      },
-      {
-        title: 'Refund or replacement',
-        description:
-          'In consumer matters, a refund, replacement, or repair may be ordered depending on the facts.',
-      },
-    ],
-    receivedCategory: category,
-  };
-
-  res.json(result);
-});
-app.post('/api/situations/analyze/', (req, res) => {
-  const description = (req.body.description || '').trim();
-  const category = req.body.category;
-
-  if (!description) {
-    return res.status(400).json({ detail: 'description is required.' });
-  }
-
-  const result = {
-    legalArea: 'Consumer / Contract dispute',
-    areaDescription:
-      'Based on the general pattern of what you described, this may fall under consumer protection or contract-related law. This is only a starting point for your own reading — not a legal determination.',
-    relevantLaws: [
-      {
-        lawName: 'Consumer Protection Act, 2019',
-        section: 'Section 35 — Manner of filing complaint',
-        explanation:
-          'Describes the process for a consumer to file a complaint about defective goods or deficient services.',
-      },
-      {
-        lawName: 'Indian Contract Act, 1872',
-        section: 'Section 73 — Compensation for breach',
-        explanation:
-          'Describes the general principle of compensation when one party fails to honour an agreement.',
-      },
-    ],
-    remedies: [
-      {
-        title: 'Consumer complaint',
-        description:
-          'A complaint may be filed with the relevant consumer forum describing the loss suffered.',
-      },
-      {
-        title: 'Civil suit for breach of contract',
-        description:
-          'A civil suit may be an option if there was a written or verbal agreement that was not honoured.',
-      },
-    ],
-    penalties: [
-      {
-        title: 'Compensation to the affected party',
-        description:
-          'Courts or forums may direct the responsible party to pay compensation for proven loss.',
-      },
-      {
-        title: 'Refund or replacement',
-        description:
-          'In consumer matters, a refund, replacement, or repair may be ordered depending on the facts.',
-      },
-    ],
-    receivedCategory: category,
-  };
-
-  res.json(result);
-});
 
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {
@@ -843,7 +926,7 @@ async function startServer() {
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Nyaya server running on http://0.0.0.0:${PORT}`);
+    console.log(`Enmachi server running on http://0.0.0.0:${PORT}`);
   });
 }
 

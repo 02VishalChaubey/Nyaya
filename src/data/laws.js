@@ -63,6 +63,40 @@ export const laws = [
     relatedLaws: ['bns-2023'],
   },
   {
+    id: 'constitution-of-india',
+    name: 'The Constitution of India',
+    year: 1950,
+    category: 'constitutional',
+    description:
+      "India's supreme law, establishing the sovereign structure, fundamental citizen rights, directive principles, and the separation of judicial, executive, and legislative powers.",
+    sections: [
+      {
+        id: 'part-3',
+        number: 'Part III',
+        title: 'Fundamental Rights (Articles 12–35)',
+        content:
+          'Enforceable constitutional rights guaranteeing equality before law, freedoms of speech and movement, protection against arbitrary arrest, freedom of conscience, and constitutional writ remedies.',
+      },
+      {
+        id: 'part-4',
+        number: 'Part IV',
+        title: 'Directive Principles of State Policy',
+        content:
+          'Guiding constitutional principles for social, economic, and educational welfare of citizens.',
+      },
+      {
+        id: 'part-4a',
+        number: 'Part IVA',
+        title: 'Fundamental Duties',
+        content:
+          'Article 51A setting forth the fundamental civic duties of every citizen of India.',
+      },
+    ],
+    officialSource: 'legislative.gov.in',
+    lastVerified: 'Legislative Department, Ministry of Law and Justice',
+    relatedLaws: ['bns-2023', 'bnss-2023', 'consumer-protection-2019'],
+  },
+  {
     id: 'consumer-protection-2019',
     name: 'Consumer Protection Act, 2019',
     year: 2019,
