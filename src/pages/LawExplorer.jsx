@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { SlidersHorizontal } from 'lucide-react'
+import { useSearchParams, Link } from 'react-router-dom'
+import { SlidersHorizontal, ArrowRight, Sparkles } from 'lucide-react'
 import Hero from '../components/Hero.jsx'
 import SearchBar from '../components/SearchBar.jsx'
 import LawCard from '../components/LawCard.jsx'
@@ -98,6 +98,32 @@ export default function LawExplorer() {
 
       <section className="container-content py-12 sm:py-14">
         {(categoriesFallback || lawsFallback) && <OfflineNotice className="mb-6" />}
+
+        {/* Featured BNS 2023 Gazette & Notes Card */}
+        <div className="mb-8 rounded-2xl border border-navy/20 bg-linear-to-r from-navy via-navy-light to-navy p-6 text-paper shadow-md">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1 rounded-md bg-amber-400/20 px-2 py-0.5 text-xs font-bold text-amber-300 border border-amber-400/30">
+                  <Sparkles size={11} /> Featured Code
+                </span>
+                <span className="font-mono text-xs text-paper/70">Act No. 45 of 2023</span>
+              </div>
+              <h3 className="mt-2 font-display text-xl font-bold text-paper sm:text-2xl">
+                Bharatiya Nyaya Sanhita, 2023 (BNS) — Gazette Notes &amp; Navigator
+              </h3>
+              <p className="mt-1 text-sm text-paper/80 max-w-2xl leading-relaxed">
+                Explore official Gazette notes, 20 chapters, 358-section structure, IPC-to-BNS conversion matrix, key penal reforms, and interactive knowledge checks.
+              </p>
+            </div>
+            <Link
+              to="/laws/bns-2023"
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-amber-400 px-5 py-2.5 text-sm font-bold text-navy shadow-sm transition hover:bg-amber-300 shrink-0"
+            >
+              Open BNS Notes <ArrowRight size={15} />
+            </Link>
+          </div>
+        </div>
 
         {/* Category filters */}
         <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by category">

@@ -72,4 +72,34 @@ export const legalTerms = [
       'A court order that requires a person to do, or to stop doing, a specific act — often used to prevent harm before a full trial is completed.',
     relatedLaws: ['indian-contract-1872'],
   },
+  {
+    id: 'bns',
+    term: 'BNS (Bharatiya Nyaya Sanhita, 2023)',
+    fullForm: 'Bharatiya Nyaya Sanhita, 2023 (Act 45 of 2023)',
+    definition:
+      "India's modernized criminal penal code which repealed and replaced the colonial Indian Penal Code, 1860 on 1 July 2024. Organised into 20 chapters and 358 sections.",
+    relatedLaws: ['bns-2023', 'bnss-2023'],
+  },
+  {
+    id: 'ipc',
+    term: 'IPC (Indian Penal Code, 1860)',
+    fullForm: 'Indian Penal Code, 1860',
+    definition:
+      'The previous criminal code of India drafted by Thomas Macaulay in 1860. Replaced by the Bharatiya Nyaya Sanhita, 2023 (BNS) for all offences committed on or after 1 July 2024.',
+    relatedLaws: ['bns-2023'],
+  },
+  {
+    id: 'zero-fir',
+    term: 'Zero FIR',
+    definition:
+      'An FIR that can be registered at any police station across India irrespective of jurisdiction, statutorily mandated under Section 173 of BNSS 2023, and transferred to the jurisdictional police station within 15 days.',
+    relatedLaws: ['bnss-2023', 'bns-2023'],
+  },
+  {
+    id: 'community-service',
+    term: 'Community Service',
+    definition:
+      'A non-custodial punishment introduced under Section 4(f) of BNS 2023 for minor offences (e.g. petty theft under ₹5,000 upon restoration, defamation, public intoxication) requiring court-directed unpaid community work.',
+    relatedLaws: ['bns-2023'],
+  },
 ]

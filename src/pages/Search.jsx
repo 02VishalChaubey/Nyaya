@@ -12,33 +12,74 @@ import { laws } from '../data/laws.js'
 import { legalTerms } from '../data/legalTerms.js'
 
 const OTHER_RESOURCES = [
+  { title: 'Bharatiya Nyaya Sanhita (BNS 2023) Official Gazette Notes & Sections', url: '/laws/bns-2023' },
+  { title: 'IPC to BNS Conversion Matrix (1860 vs 2023)', url: '/laws/bns-2023' },
   { title: 'How to file an FIR', url: '/legal-terms#fir' },
   { title: 'Understanding your right to legal aid', url: '/fundamental-rights#constitutional-remedies' },
   { title: 'Consumer complaint process, explained', url: '/laws/consumer-protection-2019' },
 ]
 
 function includesQuery(text, q) {
+  if (!text || !q) return false
   return text.toLowerCase().includes(q.toLowerCase())
 }
 
-// Client-side search across the local mock data, used only when the
-// backend can't be reached — mirrors what /api/search/ does server-side.
+// Client-side search across local data, mirrors server-side executeSearch
 function fallbackSearch(q) {
   if (!q) return { rights: [], laws: [], sections: [], terms: [] }
 
+  const query = q.toLowerCase().trim()
+  const isBnsQuery =
+    query === 'bns' ||
+    query === 'bns 2023' ||
+    query === 'bns section' ||
+    query === 'bns sections' ||
+    query.includes('bns') ||
+    query.includes('nyaya sanhita') ||
+    query.includes('penal code')
+
+  const strippedSecQ = query
+    .replace(/\b(bns|bnss|section|sec|act|2023)\b/gi, '')
+    .trim()
+
   const matchedRights = fundamentalRights.filter(
-    (r) => includesQuery(r.title, q) || includesQuery(r.summary, q)
+    (r) =>
+      includesQuery(r.title, q) ||
+      includesQuery(r.summary, q) ||
+      (r.articles && includesQuery(r.articles, q))
   )
+
   const matchedLaws = laws.filter(
-    (l) => includesQuery(l.name, q) || includesQuery(l.description, q)
+    (l) =>
+      includesQuery(l.name, q) ||
+      includesQuery(l.description, q) ||
+      (l.id && l.id.toLowerCase().includes(query)) ||
+      (l.shortName && l.shortName.toLowerCase().includes(query)) ||
+      (l.aliases && l.aliases.some((a) => a.toLowerCase().includes(query))) ||
+      (isBnsQuery && l.id === 'bns-2023')
   )
+
   const sections = laws.flatMap((l) =>
-    l.sections
-      .filter((s) => includesQuery(s.title, q) || includesQuery(s.number, q))
+    (l.sections || [])
+      .filter((s) => {
+        const isLawMatch = (isBnsQuery && l.id === 'bns-2023') || l.id.toLowerCase().includes(query)
+        const matchesSec =
+          includesQuery(s.title, q) ||
+          includesQuery(s.number, q) ||
+          (strippedSecQ && includesQuery(s.number, strippedSecQ)) ||
+          (strippedSecQ && includesQuery(s.title, strippedSecQ)) ||
+          (s.content && (includesQuery(s.content, q) || (strippedSecQ && includesQuery(s.content, strippedSecQ))))
+
+        return isLawMatch || matchesSec
+      })
       .map((s) => ({ ...s, lawId: l.id, lawName: l.name }))
   )
+
   const terms = legalTerms.filter(
-    (t) => includesQuery(t.term, q) || includesQuery(t.definition, q)
+    (t) =>
+      includesQuery(t.term, q) ||
+      (t.fullForm && includesQuery(t.fullForm, q)) ||
+      includesQuery(t.definition, q)
   )
 
   return { rights: matchedRights, laws: matchedLaws, sections, terms }

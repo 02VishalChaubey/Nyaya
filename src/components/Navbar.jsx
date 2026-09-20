@@ -5,6 +5,8 @@ import { Menu, X, Scale, Search } from 'lucide-react'
 const LINKS = [
   { to: '/', label: 'Home' },
   { to: '/fundamental-rights', label: 'Fundamental Rights' },
+  { to: '/laws/bns-2023', label: 'BNS 2023' },
+  { to: '/laws/bnss-2023', label: 'BNSS 2023' },
   { to: '/laws', label: 'Explore Laws' },
   { to: '/harmed', label: 'I Have Been Harmed' },
   { to: '/legal-terms', label: 'Legal Terms' },

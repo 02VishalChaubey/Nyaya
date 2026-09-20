@@ -18,6 +18,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/fundamental-rights" element={<FundamentalRights />} />
+          <Route path="/bns" element={<LawDetails forcedId="bns-2023" />} />
+          <Route path="/bnss" element={<LawDetails forcedId="bnss-2023" />} />
           <Route path="/laws" element={<LawExplorer />} />
           <Route path="/laws/:lawId" element={<LawDetails />} />
           <Route path="/harmed" element={<Harmed />} />

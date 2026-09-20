@@ -13,11 +13,17 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronUp,
+  BookOpen,
+  Sparkles,
 } from 'lucide-react'
 import Hero from '../components/Hero.jsx'
 import LoadingState from '../components/LoadingState.jsx'
 import OfflineNotice from '../components/OfflineNotice.jsx'
 import FundamentalRightsCharts from '../components/FundamentalRightsCharts.jsx'
+import ConstitutionalOriginsBanner from '../components/ConstitutionalOriginsBanner.jsx'
+import LandmarkCasesSection from '../components/LandmarkCasesSection.jsx'
+import Article13Section from '../components/Article13Section.jsx'
+import FundamentalRightsQuiz from '../components/FundamentalRightsQuiz.jsx'
 import { getIcon } from '../components/iconMap.js'
 import { useApi } from '../hooks/useApi.js'
 import { fetchRights } from '../api/client.js'
@@ -132,6 +138,46 @@ export default function FundamentalRights() {
       <section className="container-content py-10 sm:py-14">
         {usingFallback && <OfflineNotice className="mb-6 max-w-lg" />}
 
+        {/* Quick Section Jump Navigation */}
+        <div className="mb-8 flex flex-wrap items-center gap-2 border-b border-border/80 pb-4 text-xs">
+          <span className="font-semibold text-ink/60 mr-1">Quick Navigation:</span>
+          <a
+            href="#origins"
+            className="rounded-full border border-navy/20 bg-paper px-3 py-1 font-medium text-navy hover:bg-navy/5 transition-colors"
+          >
+            Philosophy &amp; US Origin
+          </a>
+          <a
+            href="#rights-breakdown"
+            className="rounded-full border border-navy/20 bg-paper px-3 py-1 font-medium text-navy hover:bg-navy/5 transition-colors"
+          >
+            6 Core Rights Breakdown
+          </a>
+          <a
+            href="#article-13"
+            className="rounded-full border border-navy/20 bg-paper px-3 py-1 font-medium text-navy hover:bg-navy/5 transition-colors"
+          >
+            Article 13 (Judicial Review)
+          </a>
+          <a
+            href="#landmark-cases"
+            className="rounded-full border border-navy/20 bg-paper px-3 py-1 font-medium text-navy hover:bg-navy/5 transition-colors"
+          >
+            Landmark Cases Table
+          </a>
+          <a
+            href="#practice-questions"
+            className="rounded-full border border-emerald-600/30 bg-emerald-50 px-3 py-1 font-medium text-emerald-800 hover:bg-emerald-100 transition-colors"
+          >
+            Practice MCQs Quiz
+          </a>
+        </div>
+
+        {/* Foundational Understanding & US Adaptation Banner */}
+        <div id="origins">
+          <ConstitutionalOriginsBanner />
+        </div>
+
         {/* Analytical Interactive Charts Section */}
         <div className="mb-12">
           <FundamentalRightsCharts />
@@ -234,7 +280,7 @@ export default function FundamentalRights() {
             </button>
           </div>
         ) : (
-          <div className="space-y-8">
+          <div id="rights-breakdown" className="space-y-8 scroll-mt-24">
             {filteredRights.map((right) => {
               const Icon = getIcon(right.icon)
               const action = RIGHT_ACTION_MAP[right.id] || {
@@ -243,7 +289,7 @@ export default function FundamentalRights() {
                 category: 'Indian Law',
               }
               const isExpanded = expandedCards[right.id] ?? false
-              const activeTab = activeTabByRight[right.id] || 'violations' // default to showing violations
+              const activeTab = activeTabByRight[right.id] || 'core' // default to 3-pillar core breakdown
 
               return (
                 <article
@@ -329,6 +375,18 @@ export default function FundamentalRights() {
                       <div className="mb-6 flex flex-wrap gap-2 border-b border-border/70 pb-3">
                         <button
                           type="button"
+                          onClick={() => setRightTab(right.id, 'core')}
+                          className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-all ${
+                            activeTab === 'core'
+                              ? 'bg-navy text-white shadow-2xs'
+                              : 'bg-paper text-ink/75 border border-border/70 hover:text-navy hover:bg-page'
+                          }`}
+                        >
+                          <Sparkles size={13} />
+                          Core Breakdown (Rights, Restrictions &amp; Violations)
+                        </button>
+                        <button
+                          type="button"
                           onClick={() => setRightTab(right.id, 'violations')}
                           className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-all ${
                             activeTab === 'violations'
@@ -376,6 +434,100 @@ export default function FundamentalRights() {
                           Citizen Redress Pathway
                         </button>
                       </div>
+
+                      {/* TAB CONTENT 0: CORE 3-PILLAR BREAKDOWN */}
+                      {activeTab === 'core' && (
+                        <div className="space-y-4">
+                          <div className="grid gap-4 md:grid-cols-3">
+                            {/* 1. The Rights */}
+                            <div className="rounded-xl border border-navy/15 bg-paper p-4 shadow-2xs">
+                              <div className="flex items-center gap-2 text-navy border-b border-border/70 pb-2.5">
+                                <BookOpen size={15} className="text-navy" />
+                                <h4 className="text-xs font-bold uppercase tracking-wider">
+                                  1. The Rights
+                                </h4>
+                              </div>
+                              <ul className="mt-3 space-y-2.5 text-xs leading-relaxed text-ink/85">
+                                {right.theRights ? (
+                                  right.theRights.map((item, i) => (
+                                    <li key={i} className="flex items-start gap-2">
+                                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-navy" />
+                                      <span>{item}</span>
+                                    </li>
+                                  ))
+                                ) : (
+                                  <li className="flex items-start gap-2">
+                                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-navy" />
+                                    <span>{right.summary}</span>
+                                  </li>
+                                )}
+                              </ul>
+                            </div>
+
+                            {/* 2. Proper Restrictions / Exceptions */}
+                            <div className="rounded-xl border border-amber-500/25 bg-amber-500/5 p-4 shadow-2xs">
+                              <div className="flex items-center gap-2 text-amber-900 border-b border-amber-500/20 pb-2.5">
+                                <AlertTriangle size={15} className="text-amber-700" />
+                                <h4 className="text-xs font-bold uppercase tracking-wider">
+                                  2. Proper Restrictions / Exceptions
+                                </h4>
+                              </div>
+                              <ul className="mt-3 space-y-2.5 text-xs leading-relaxed text-ink/85">
+                                {right.properRestrictionsSummary ? (
+                                  right.properRestrictionsSummary.map((item, i) => (
+                                    <li key={i} className="flex items-start gap-2">
+                                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-600" />
+                                      <span>{item}</span>
+                                    </li>
+                                  ))
+                                ) : right.restrictions ? (
+                                  right.restrictions.map((r, i) => (
+                                    <li key={i} className="flex items-start gap-2">
+                                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-600" />
+                                      <span>
+                                        <strong>{r.ground}:</strong> {r.description}
+                                      </span>
+                                    </li>
+                                  ))
+                                ) : (
+                                  <li>Subject to public order, morality, and general public interest.</li>
+                                )}
+                              </ul>
+                            </div>
+
+                            {/* 3. What happens if violated? */}
+                            <div className="rounded-xl border border-rose-500/25 bg-rose-500/5 p-4 shadow-2xs">
+                              <div className="flex items-center gap-2 text-rose-900 border-b border-rose-500/20 pb-2.5">
+                                <ShieldAlert size={15} className="text-rose-700" />
+                                <h4 className="text-xs font-bold uppercase tracking-wider">
+                                  3. What Happens If Violated?
+                                </h4>
+                              </div>
+                              <ul className="mt-3 space-y-2.5 text-xs leading-relaxed text-ink/85">
+                                {right.violationConsequencesSummary ? (
+                                  right.violationConsequencesSummary.map((item, i) => (
+                                    <li key={i} className="flex items-start gap-2">
+                                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-600" />
+                                      <span>{item}</span>
+                                    </li>
+                                  ))
+                                ) : right.violationConsequences ? (
+                                  right.violationConsequences.map((v, i) => (
+                                    <li key={i} className="flex items-start gap-2">
+                                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-600" />
+                                      <span>
+                                        <strong>{v.consequence}:</strong> {v.details}
+                                      </span>
+                                    </li>
+                                  ))
+                                ) : (
+                                  <li>Discriminatory laws can be challenged under Article 13 and declared null and void.</li>
+                                )}
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      )}
 
                       {/* TAB CONTENT 1: WHAT HAPPENS IF VIOLATED? */}
                       {activeTab === 'violations' && (
@@ -625,6 +777,15 @@ export default function FundamentalRights() {
             })}
           </div>
         )}
+
+        {/* Article 13 Judicial Review & Severability Section */}
+        <Article13Section />
+
+        {/* Landmark Supreme Court Cases Table */}
+        <LandmarkCasesSection />
+
+        {/* Practice MCQs Preparation Quiz */}
+        <FundamentalRightsQuiz />
 
         {/* Global Constitutional Remedies Reference Banner */}
         <div className="mt-14 rounded-2xl border border-navy/15 bg-paper p-7 sm:p-9 shadow-xs">
