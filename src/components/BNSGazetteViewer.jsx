@@ -25,16 +25,27 @@ import {
   ExternalLink,
   Info,
 } from 'lucide-react'
+import { useApi } from '../hooks/useApi.js'
+import { fetchBnsData } from '../api/client.js'
 import {
-  bnsGazetteInfo,
-  bnsKeyReforms,
-  bnsChapters,
-  bnsCoreSections,
-  ipcToBnsMatrix,
-  bnsQuiz,
+  bnsGazetteInfo as fallbackInfo,
+  bnsKeyReforms as fallbackReforms,
+  bnsChapters as fallbackChapters,
+  bnsCoreSections as fallbackSections,
+  ipcToBnsMatrix as fallbackMatrix,
+  bnsQuiz as fallbackQuiz,
 } from '../data/bnsDetailedNotes.js'
 
 export default function BNSGazetteViewer() {
+  const { data: bnsData } = useApi(fetchBnsData, [], null)
+
+  const bnsGazetteInfo = bnsData?.gazetteInfo || fallbackInfo
+  const bnsKeyReforms = bnsData?.reforms || fallbackReforms
+  const bnsChapters = bnsData?.chapters || fallbackChapters
+  const bnsCoreSections = bnsData?.sections || fallbackSections
+  const ipcToBnsMatrix = bnsData?.matrix || fallbackMatrix
+  const bnsQuiz = bnsData?.quiz || fallbackQuiz
+
   const [activeTab, setActiveTab] = useState('sections') // 'reforms', 'matrix', 'chapters', 'sections', 'defences', 'quiz'
   const [sectionSearch, setSectionSearch] = useState('')
   const [selectedChapterFilter, setSelectedChapterFilter] = useState('all')

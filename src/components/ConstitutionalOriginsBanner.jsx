@@ -1,8 +1,17 @@
 import React from 'react'
 import { BookOpen, ShieldCheck, Scale, Compass } from 'lucide-react'
-import { constitutionalOrigins } from '../data/rights.js'
+import { useApi } from '../hooks/useApi.js'
+import { fetchConstitutionalOrigins } from '../api/client.js'
+import { constitutionalOrigins as fallbackConstitutionalOrigins } from '../data/rights.js'
 
 export default function ConstitutionalOriginsBanner() {
+  const { data: originsData } = useApi(
+    fetchConstitutionalOrigins,
+    [],
+    fallbackConstitutionalOrigins
+  )
+
+  const constitutionalOrigins = originsData || fallbackConstitutionalOrigins
   return (
     <section className="mb-12 rounded-2xl border border-navy/15 bg-paper p-6 sm:p-9 shadow-xs">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-10">

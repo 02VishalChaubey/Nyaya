@@ -57,12 +57,11 @@ export default function LawDetails({ forcedId }) {
   const categoryId = typeof law.category === 'string' ? law.category : law.category?.id
   const category = categories.find((c) => c.id === categoryId)
 
-  // In fallback mode, related laws are just ids — resolve them to full
-  // objects locally. When the API is live, related_laws already arrives
-  // as [{id, name}] from the serializer.
-  const related = lawFallback
-    ? fallbackLaws.filter((l) => law.relatedLaws?.includes(l.id))
-    : law.related_laws || []
+  // Resolve related laws from backend related_laws or from local fallback list
+  const related =
+    law.related_laws && law.related_laws.length > 0
+      ? law.related_laws
+      : fallbackLaws.filter((l) => (law.relatedLaws || []).includes(l.id))
 
   const isBNS = law.id === 'bns-2023'
   const isBNSS = law.id === 'bnss-2023'

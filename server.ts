@@ -26,6 +26,15 @@ import {
   ipcToBnsMatrix,
   bnsQuiz,
 } from './src/data/bnsDetailedNotes.js';
+import {
+  bnssMeta,
+  bnssChapters,
+  bnssCoreSections,
+  crpcToBnssMatrix,
+  bnssScheduleForms,
+  bnssInnovations,
+  bnssQuiz,
+} from './src/data/bnssDetailedNotes.js';
 
 const categoriesData = [
   {
@@ -897,6 +906,69 @@ app.get('/api/bns/', (req, res) => {
   });
 });
 
+// GET /api/bnss
+app.get('/api/bnss', (req, res) => {
+  res.json({
+    meta: bnssMeta,
+    chapters: bnssChapters,
+    sections: bnssCoreSections,
+    matrix: crpcToBnssMatrix,
+    forms: bnssScheduleForms,
+    innovations: bnssInnovations,
+    quiz: bnssQuiz,
+  });
+});
+app.get('/api/bnss/', (req, res) => {
+  res.json({
+    meta: bnssMeta,
+    chapters: bnssChapters,
+    sections: bnssCoreSections,
+    matrix: crpcToBnssMatrix,
+    forms: bnssScheduleForms,
+    innovations: bnssInnovations,
+    quiz: bnssQuiz,
+  });
+});
+
+// Enriches law objects so frontend gets both camelCase and snake_case properties plus resolved related_laws
+function enrichLaw(l: any) {
+  if (!l) return l;
+  const rel = (l.relatedLaws || []).map((id: string) => {
+    const target = lawsData.find((x) => x.id === id);
+    return {
+      id,
+      name: target?.name || id,
+      shortName: target?.shortName || target?.name || id,
+    };
+  });
+  return {
+    ...l,
+    official_source: l.officialSource,
+    last_verified: l.lastVerified,
+    related_laws: rel,
+    relatedLaws: l.relatedLaws || [],
+  };
+}
+
+// Enriches term objects so related_laws includes { id, name, shortName } and full_form
+function enrichTerm(t: any) {
+  if (!t) return t;
+  const rel = (t.relatedLaws || []).map((id: string) => {
+    const target = lawsData.find((x) => x.id === id);
+    return {
+      id,
+      name: target?.name || id,
+      shortName: target?.shortName || target?.name || id,
+    };
+  });
+  return {
+    ...t,
+    full_form: t.fullForm,
+    related_laws: rel,
+    relatedLaws: t.relatedLaws || [],
+  };
+}
+
 // GET /api/categories/
 app.get('/api/categories', (req, res) => {
   res.json(categoriesData);
@@ -917,7 +989,7 @@ app.get('/api/situation-categories/', (req, res) => {
 app.get('/api/legal-terms', (req, res) => {
   const q = ((req.query.q as string) || '').toLowerCase().trim();
   if (!q) {
-    return res.json(legalTermsData);
+    return res.json(legalTermsData.map(enrichTerm));
   }
   const filtered = legalTermsData.filter(
     (item) =>
@@ -925,12 +997,12 @@ app.get('/api/legal-terms', (req, res) => {
       (item.fullForm && item.fullForm.toLowerCase().includes(q)) ||
       item.definition.toLowerCase().includes(q)
   );
-  res.json(filtered);
+  res.json(filtered.map(enrichTerm));
 });
 app.get('/api/legal-terms/', (req, res) => {
   const q = ((req.query.q as string) || '').toLowerCase().trim();
   if (!q) {
-    return res.json(legalTermsData);
+    return res.json(legalTermsData.map(enrichTerm));
   }
   const filtered = legalTermsData.filter(
     (item) =>
@@ -938,7 +1010,7 @@ app.get('/api/legal-terms/', (req, res) => {
       (item.fullForm && item.fullForm.toLowerCase().includes(q)) ||
       item.definition.toLowerCase().includes(q)
   );
-  res.json(filtered);
+  res.json(filtered.map(enrichTerm));
 });
 
 // GET /api/legal-terms/:id
@@ -947,14 +1019,14 @@ app.get('/api/legal-terms/:id', (req, res) => {
   if (!item) {
     return res.status(404).json({ detail: 'Not found' });
   }
-  res.json(item);
+  res.json(enrichTerm(item));
 });
 app.get('/api/legal-terms/:id/', (req, res) => {
   const item = legalTermsData.find((t) => t.id === req.params.id);
   if (!item) {
     return res.status(404).json({ detail: 'Not found' });
   }
-  res.json(item);
+  res.json(enrichTerm(item));
 });
 
 // Helper for laws searching
@@ -983,7 +1055,7 @@ function searchLaws(category: string, q: string) {
         (isBnsQuery && l.id === 'bns-2023')
     );
   }
-  return results;
+  return results.map(enrichLaw);
 }
 
 // GET /api/laws/
@@ -1004,14 +1076,14 @@ app.get('/api/laws/:id', (req, res) => {
   if (!law) {
     return res.status(404).json({ detail: 'Law not found' });
   }
-  res.json(law);
+  res.json(enrichLaw(law));
 });
 app.get('/api/laws/:id/', (req, res) => {
   const law = lawsData.find((l) => l.id === req.params.id);
   if (!law) {
     return res.status(404).json({ detail: 'Law not found' });
   }
-  res.json(law);
+  res.json(enrichLaw(law));
 });
 
 // Helper for unified search
@@ -1090,9 +1162,9 @@ function executeSearch(q: string) {
 
   return {
     rights: matchedRights,
-    laws: matchedLaws,
+    laws: matchedLaws.map(enrichLaw),
     sections: matchedSections,
-    terms: matchedTerms,
+    terms: matchedTerms.map(enrichTerm),
   };
 }
 

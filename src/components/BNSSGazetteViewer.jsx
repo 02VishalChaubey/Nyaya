@@ -24,17 +24,29 @@ import {
   Info,
   ExternalLink,
 } from 'lucide-react'
+import { useApi } from '../hooks/useApi.js'
+import { fetchBnssData } from '../api/client.js'
 import {
-  bnssMeta,
-  bnssChapters,
-  bnssCoreSections,
-  crpcToBnssMatrix,
-  bnssScheduleForms,
-  bnssInnovations,
-  bnssQuiz,
+  bnssMeta as fallbackMeta,
+  bnssChapters as fallbackChapters,
+  bnssCoreSections as fallbackSections,
+  crpcToBnssMatrix as fallbackMatrix,
+  bnssScheduleForms as fallbackForms,
+  bnssInnovations as fallbackInnovations,
+  bnssQuiz as fallbackQuiz,
 } from '../data/bnssDetailedNotes.js'
 
 export default function BNSSGazetteViewer() {
+  const { data: bnssData } = useApi(fetchBnssData, [], null)
+
+  const bnssMeta = bnssData?.meta || fallbackMeta
+  const bnssChapters = bnssData?.chapters || fallbackChapters
+  const bnssCoreSections = bnssData?.sections || fallbackSections
+  const crpcToBnssMatrix = bnssData?.matrix || fallbackMatrix
+  const bnssScheduleForms = bnssData?.forms || fallbackForms
+  const bnssInnovations = bnssData?.innovations || fallbackInnovations
+  const bnssQuiz = bnssData?.quiz || fallbackQuiz
+
   const [activeTab, setActiveTab] = useState('sections') // 'sections', 'matrix', 'reforms', 'forms', 'chapters', 'quiz'
   const [sectionSearch, setSectionSearch] = useState('')
   const [selectedChapterFilter, setSelectedChapterFilter] = useState('all')

@@ -1,10 +1,20 @@
 import React, { useState } from 'react'
 import { Landmark, Search, BookOpen, ChevronRight, Scale, Info } from 'lucide-react'
-import { landmarkCases } from '../data/rights.js'
+import { useApi } from '../hooks/useApi.js'
+import { fetchLandmarkCases } from '../api/client.js'
+import { landmarkCases as fallbackLandmarkCases } from '../data/rights.js'
 
 export default function LandmarkCasesSection() {
   const [filterArticle, setFilterArticle] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
+
+  const { data: casesData } = useApi(
+    fetchLandmarkCases,
+    [],
+    fallbackLandmarkCases
+  )
+
+  const landmarkCases = casesData || fallbackLandmarkCases
 
   const articles = [
     { value: 'all', label: 'All Cases (9)' },

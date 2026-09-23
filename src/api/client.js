@@ -1,14 +1,12 @@
-// Thin wrapper around fetch() for the Django backend.
-//
-// Base URL comes from VITE_API_BASE_URL (see .env.example) and falls back to
-// the default local dev address, so this works out of the box with
-// `python manage.py runserver` on 127.0.0.1:8000.
+// Client library for Enmachi's legal intelligence API.
+// Defaults to the local server's `/api` proxy or custom VITE_API_BASE_URL.
 
 const RAW_BASE = import.meta.env.VITE_API_BASE_URL || '/api'
 export const API_BASE_URL = RAW_BASE.replace(/\/$/, '')
 
 async function request(path, options = {}) {
-  const res = await fetch(`${API_BASE_URL}${path}`, {
+  const url = `${API_BASE_URL}${path}`
+  const res = await fetch(url, {
     headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
     ...options,
   })
@@ -19,10 +17,7 @@ async function request(path, options = {}) {
   return res.json()
 }
 
-// DRF's default ListAPIView pagination wraps results as
-// {count, next, previous, results: [...]}. Some list views on this backend
-// have pagination disabled (plain arrays), others don't — this normalizes
-// both so callers always get a plain array back.
+// DRF & Express normalizer to ensure callers get a plain array back
 function unwrapList(payload) {
   if (Array.isArray(payload)) return payload
   if (payload && Array.isArray(payload.results)) return payload.results
@@ -31,6 +26,30 @@ function unwrapList(payload) {
 
 export function fetchRights() {
   return request('/rights/').then(unwrapList)
+}
+
+export function fetchLandmarkCases() {
+  return request('/landmark-cases/').then(unwrapList)
+}
+
+export function fetchArticle13() {
+  return request('/article-13/').then(unwrapList)
+}
+
+export function fetchRightsQuiz() {
+  return request('/rights-quiz/').then(unwrapList)
+}
+
+export function fetchConstitutionalOrigins() {
+  return request('/constitutional-origins')
+}
+
+export function fetchBnsData() {
+  return request('/bns/')
+}
+
+export function fetchBnssData() {
+  return request('/bnss/')
 }
 
 export function fetchCategories() {
@@ -56,6 +75,10 @@ export function fetchLegalTerms({ q } = {}) {
   return request(`/legal-terms/${qs ? `?${qs}` : ''}`).then(unwrapList)
 }
 
+export function fetchLegalTermDetail(id) {
+  return request(`/legal-terms/${encodeURIComponent(id)}/`)
+}
+
 export function fetchSituationCategories() {
   return request('/situation-categories/').then(unwrapList)
 }
@@ -70,4 +93,8 @@ export function analyzeSituation({ description, category }) {
     method: 'POST',
     body: JSON.stringify({ description, category }),
   })
+}
+
+export function checkBackendHealth() {
+  return request('/health')
 }

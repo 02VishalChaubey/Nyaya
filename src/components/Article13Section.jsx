@@ -1,8 +1,17 @@
 import React from 'react'
 import { ShieldX, CheckSquare, Layers, AlertOctagon, HelpCircle } from 'lucide-react'
-import { article13Principles } from '../data/rights.js'
+import { useApi } from '../hooks/useApi.js'
+import { fetchArticle13 } from '../api/client.js'
+import { article13Principles as fallbackArticle13Principles } from '../data/rights.js'
 
 export default function Article13Section() {
+  const { data: principles } = useApi(
+    fetchArticle13,
+    [],
+    fallbackArticle13Principles
+  )
+
+  const article13Principles = principles || fallbackArticle13Principles
   return (
     <section id="article-13" className="my-12 rounded-2xl border border-border/80 bg-paper p-6 sm:p-9 shadow-xs">
       <div className="max-w-3xl">

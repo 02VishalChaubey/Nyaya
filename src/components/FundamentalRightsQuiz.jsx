@@ -1,10 +1,20 @@
 import React, { useState } from 'react'
 import { HelpCircle, CheckCircle, XCircle, RotateCcw, Award } from 'lucide-react'
-import { practiceQuestions } from '../data/rights.js'
+import { useApi } from '../hooks/useApi.js'
+import { fetchRightsQuiz } from '../api/client.js'
+import { practiceQuestions as fallbackQuestions } from '../data/rights.js'
 
 export default function FundamentalRightsQuiz() {
   const [selectedAnswers, setSelectedAnswers] = useState({})
   const [revealed, setRevealed] = useState({})
+
+  const { data: questionsData } = useApi(
+    fetchRightsQuiz,
+    [],
+    fallbackQuestions
+  )
+
+  const practiceQuestions = questionsData || fallbackQuestions
 
   const handleSelect = (questionId, optionIndex) => {
     if (revealed[questionId]) return

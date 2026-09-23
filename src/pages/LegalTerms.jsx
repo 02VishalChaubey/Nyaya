@@ -55,11 +55,11 @@ export default function LegalTerms() {
         ) : results.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2">
             {results.map((term) => {
-              // API results already nest related_laws as [{id, name}];
-              // fallback mock data only stores ids, so resolve those locally.
-              const related = usingFallback
-                ? fallbackLaws.filter((l) => term.relatedLaws?.includes(l.id))
-                : term.related_laws || []
+              // API results nest related_laws as [{id, name}]; fallback mock data stores ids
+              const related =
+                term.related_laws && term.related_laws.length > 0
+                  ? term.related_laws
+                  : fallbackLaws.filter((l) => (term.relatedLaws || []).includes(l.id))
 
               return (
                 <article key={term.id} className="card-surface p-6">

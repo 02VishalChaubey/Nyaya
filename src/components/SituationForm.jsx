@@ -88,12 +88,11 @@ export default function SituationForm() {
       </fieldset>
 
       <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs text-ink/50">
-          This sends your description to the backend for a placeholder match —
-          nothing is stored or reviewed by a person.
+        <p className="text-xs text-ink/60">
+          Your situation is analyzed securely by Enmachi&apos;s legal intelligence backend to identify relevant provisions, remedies, and procedures.
         </p>
         <Button type="submit" icon={submitting ? Loader2 : Send} iconPosition="right" disabled={submitting}>
-          {submitting ? 'Finding information...' : 'Find Relevant Information'}
+          {submitting ? 'Analyzing with Enmachi Legal AI...' : 'Find Relevant Information'}
         </Button>
       </div>
 
