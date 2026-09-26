@@ -1,30 +1,14 @@
 import React from 'react'
-import { ShieldX, CheckSquare, Layers, AlertOctagon, HelpCircle } from 'lucide-react'
-import { useApi } from '../hooks/useApi.js'
-import { fetchArticle13 } from '../api/client.js'
-import { article13Principles as fallbackArticle13Principles } from '../data/rights.js'
+import { CheckSquare, Layers, AlertOctagon } from 'lucide-react'
+import { article13Principles } from '../data/rights.js'
 
 export default function Article13Section() {
-  const { data: principles } = useApi(
-    fetchArticle13,
-    [],
-    fallbackArticle13Principles
-  )
-
-  const article13Principles = principles || fallbackArticle13Principles
   return (
-    <section id="article-13" className="my-12 rounded-2xl border border-border/80 bg-paper p-6 sm:p-9 shadow-xs">
+    <section id="article-13" className="my-12 border-b border-border pb-10">
       <div className="max-w-3xl">
-        <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-rose-500/10 text-rose-700">
-            <ShieldX size={16} />
-          </span>
-          <span className="font-mono text-xs font-bold uppercase tracking-wider text-rose-700">
-            Constitutional Shield • Article 13
-          </span>
-        </div>
+        <span className="text-xs font-mono font-medium uppercase tracking-wider text-brass-dark mb-2 block">Constitutional Shield • Article 13</span>
 
-        <h2 className="mt-2 text-xl font-bold tracking-tight text-navy sm:text-2xl">
+        <h2 className="font-display text-xl font-semibold text-navy sm:text-2xl">
           What Happens if a Law Violates a Fundamental Right? (Article 13)
         </h2>
 
@@ -34,23 +18,23 @@ export default function Article13Section() {
       </div>
 
       {/* Article 13 Table */}
-      <div className="mt-6 overflow-x-auto rounded-xl border border-border/80 bg-page/30">
+      <div className="mt-6 overflow-x-auto rounded-md border border-border">
         <table className="w-full border-collapse text-left text-xs">
           <thead>
-            <tr className="border-b border-border/80 bg-page text-[11px] font-bold uppercase tracking-wider text-ink/60">
+            <tr className="border-b border-border bg-paper-dim text-[11px] font-semibold uppercase tracking-wide text-ink/60">
               <th className="py-3.5 px-4 font-semibold text-navy w-1/3">Situation / Doctrine</th>
               <th className="py-3.5 px-4 font-semibold text-navy w-2/3">Action / Consequence</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border/60 bg-paper">
+          <tbody className="divide-y divide-border bg-paper">
             {article13Principles.map((item, idx) => (
-              <tr key={idx} className="hover:bg-page/50 transition-colors">
+              <tr key={idx} className="hover:bg-paper-dim/50 transition-colors">
                 <td className="py-4 px-4 font-semibold text-navy align-top">
                   <div className="flex items-center gap-2">
                     {idx === 0 && <CheckSquare size={16} className="text-navy" />}
-                    {idx === 1 && <Layers size={16} className="text-amber-600" />}
-                    {idx === 2 && <AlertOctagon size={16} className="text-rose-600" />}
-                    <span className="text-xs sm:text-sm font-bold text-navy">
+                    {idx === 1 && <Layers size={16} className="text-brass-dark" />}
+                    {idx === 2 && <AlertOctagon size={16} className="text-oxblood" />}
+                    <span className="text-xs sm:text-sm font-semibold text-navy">
                       {item.situation}
                     </span>
                   </div>
@@ -71,10 +55,10 @@ export default function Article13Section() {
         </table>
       </div>
 
-      {/* Visual illustration of Severability */}
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-amber-900">
+      {/* Severability comparison */}
+      <div className="mt-8 grid gap-6 border-t border-border pt-6 sm:grid-cols-2 sm:gap-0 sm:divide-x sm:divide-border">
+        <div className="sm:pr-6">
+          <h4 className="text-xs font-semibold uppercase tracking-wide text-brass-dark">
             Severable Law (Partial Strike Down)
           </h4>
           <p className="mt-1.5 text-xs leading-relaxed text-ink/75">
@@ -82,8 +66,8 @@ export default function Article13Section() {
           </p>
         </div>
 
-        <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-4">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-rose-900">
+        <div className="sm:pl-6">
+          <h4 className="text-xs font-semibold uppercase tracking-wide text-oxblood-dark">
             Inseverable Law (Complete Void)
           </h4>
           <p className="mt-1.5 text-xs leading-relaxed text-ink/75">

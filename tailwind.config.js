@@ -68,9 +68,10 @@ export default {
         },
       },
       fontFamily: {
-        display: ['Lora', '"Source Serif 4"', 'Georgia', 'serif'],
-        body: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Lora', '"Source Serif 4"', '"Noto Sans Devanagari"', 'Georgia', 'serif'],
+        body: ['Inter', '"Noto Sans Devanagari"', 'system-ui', 'sans-serif'],
         mono: ['"IBM Plex Mono"', 'monospace'],
+        hindi: ['"Noto Sans Devanagari"', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
         xs: '2px',

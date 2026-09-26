@@ -106,6 +106,36 @@ export const landmarkCases = [
     keyTakeaway:
       'Held that vague restrictions on digital speech create a chilling effect and must strictly conform to the exhaustive grounds in Article 19(2).',
   },
+  {
+    id: 'dk-basu-1997',
+    caseName: 'D.K. Basu v. State of West Bengal',
+    year: '1997',
+    relatedArticle: 'Articles 21 and 22',
+    importance:
+      'Laid down mandatory procedural safeguards against custodial violence, arbitrary arrest, and torture.',
+    keyTakeaway:
+      'Mandated transparent identification of arresting police officers, immediate arrest memos, notification to relatives within 8–12 hours, and regular medical checkups — codified into BNSS Sections 36–58.',
+  },
+  {
+    id: 'anuradha-bhasin-2020',
+    caseName: 'Anuradha Bhasin v. Union of India',
+    year: '2020',
+    relatedArticle: 'Article 19(1)(a) and 19(1)(g)',
+    importance:
+      'Ruled that freedom of speech and expression and the right to carry on trade/business using the internet are constitutionally protected fundamental rights.',
+    keyTakeaway:
+      'Held that indefinite internet shutdowns violate proportionality doctrine and freedom of speech; suspension orders must be published and are subject to judicial review.',
+  },
+  {
+    id: 'navtej-johar-2018',
+    caseName: 'Navtej Singh Johar v. Union of India',
+    year: '2018',
+    relatedArticle: 'Articles 14, 15, 19 and 21',
+    importance:
+      'Decriminalised consensual same-sex relations by reading down Section 377 of the Indian Penal Code.',
+    keyTakeaway:
+      'Unanimous 5-judge bench held that constitutional morality triumphs over public majoritarian views; sexual orientation is an intrinsic element of personal liberty and privacy.',
+  },
 ];
 
 export const article13Principles = [

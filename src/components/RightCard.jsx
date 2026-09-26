@@ -1,6 +1,7 @@
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { getIcon } from './iconMap.js'
+import BookmarkButton from './BookmarkButton.jsx'
 
 const RIGHT_DESTINATIONS = {
   equality: {
@@ -49,7 +50,20 @@ export default function RightCard({ right, compact = false }) {
         <span className="flex h-11 w-11 items-center justify-center rounded-sm bg-navy/5 text-navy group-hover:bg-navy/10 transition-colors">
           <Icon size={20} aria-hidden="true" />
         </span>
-        <span className="article-tab">{right.articles}</span>
+        <div className="flex items-center gap-1.5">
+          <span className="font-mono text-xs font-semibold text-brass-dark tracking-wide">{right.articles}</span>
+          <BookmarkButton
+            item={{
+              id: `fundamental-right-${right.id}`,
+              title: right.title,
+              category: 'Fundamental Rights',
+              type: 'right',
+              description: right.summary,
+              url: destination.to,
+            }}
+            size="sm"
+          />
+        </div>
       </div>
 
       <h3 className="mt-4 text-lg font-semibold text-navy group-hover:text-brass-dark transition-colors">{right.title}</h3>

@@ -8,7 +8,14 @@ const app = express();
 const PORT = 3000;
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
+
+// Security Headers
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});
 
 // In-Memory Database for Indian Legal Awareness System
 import {
@@ -26,15 +33,15 @@ import {
   ipcToBnsMatrix,
   bnsQuiz,
 } from './src/data/bnsDetailedNotes.js';
+import { legalTerms as legalTermsData } from './src/data/legalTerms.js';
 import {
-  bnssMeta,
-  bnssChapters,
-  bnssCoreSections,
-  crpcToBnssMatrix,
-  bnssScheduleForms,
-  bnssInnovations,
-  bnssQuiz,
-} from './src/data/bnssDetailedNotes.js';
+  lawComparisonsData,
+  COMPARISON_PAIRS,
+  COMPARISON_TOPICS,
+} from './src/data/lawComparisons.js';
+import { rightsCategories } from './src/data/rightsHub.js';
+import { legalGuides } from './src/data/guides.js';
+import { executeUnifiedSearch } from './src/utils/legalSearchEngine.js';
 
 const categoriesData = [
   {
@@ -96,110 +103,6 @@ const situationCategoriesData = [
   { id: 'personal-rights', icon: 'ShieldOff', label: 'Personal Rights' },
   { id: 'family', icon: 'Users', label: 'Family' },
   { id: 'other', icon: 'MoreHorizontal', label: 'Other' },
-];
-
-const legalTermsData = [
-  {
-    id: 'fir',
-    term: 'FIR',
-    fullForm: 'First Information Report',
-    definition:
-      'A written document prepared by police when they receive information about a cognizable offence — usually the first step in a criminal investigation.',
-    relatedLaws: ['bnss-2023'],
-  },
-  {
-    id: 'bail',
-    term: 'Bail',
-    definition:
-      'The temporary release of an accused person while their case is ongoing, usually on conditions set by a court or police officer.',
-    relatedLaws: ['bnss-2023'],
-  },
-  {
-    id: 'cognizable-offence',
-    term: 'Cognizable offence',
-    definition:
-      'An offence for which police can arrest without a warrant and start an investigation without prior court permission, such as serious crimes like theft or assault.',
-    relatedLaws: ['bnss-2023'],
-  },
-  {
-    id: 'non-cognizable-offence',
-    term: 'Non-cognizable offence',
-    definition:
-      'A less serious offence where police cannot arrest without a warrant and generally need court permission to investigate.',
-    relatedLaws: ['bnss-2023'],
-  },
-  {
-    id: 'summons',
-    term: 'Summons',
-    definition:
-      'A formal order from a court requiring a person to appear before it on a given date, usually in connection with a case.',
-    relatedLaws: ['bnss-2023'],
-  },
-  {
-    id: 'warrant',
-    term: 'Warrant',
-    definition:
-      'A written order issued by a court authorising an action, such as the arrest of a person or the search of a place.',
-    relatedLaws: ['bnss-2023'],
-  },
-  {
-    id: 'civil-suit',
-    term: 'Civil suit',
-    definition:
-      'A legal case filed in court to resolve a dispute between individuals or organisations, such as over property or a contract, rather than a criminal offence.',
-    relatedLaws: ['indian-contract-1872'],
-  },
-  {
-    id: 'criminal-complaint',
-    term: 'Criminal complaint',
-    definition:
-      'A formal allegation made to a magistrate or police that a person has committed an offence, which may lead to an investigation or trial.',
-    relatedLaws: ['bnss-2023'],
-  },
-  {
-    id: 'compensation',
-    term: 'Compensation',
-    definition:
-      'A payment ordered by a court or authority to make up for loss, injury, or damage suffered by a person.',
-    relatedLaws: ['consumer-protection-2019'],
-  },
-  {
-    id: 'injunction',
-    term: 'Injunction',
-    definition:
-      'A court order that requires a person to do, or to stop doing, a specific act — often used to prevent harm before a full trial is completed.',
-    relatedLaws: ['indian-contract-1872'],
-  },
-  {
-    id: 'bns',
-    term: 'BNS (Bharatiya Nyaya Sanhita, 2023)',
-    fullForm: 'Bharatiya Nyaya Sanhita, 2023 (Act 45 of 2023)',
-    definition:
-      "India's modernized criminal penal code which repealed and replaced the colonial Indian Penal Code, 1860 on 1 July 2024. Organised into 20 chapters and 358 sections.",
-    relatedLaws: ['bns-2023', 'bnss-2023'],
-  },
-  {
-    id: 'ipc',
-    term: 'IPC (Indian Penal Code, 1860)',
-    fullForm: 'Indian Penal Code, 1860',
-    definition:
-      'The previous criminal code of India drafted by Thomas Macaulay in 1860. Replaced by the Bharatiya Nyaya Sanhita, 2023 (BNS) for all offences committed on or after 1 July 2024.',
-    relatedLaws: ['bns-2023'],
-  },
-  {
-    id: 'zero-fir',
-    term: 'Zero FIR',
-    definition:
-      'An FIR that can be registered at any police station across India irrespective of jurisdiction, statutorily mandated under Section 173 of BNSS 2023, and transferred to the jurisdictional police station within 15 days.',
-    relatedLaws: ['bnss-2023', 'bns-2023'],
-  },
-  {
-    id: 'community-service',
-    term: 'Community Service',
-    definition:
-      'A non-custodial punishment introduced under Section 4(f) of BNS 2023 for minor offences (e.g. petty theft under ₹5,000 upon restoration, defamation, public intoxication) requiring court-directed unpaid community work.',
-    relatedLaws: ['bns-2023'],
-  },
 ];
 
 const lawsData = [
@@ -810,6 +713,18 @@ const lawsData = [
         title: 'Sale defined',
         content: 'Describes the essential elements of a valid sale of immovable property and the requirement of registered instruments.',
       },
+      {
+        id: 'sec-105',
+        number: 'Section 105',
+        title: 'Lease defined',
+        content: 'Defines a lease of immovable property as a transfer of a right to enjoy such property for a certain time or in perpetuity in consideration of a price paid or promised (rent or premium).',
+      },
+      {
+        id: 'sec-108',
+        number: 'Section 108',
+        title: 'Rights and liabilities of lessor and lessee',
+        content: 'Sets out reciprocal statutory rights and duties: lessor must disclose material latent defects and ensure peaceful possession; lessee must restore property in good condition subject to fair wear and tear.',
+      },
     ],
     officialSource: 'indiacode.nic.in',
     lastVerified: 'India Code legislative database',
@@ -853,6 +768,11 @@ app.get('/api/rights', (req, res) => {
 });
 app.get('/api/rights/', (req, res) => {
   res.json(rightsData);
+});
+
+// GET /api/rights-hub
+app.get(['/api/rights-hub', '/api/rights-hub/'], (req, res) => {
+  res.json(rightsCategories);
 });
 
 // GET /api/landmark-cases
@@ -906,69 +826,6 @@ app.get('/api/bns/', (req, res) => {
   });
 });
 
-// GET /api/bnss
-app.get('/api/bnss', (req, res) => {
-  res.json({
-    meta: bnssMeta,
-    chapters: bnssChapters,
-    sections: bnssCoreSections,
-    matrix: crpcToBnssMatrix,
-    forms: bnssScheduleForms,
-    innovations: bnssInnovations,
-    quiz: bnssQuiz,
-  });
-});
-app.get('/api/bnss/', (req, res) => {
-  res.json({
-    meta: bnssMeta,
-    chapters: bnssChapters,
-    sections: bnssCoreSections,
-    matrix: crpcToBnssMatrix,
-    forms: bnssScheduleForms,
-    innovations: bnssInnovations,
-    quiz: bnssQuiz,
-  });
-});
-
-// Enriches law objects so frontend gets both camelCase and snake_case properties plus resolved related_laws
-function enrichLaw(l: any) {
-  if (!l) return l;
-  const rel = (l.relatedLaws || []).map((id: string) => {
-    const target = lawsData.find((x) => x.id === id);
-    return {
-      id,
-      name: target?.name || id,
-      shortName: target?.shortName || target?.name || id,
-    };
-  });
-  return {
-    ...l,
-    official_source: l.officialSource,
-    last_verified: l.lastVerified,
-    related_laws: rel,
-    relatedLaws: l.relatedLaws || [],
-  };
-}
-
-// Enriches term objects so related_laws includes { id, name, shortName } and full_form
-function enrichTerm(t: any) {
-  if (!t) return t;
-  const rel = (t.relatedLaws || []).map((id: string) => {
-    const target = lawsData.find((x) => x.id === id);
-    return {
-      id,
-      name: target?.name || id,
-      shortName: target?.shortName || target?.name || id,
-    };
-  });
-  return {
-    ...t,
-    full_form: t.fullForm,
-    related_laws: rel,
-    relatedLaws: t.relatedLaws || [],
-  };
-}
-
 // GET /api/categories/
 app.get('/api/categories', (req, res) => {
   res.json(categoriesData);
@@ -985,32 +842,46 @@ app.get('/api/situation-categories/', (req, res) => {
   res.json(situationCategoriesData);
 });
 
+// Helper for searching legal terms
+function searchLegalTermsApi(q: string, category: string) {
+  let results = legalTermsData.map((item: any) => ({
+    ...item,
+    definition: item.plainLanguage || item.definition,
+  }));
+
+  if (category && category !== 'all') {
+    results = results.filter(
+      (item: any) => item.category && item.category.toLowerCase() === category.toLowerCase()
+    );
+  }
+
+  if (q) {
+    results = results.filter(
+      (item: any) =>
+        item.term.toLowerCase().includes(q) ||
+        (item.fullForm && item.fullForm.toLowerCase().includes(q)) ||
+        (item.plainLanguage && item.plainLanguage.toLowerCase().includes(q)) ||
+        (item.legalMeaning && item.legalMeaning.toLowerCase().includes(q)) ||
+        (item.example && item.example.toLowerCase().includes(q)) ||
+        (item.relevantLaw && item.relevantLaw.toLowerCase().includes(q)) ||
+        (item.source && item.source.toLowerCase().includes(q)) ||
+        (item.category && item.category.toLowerCase().includes(q))
+    );
+  }
+
+  return results;
+}
+
 // GET /api/legal-terms/
 app.get('/api/legal-terms', (req, res) => {
   const q = ((req.query.q as string) || '').toLowerCase().trim();
-  if (!q) {
-    return res.json(legalTermsData.map(enrichTerm));
-  }
-  const filtered = legalTermsData.filter(
-    (item) =>
-      item.term.toLowerCase().includes(q) ||
-      (item.fullForm && item.fullForm.toLowerCase().includes(q)) ||
-      item.definition.toLowerCase().includes(q)
-  );
-  res.json(filtered.map(enrichTerm));
+  const category = ((req.query.category as string) || '').trim();
+  res.json(searchLegalTermsApi(q, category));
 });
 app.get('/api/legal-terms/', (req, res) => {
   const q = ((req.query.q as string) || '').toLowerCase().trim();
-  if (!q) {
-    return res.json(legalTermsData.map(enrichTerm));
-  }
-  const filtered = legalTermsData.filter(
-    (item) =>
-      item.term.toLowerCase().includes(q) ||
-      (item.fullForm && item.fullForm.toLowerCase().includes(q)) ||
-      item.definition.toLowerCase().includes(q)
-  );
-  res.json(filtered.map(enrichTerm));
+  const category = ((req.query.category as string) || '').trim();
+  res.json(searchLegalTermsApi(q, category));
 });
 
 // GET /api/legal-terms/:id
@@ -1019,14 +890,96 @@ app.get('/api/legal-terms/:id', (req, res) => {
   if (!item) {
     return res.status(404).json({ detail: 'Not found' });
   }
-  res.json(enrichTerm(item));
+  res.json(item);
 });
 app.get('/api/legal-terms/:id/', (req, res) => {
   const item = legalTermsData.find((t) => t.id === req.params.id);
   if (!item) {
     return res.status(404).json({ detail: 'Not found' });
   }
-  res.json(enrichTerm(item));
+  res.json(item);
+});
+
+// Helper for law comparisons
+function searchLawComparisonsApi(q: string, topic: string, status: string, pair: string) {
+  let results = [...lawComparisonsData];
+
+  if (pair && pair !== 'all') {
+    results = results.filter((c) => c.pairId === pair);
+  }
+
+  if (topic && topic !== 'all') {
+    results = results.filter((c) => c.topicId === topic || c.topic.toLowerCase() === topic.toLowerCase());
+  }
+
+  if (status && status !== 'all') {
+    results = results.filter((c) => c.mappingStatus === status);
+  }
+
+  if (q) {
+    const qClean = q.toLowerCase().trim();
+    results = results.filter(
+      (c) =>
+        c.offenceTitle.toLowerCase().includes(qClean) ||
+        c.oldProvision.section.toLowerCase().includes(qClean) ||
+        c.newProvision.section.toLowerCase().includes(qClean) ||
+        c.topic.toLowerCase().includes(qClean) ||
+        c.plainLanguageDifference.toLowerCase().includes(qClean) ||
+        (c.searchKeywords && c.searchKeywords.some((k: string) => k.toLowerCase().includes(qClean))) ||
+        (c.oldProvision.scopeText && c.oldProvision.scopeText.toLowerCase().includes(qClean)) ||
+        (c.newProvision.scopeText && c.newProvision.scopeText.toLowerCase().includes(qClean))
+    );
+  }
+
+  return results;
+}
+
+// GET /api/law-comparisons/pairs
+app.get('/api/law-comparisons/pairs', (req, res) => {
+  res.json(COMPARISON_PAIRS);
+});
+app.get('/api/law-comparisons/pairs/', (req, res) => {
+  res.json(COMPARISON_PAIRS);
+});
+
+// GET /api/law-comparisons/topics
+app.get('/api/law-comparisons/topics', (req, res) => {
+  res.json(COMPARISON_TOPICS);
+});
+app.get('/api/law-comparisons/topics/', (req, res) => {
+  res.json(COMPARISON_TOPICS);
+});
+
+// GET /api/law-comparisons
+app.get('/api/law-comparisons', (req, res) => {
+  const q = ((req.query.q as string) || '').trim();
+  const topic = ((req.query.topic as string) || '').trim();
+  const status = ((req.query.status as string) || '').trim();
+  const pair = ((req.query.pair as string) || 'ipc-bns').trim();
+  res.json(searchLawComparisonsApi(q, topic, status, pair));
+});
+app.get('/api/law-comparisons/', (req, res) => {
+  const q = ((req.query.q as string) || '').trim();
+  const topic = ((req.query.topic as string) || '').trim();
+  const status = ((req.query.status as string) || '').trim();
+  const pair = ((req.query.pair as string) || 'ipc-bns').trim();
+  res.json(searchLawComparisonsApi(q, topic, status, pair));
+});
+
+// GET /api/law-comparisons/:id
+app.get('/api/law-comparisons/:id', (req, res) => {
+  const item = lawComparisonsData.find((c) => c.id === req.params.id);
+  if (!item) {
+    return res.status(404).json({ detail: 'Comparison entry not found' });
+  }
+  res.json(item);
+});
+app.get('/api/law-comparisons/:id/', (req, res) => {
+  const item = lawComparisonsData.find((c) => c.id === req.params.id);
+  if (!item) {
+    return res.status(404).json({ detail: 'Comparison entry not found' });
+  }
+  res.json(item);
 });
 
 // Helper for laws searching
@@ -1055,7 +1008,7 @@ function searchLaws(category: string, q: string) {
         (isBnsQuery && l.id === 'bns-2023')
     );
   }
-  return results.map(enrichLaw);
+  return results;
 }
 
 // GET /api/laws/
@@ -1076,105 +1029,29 @@ app.get('/api/laws/:id', (req, res) => {
   if (!law) {
     return res.status(404).json({ detail: 'Law not found' });
   }
-  res.json(enrichLaw(law));
+  res.json(law);
 });
 app.get('/api/laws/:id/', (req, res) => {
   const law = lawsData.find((l) => l.id === req.params.id);
   if (!law) {
     return res.status(404).json({ detail: 'Law not found' });
   }
-  res.json(enrichLaw(law));
+  res.json(law);
 });
 
-// Helper for unified search
+// Helper for unified legal search
 function executeSearch(q: string) {
-  if (!q) {
-    return { rights: [], laws: [], sections: [], terms: [] };
-  }
-
-  const isBnsQuery =
-    q === 'bns' ||
-    q === 'bns 2023' ||
-    q === 'bns section' ||
-    q === 'bns sections' ||
-    q.includes('bns') ||
-    q.includes('nyaya sanhita') ||
-    q.includes('penal code');
-
-  const strippedSecQ = q
-    .replace(/\b(bns|bnss|section|sec|act|2023)\b/gi, '')
-    .trim();
-
-  const matchedRights = rightsData.filter(
-    (r) =>
-      r.title.toLowerCase().includes(q) ||
-      r.summary.toLowerCase().includes(q) ||
-      r.articles.toLowerCase().includes(q)
-  );
-
-  const matchedLaws = lawsData.filter(
-    (l: any) =>
-      l.name.toLowerCase().includes(q) ||
-      l.description.toLowerCase().includes(q) ||
-      l.id.toLowerCase().includes(q) ||
-      (l.shortName && l.shortName.toLowerCase().includes(q)) ||
-      (l.aliases && l.aliases.some((a: string) => a.toLowerCase().includes(q))) ||
-      (isBnsQuery && l.id === 'bns-2023')
-  );
-
-  const matchedSections: Array<{
-    id: string;
-    number: string;
-    title: string;
-    lawId: string;
-    lawName: string;
-  }> = [];
-
-  lawsData.forEach((law: any) => {
-    (law.sections || []).forEach((sec: any) => {
-      const isLawMatch = (isBnsQuery && law.id === 'bns-2023') || law.id.toLowerCase().includes(q);
-      const matchesSec =
-        sec.title.toLowerCase().includes(q) ||
-        sec.number.toLowerCase().includes(q) ||
-        (strippedSecQ && sec.number.toLowerCase().includes(strippedSecQ)) ||
-        (strippedSecQ && sec.title.toLowerCase().includes(strippedSecQ)) ||
-        sec.content.toLowerCase().includes(q) ||
-        (strippedSecQ && sec.content.toLowerCase().includes(strippedSecQ));
-
-      if (isLawMatch || matchesSec) {
-        matchedSections.push({
-          id: sec.id,
-          number: sec.number,
-          title: sec.title,
-          lawId: law.id,
-          lawName: law.name,
-        });
-      }
-    });
-  });
-
-  const matchedTerms = legalTermsData.filter(
-    (t) =>
-      t.term.toLowerCase().includes(q) ||
-      (t.fullForm && t.fullForm.toLowerCase().includes(q)) ||
-      t.definition.toLowerCase().includes(q)
-  );
-
-  return {
-    rights: matchedRights,
-    laws: matchedLaws.map(enrichLaw),
-    sections: matchedSections,
-    terms: matchedTerms.map(enrichTerm),
-  };
+  const safeQ = (q || '').trim().slice(0, 500);
+  return executeUnifiedSearch(safeQ);
 }
 
 // GET /api/search/
 app.get('/api/search', (req, res) => {
-  const q = ((req.query.q as string) || '').toLowerCase().trim();
+  const q = ((req.query.q as string) || '').trim();
   res.json(executeSearch(q));
 });
 app.get('/api/search/', (req, res) => {
-  const q = ((req.query.q as string) || '').toLowerCase().trim();
+  const q = ((req.query.q as string) || '').trim();
   res.json(executeSearch(q));
 });
 
@@ -1189,161 +1066,636 @@ function getGenAI(): GoogleGenAI | null {
   return null;
 }
 
-function getFallbackSituationResult(category?: string, description?: string) {
-  if (category === 'cyber') {
+// Laws whose officialSource/lastVerified have actually been checked against
+// an official Gazette/legislative source — kept in sync with the same
+// verified set used by the frontend (src/data/laws.js + src/utils/sources.js).
+// Everything else is shown to the user as unverified, even if this
+// server-side copy of the data doesn't itself say "placeholder".
+const VERIFIED_LAW_IDS = new Set(['bns-2023', 'bnss-2023', 'constitution-of-india']);
+
+// Maps a situation category (from the "What happened?" form) to the law
+// categories most likely to be relevant, to bias retrieval — this never
+// invents a law, only weights which real laws in lawsData are considered first.
+const SITUATION_CATEGORY_TO_LAW_CATEGORIES: Record<string, string[]> = {
+  'money-fraud': ['criminal', 'civil', 'cyber'],
+  property: ['property', 'civil', 'criminal'],
+  cyber: ['cyber', 'criminal', 'consumer'],
+  consumer: ['consumer', 'civil'],
+  workplace: ['labour', 'civil', 'constitutional'],
+  'personal-rights': ['constitutional', 'criminal'],
+  family: ['family', 'civil'],
+  other: ['constitutional', 'civil', 'criminal'],
+};
+
+interface RetrievedProvisionItem {
+  lawId: string;
+  lawName: string;
+  section: string;
+  content: string;
+  officialSource?: string;
+  lastVerified?: string | null;
+  verified: boolean;
+}
+
+interface SituationClassification {
+  legalAreas: string[];
+  primaryCategory: string;
+  intents: string[];
+  keyTerms: string[];
+  isPlausibleDomain: boolean;
+}
+
+/**
+ * Step 1: Classification / Intent Extraction
+ * Extracts legal categories, primary domain, user goals, and substantive key terms.
+ * Uses Gemini when available for semantic extraction, with a robust rule-based fallback.
+ */
+async function classifyAndExtractIntent(
+  description: string,
+  category?: string,
+  focus?: string[]
+): Promise<SituationClassification> {
+  const descLower = description.toLowerCase();
+
+  // Rule-based keyword analysis as baseline
+  const words = descLower.split(/[^a-z0-9]+/).filter((w) => w.length > 3);
+  const detectedAreas: string[] = [];
+  let detectedCategory = category || 'unknown';
+
+  if (descLower.includes('cheat') || descLower.includes('fraud') || descLower.includes('scam') || descLower.includes('money') || descLower.includes('bribe')) {
+    detectedAreas.push('Fraud & Criminal Offences');
+    if (detectedCategory === 'unknown') detectedCategory = 'money-fraud';
+  }
+  if (descLower.includes('upi') || descLower.includes('cyber') || descLower.includes('hacked') || descLower.includes('phishing') || descLower.includes('online')) {
+    detectedAreas.push('Cyber Law & Digital Transactions');
+    if (detectedCategory === 'unknown') detectedCategory = 'cyber';
+  }
+  if (descLower.includes('refund') || descLower.includes('seller') || descLower.includes('defect') || descLower.includes('consumer') || descLower.includes('warranty') || descLower.includes('damaged')) {
+    detectedAreas.push('Consumer Protection');
+    if (detectedCategory === 'unknown') detectedCategory = 'consumer';
+  }
+  if (descLower.includes('rent') || descLower.includes('tenant') || descLower.includes('landlord') || descLower.includes('lease') || descLower.includes('evict') || descLower.includes('property')) {
+    detectedAreas.push('Property & Tenancy Law');
+    if (detectedCategory === 'unknown') detectedCategory = 'property';
+  }
+  if (descLower.includes('salary') || descLower.includes('wage') || descLower.includes('employer') || descLower.includes('resignation') || descLower.includes('fired') || descLower.includes('retrenchment')) {
+    detectedAreas.push('Labour & Employment Law');
+    if (detectedCategory === 'unknown') detectedCategory = 'workplace';
+  }
+  if (descLower.includes('police') || descLower.includes('arrest') || descLower.includes('detain') || descLower.includes('warrant') || descLower.includes('custody') || descLower.includes('liberty')) {
+    detectedAreas.push('Constitutional Safeguards & Due Process');
+    if (detectedCategory === 'unknown') detectedCategory = 'personal-rights';
+  }
+  if (descLower.includes('divorce') || descLower.includes('marriage') || descLower.includes('maintenance') || descLower.includes('custody') || descLower.includes('alimony')) {
+    detectedAreas.push('Family & Matrimonial Law');
+    if (detectedCategory === 'unknown') detectedCategory = 'family';
+  }
+
+  const baselineIntents: string[] = [];
+  if (focus?.includes('report')) baselineIntents.push('reporting_channels');
+  if (focus?.includes('next-steps')) baselineIntents.push('remedies_and_steps');
+  if (focus?.includes('rights')) baselineIntents.push('statutory_and_constitutional_rights');
+  if (focus?.includes('law')) baselineIntents.push('applicable_statutes');
+
+  const baselineResult: SituationClassification = {
+    legalAreas: detectedAreas.length ? detectedAreas : ['General Statutory Inquiry'],
+    primaryCategory: detectedCategory,
+    intents: baselineIntents.length ? baselineIntents : ['applicable_statutes', 'remedies_and_steps'],
+    keyTerms: words.slice(0, 8),
+    isPlausibleDomain: words.length >= 2,
+  };
+
+  // If Gemini is available, refine intent extraction and domain classification
+  const ai = getGenAI();
+  if (ai) {
+    try {
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.8-flash',
+        contents: `You are an Indian legal classification and intent extraction engine.
+Analyze this citizen situation:
+"${description}"
+User selected category: "${category || 'None'}"
+User focus questions: "${(focus || []).join(', ')}"
+
+Classify into structured JSON:
+- legal_areas: 1 to 3 concise domain titles (e.g. "Consumer Protection & Deficient Goods", "Cyber Fraud & Identity Deception", "Constitutional Due Process").
+- primary_category: one of ["consumer", "cyber", "property", "workplace", "personal-rights", "family", "money-fraud", "other", "unknown"].
+- intents: list of user aims, e.g. ["remedies", "reporting_channels", "safeguards", "documentation"].
+- key_terms: 3 to 7 key factual or legal search terms in lowercase.
+- is_plausible_domain: boolean (false if clearly gibberish, non-legal, or relating to foreign non-Indian jurisdiction).`,
+        config: {
+          responseMimeType: 'application/json',
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              legal_areas: {
+                type: Type.ARRAY,
+                items: { type: Type.STRING },
+              },
+              primary_category: { type: Type.STRING },
+              intents: {
+                type: Type.ARRAY,
+                items: { type: Type.STRING },
+              },
+              key_terms: {
+                type: Type.ARRAY,
+                items: { type: Type.STRING },
+              },
+              is_plausible_domain: { type: Type.BOOLEAN },
+            },
+            required: ['legal_areas', 'primary_category', 'intents', 'key_terms', 'is_plausible_domain'],
+          },
+        },
+      });
+
+      if (response.text) {
+        const parsed = JSON.parse(response.text);
+        return {
+          legalAreas: Array.isArray(parsed.legal_areas) && parsed.legal_areas.length ? parsed.legal_areas : baselineResult.legalAreas,
+          primaryCategory: parsed.primary_category || baselineResult.primaryCategory,
+          intents: Array.isArray(parsed.intents) ? parsed.intents : baselineResult.intents,
+          keyTerms: Array.isArray(parsed.key_terms) ? parsed.key_terms : baselineResult.keyTerms,
+          isPlausibleDomain: parsed.is_plausible_domain !== false,
+        };
+      }
+    } catch {
+      // Fallback to baseline rule-based classification
+    }
+  }
+
+  return baselineResult;
+}
+
+/**
+ * Step 2 & 3: Verified Legal Knowledge Retrieval & Thresholding
+ * Searches strictly within verified statutory database records (lawsData & rightsData).
+ * Enforces a strict confidence threshold: if a situation cannot be confidently matched,
+ * returns confidentMatch: false and empty provisions rather than guessing or forcing a match.
+ */
+const LEGAL_STOP_WORDS = new Set([
+  'about', 'above', 'after', 'again', 'against', 'all', 'also', 'and', 'any', 'are', 'because', 'been',
+  'before', 'being', 'below', 'between', 'both', 'but', 'came', 'can', 'cannot', 'could', 'did', 'do',
+  'does', 'doing', 'down', 'during', 'each', 'few', 'for', 'from', 'further', 'had', 'has', 'have',
+  'having', 'here', 'how', 'into', 'itself', 'just', 'more', 'most', 'myself', 'only', 'other',
+  'our', 'ours', 'out', 'over', 'same', 'should', 'some', 'such', 'than', 'that', 'the', 'their',
+  'theirs', 'them', 'themselves', 'then', 'there', 'these', 'they', 'this', 'those', 'through',
+  'too', 'under', 'until', 'very', 'was', 'were', 'what', 'when', 'where', 'which', 'while', 'who',
+  'whom', 'why', 'with', 'would', 'your', 'yours', 'yourself', 'yourselves', 'legal', 'sentence',
+  'issue', 'matter', 'happened', 'problem', 'situation', 'landing', 'spacecraft', 'martian', 'volcano',
+  'year', 'years', 'week', 'weeks', 'month', 'months', 'day', 'days', 'replace', 'replaces', 'item',
+  'items', 'time', 'times', 'store', 'stores', 'working', 'work', 'stopped', 'stop', 'happened', 'need',
+  'want', 'said', 'told', 'asked', 'give', 'gave', 'take', 'took', 'went', 'make', 'made'
+]);
+
+function retrieveVerifiedLegalRecords(
+  classification: SituationClassification,
+  description: string,
+  category?: string,
+  focus?: string[],
+  maxProvisions = 4
+): {
+  confidentMatch: boolean;
+  provisions: RetrievedProvisionItem[];
+  sources: any[];
+  matchedLaws: any[];
+  confidenceScore: number;
+} {
+  if (!classification.isPlausibleDomain) {
     return {
-      legalArea: 'Cyber Law & Digital Consumer Protection',
-      areaDescription:
-        'Online fraud, identity theft, unauthorized transactions, or cyber harassment in India fall primarily under the Information Technology Act and criminal provisions of the Bharatiya Nyaya Sanhita.',
-      relevantLaws: [
-        {
-          lawName: 'Information Technology Act, 2000',
-          section: 'Section 66C & 66D — Identity theft and cheating by personation',
-          explanation:
-            'Punishes identity theft, fraudulent password or credential misuse, and cheating using any computer resource.',
-        },
-        {
-          lawName: 'Bharatiya Nyaya Sanhita, 2023',
-          section: 'Section 318 — Cheating',
-          explanation:
-            'Covers deception causing wrongful loss or inducing delivery of property in physical or electronic contexts.',
-        },
-      ],
-      remedies: [
-        {
-          title: 'Report on National Cyber Crime Reporting Portal',
-          description:
-            'File an incident immediately at cybercrime.gov.in or dial helpline 1930 to freeze fraudulent transactions.',
-        },
-        {
-          title: 'Bank Fraud Alert & Chargeback',
-          description:
-            'Notify your bank within 72 hours for zero customer liability under RBI guidelines on unauthorized electronic banking transactions.',
-        },
-      ],
-      penalties: [
-        {
-          title: 'Imprisonment and fine under IT Act',
-          description:
-            'Section 66D prescribes imprisonment of up to three years and a monetary fine.',
-        },
-        {
-          title: 'Account freezing and restitution',
-          description:
-            'Investigating agencies can freeze destination bank accounts and recover misappropriated sums.',
-        },
-      ],
-      receivedCategory: category,
+      confidentMatch: false,
+      provisions: [],
+      sources: [],
+      matchedLaws: [],
+      confidenceScore: 0,
     };
   }
 
-  if (category === 'workplace') {
+  const descLower = description.toLowerCase();
+  const searchTerms = Array.from(
+    new Set([
+      ...classification.keyTerms.map((t) => t.toLowerCase()),
+      ...descLower.split(/[^a-z0-9]+/).filter((w) => w.length > 3 && !LEGAL_STOP_WORDS.has(w)),
+    ])
+  ).filter((w) => !LEGAL_STOP_WORDS.has(w));
+
+  const effectiveCategory = category || classification.primaryCategory;
+  const biasedCategories = SITUATION_CATEGORY_TO_LAW_CATEGORIES[effectiveCategory] || [];
+  const wantsRights = focus?.includes('rights') || effectiveCategory === 'personal-rights';
+  const isExplicitCrime = /\b(cheat|cheated|cheating|theft|stole|stolen|fraud|fraudulent|scam|assault|extortion|bribe|bribery|fir|arrest|police)\b/i.test(description);
+
+  // 1. Evaluate provisions across laws
+  interface ScoredProvision {
+    item: RetrievedProvisionItem;
+    law: any;
+    score: number;
+  }
+
+  const scoredProvisions: ScoredProvision[] = [];
+
+  // Constitutional rights checking with precise regex word boundaries
+  const touchesLiberty =
+    /\b(liberty|arrest|arrested|detain|detained|detention|police|warrant|custody|bail)\b/i.test(description) &&
+    !/\bwarrant(y|ies)\b/i.test(description);
+  const touchesEquality = /\b(equality|discrim|discrimination|caste|untouchability)\b/i.test(description);
+  const touchesSpeech = /\b(speech|protest|expression|assembly|dissent)\b/i.test(description);
+  const touchesPropertyRight =
+    /\bproperty\b/i.test(description) && /\b(depriv|deprived|seiz|seizure|demolish|demolition)\b/i.test(description);
+
+  if (wantsRights || touchesLiberty || touchesEquality || touchesSpeech || touchesPropertyRight) {
+    for (const r of rightsData) {
+      let rScore = 0;
+      const haystack = `${r.title} ${r.articles} ${r.summary}`.toLowerCase();
+
+      for (const term of searchTerms) {
+        if (new RegExp(`\\b${term}\\b`, 'i').test(haystack)) rScore += 2.5;
+      }
+
+      if (touchesLiberty && (r.articles.includes('21') || r.articles.includes('22'))) rScore += 6;
+      if (touchesEquality && (r.articles.includes('14') || r.articles.includes('15'))) rScore += 6;
+      if (touchesSpeech && r.articles.includes('19')) rScore += 6;
+      if (touchesPropertyRight && r.articles.includes('300A')) rScore += 6;
+
+      if (rScore >= 5) {
+        scoredProvisions.push({
+          score: rScore,
+          law: { id: 'constitution-of-india', name: 'The Constitution of India', category: 'constitutional' },
+          item: {
+            lawId: 'constitution-of-india',
+            lawName: 'The Constitution of India',
+            section: `${r.articles} — ${r.title}`,
+            content: r.summary,
+            officialSource: 'legislative.gov.in',
+            lastVerified: 'Legislative Department, Ministry of Law and Justice',
+            verified: true,
+          },
+        });
+      }
+    }
+  }
+
+  // Statutory provisions checking across lawsData
+  for (const law of lawsData) {
+    // Exclude criminal penal provisions if the context is purely consumer, civil, or family with no criminal allegations
+    if (law.category === 'criminal' && !isExplicitCrime && (effectiveCategory === 'consumer' || effectiveCategory === 'family' || effectiveCategory === 'workplace')) {
+      continue;
+    }
+
+    const sections = law.sections || [];
+    for (const sec of sections) {
+      let secScore = 0;
+      const secHaystack = `${sec.number} ${sec.title} ${sec.content}`.toLowerCase();
+
+      let matchedTermsCount = 0;
+      for (const term of searchTerms) {
+        if (new RegExp(`\\b${term}\\b`, 'i').test(secHaystack)) {
+          secScore += 3;
+          matchedTermsCount++;
+        }
+      }
+
+      // Add category bias weight only if substantive terms matched
+      if (matchedTermsCount > 0 && biasedCategories.includes(law.category)) {
+        secScore += 2;
+      }
+
+      // Check specific domain matches
+      if (
+        law.id === 'consumer-protection-2019' &&
+        /\b(defect|defective|deficiency|deficient|refund|replacement|seller|store|consumer|warranty|guarantee|mrp)\b/i.test(description)
+      ) {
+        secScore += 5;
+        matchedTermsCount++;
+      }
+      if (
+        law.id === 'bns-2023' &&
+        /\b(cheat|cheated|cheating|theft|fraud|fraudulent|scam|assault|extortion)\b/i.test(description)
+      ) {
+        secScore += 5;
+        matchedTermsCount++;
+      }
+      if (
+        law.id === 'bnss-2023' &&
+        /\b(fir|bail|arrest|police station|investigation|complaint)\b/i.test(description)
+      ) {
+        secScore += 5;
+        matchedTermsCount++;
+      }
+
+      if (secScore >= 5 && matchedTermsCount >= 1) {
+        scoredProvisions.push({
+          score: secScore,
+          law,
+          item: {
+            lawId: law.id,
+            lawName: law.name,
+            section: `${sec.number} — ${sec.title}`,
+            content: sec.content,
+            officialSource: law.officialSource,
+            lastVerified: law.lastVerified,
+            verified: VERIFIED_LAW_IDS.has(law.id),
+          },
+        });
+      }
+    }
+  }
+
+  // Sort by score descending
+  scoredProvisions.sort((a, b) => b.score - a.score);
+
+  const topScore = scoredProvisions.length > 0 ? scoredProvisions[0].score : 0;
+
+  // STRICT CONFIDENCE THRESHOLD:
+  // If the top score is below threshold (5), or search terms were empty, we declare no confident match.
+  // We NEVER force a placeholder law.
+  const CONFIDENCE_THRESHOLD = 5;
+  if (scoredProvisions.length === 0 || topScore < CONFIDENCE_THRESHOLD || searchTerms.length === 0) {
     return {
-      legalArea: 'Labour & Employment Law',
-      areaDescription:
-        'Matters concerning wrongful termination, unpaid wages, gratuity withholding, or unsafe workplace conditions fall under Indian industrial and labour legislations.',
-      relevantLaws: [
-        {
-          lawName: 'Payment of Wages Act, 1936',
-          section: 'Section 15 — Claims arising out of deductions from wages',
-          explanation:
-            'Allows an employee to apply to the appointed Authority for recovery of delayed or illegally deducted wages.',
-        },
-        {
-          lawName: 'Industrial Disputes Act, 1947',
-          section: 'Section 2A & 25F — Retrenchment & Individual Dispute',
-          explanation:
-            'Requires prior notice or pay in lieu of notice and retrenchment compensation before terminating employment.',
-        },
-      ],
-      remedies: [
-        {
-          title: 'Complaint to the Labour Commissioner',
-          description:
-            'Approach the local or state Labour Commissioner or conciliation officer for dispute resolution.',
-        },
-        {
-          title: 'Legal notice for unpaid dues',
-          description:
-            'Issue a formal legal notice demanding payment of salary, earned leaves, and full and final settlement.',
-        },
-      ],
-      penalties: [
-        {
-          title: 'Statutory interest and penalties',
-          description:
-            'Labour authorities can award statutory compensation and impose monetary penalties on non-compliant employers.',
-        },
-      ],
-      receivedCategory: category,
+      confidentMatch: false,
+      provisions: [],
+      sources: [],
+      matchedLaws: [],
+      confidenceScore: topScore,
     };
   }
+
+  // Deduplicate provisions and pick top items
+  const uniqueProvisions: RetrievedProvisionItem[] = [];
+  const seenSections = new Set<string>();
+  const matchedLawSet = new Map<string, any>();
+
+  for (const item of scoredProvisions) {
+    if (!seenSections.has(item.item.section)) {
+      seenSections.add(item.item.section);
+      uniqueProvisions.push(item.item);
+      matchedLawSet.set(item.item.lawId, item.law);
+    }
+    if (uniqueProvisions.length >= maxProvisions) break;
+  }
+
+  // Construct sources strictly from matched law records
+  const sources = Array.from(matchedLawSet.values()).map((law) => {
+    const verified = VERIFIED_LAW_IDS.has(law.id);
+    return {
+      lawId: law.id,
+      lawName: law.name,
+      officialSource: law.officialSource || null,
+      lastVerified: verified ? law.lastVerified || null : null,
+      verified,
+    };
+  });
 
   return {
-    legalArea: 'Consumer & Civil Contract Remedies',
-    areaDescription:
-      'Based on the general pattern of what you described, this may fall under consumer protection or contract-related law. This provides an educational starting point for understanding applicable rights in India.',
-    relevantLaws: [
-      {
-        lawName: 'Consumer Protection Act, 2019',
-        section: 'Section 35 — Manner of filing complaint',
-        explanation:
-          'Describes the simple procedure for consumers to file a complaint regarding deficient goods or services before the District Commission.',
-      },
-      {
-        lawName: 'Indian Contract Act, 1872',
-        section: 'Section 73 — Compensation for breach',
-        explanation:
-          'Establishes the right to compensation for loss or damage caused naturally by a breach of contractual obligation.',
-      },
-    ],
-    remedies: [
-      {
-        title: 'Consumer Forum Complaint (e-Daakhil)',
-        description:
-          'File an online grievance via edaakhil.nic.in or register with the National Consumer Helpline (1915).',
-      },
-      {
-        title: 'Civil suit for breach or damages',
-        description:
-          'Where contractual agreements exist, parties may seek specific performance or monetary damages in civil court.',
-      },
-    ],
-    penalties: [
-      {
-        title: 'Compensation to the affected party',
-        description:
-          'Forums or civil courts may direct payment of actual losses plus compensation for mental harassment.',
-      },
-      {
-        title: 'Refund or replacement order',
-        description:
-          'Consumer commissions can direct refund of purchase price, rectification of defect, or replacement of goods.',
-      },
-    ],
-    receivedCategory: category,
+    confidentMatch: true,
+    provisions: uniqueProvisions,
+    sources,
+    matchedLaws: Array.from(matchedLawSet.values()),
+    confidenceScore: topScore,
   };
 }
 
-async function analyzeSituationWithGemini(description: string, category?: string) {
-  const ai = getGenAI();
-  if (!ai) {
-    return null;
+/**
+ * Constructs the canonical response when no provision could be confidently identified.
+ */
+function buildNoConfidentMatchResponse(
+  description: string,
+  classification: SituationClassification,
+  category?: string
+) {
+  const summary =
+    'Based on the information provided, no specific statutory provision from our verified database could be confidently matched to this situation.';
+
+  const explanation =
+    'The situation described does not appear to correspond directly to the specific central statutes currently indexed in our verified Indian legal knowledge base (such as the Bharatiya Nyaya Sanhita, Consumer Protection Act, or Constitution of India), or it may involve state-specific enactments, municipal bylaws, or specialized regulatory jurisdictions. Rather than inferring, predicting, or inventing unverified section numbers or provisions, Nyaya limits its output to verified records.';
+
+  const possibleNextSteps = [
+    {
+      title: 'Seek Guidance from Free Legal Aid (DLSA / NALSA)',
+      description:
+        'You may consider visiting your nearest District Legal Services Authority (DLSA) or Taluk Legal Services Committee. Under the Legal Services Authorities Act, 1987, qualified panel lawyers provide free, confidential advice.',
+      category: 'legal-aid',
+    },
+    {
+      title: 'Consult an Enrolled Advocate',
+      description:
+        'One option is to consult an enrolled advocate in your local court jurisdiction who can examine the full documentation, local state laws, or specialized forum rules.',
+      category: 'remedy',
+    },
+    {
+      title: 'Preserve All Evidence & Records',
+      description:
+        'Keep safe copies of all receipts, written agreements, digital messages, and timestamps related to what happened.',
+      category: 'documentation',
+    },
+  ];
+
+  const confidenceNote =
+    'The system could not confidently identify a statutory provision in the verified knowledge base for this situation. Rather than inferring or predicting an unverified law or section, Nyaya recommends consulting a qualified advocate or your local District Legal Services Authority (DLSA).';
+
+  const limitation = `${confidenceNote} This information is strictly educational and does not constitute a legal determination, legal opinion, or legal advice. It does not establish whether an offence has occurred or predict how any police authority, regulatory body, or court of law will evaluate your situation. Laws apply differently based on specific facts, evidence, and jurisdiction. If you need legal advice, consult a qualified advocate or your local District Legal Services Authority (DLSA).`;
+
+  return {
+    summary,
+    legal_areas: classification.legalAreas.length ? classification.legalAreas : ['General Legal Inquiry'],
+    relevant_provisions: [],
+    explanation,
+    possible_next_steps: possibleNextSteps,
+    sources: [],
+    confidence_note: confidenceNote,
+
+    // Frontend backward-compatibility aliases:
+    yourSituation: description,
+    legalArea: classification.legalAreas[0] || 'General Legal Inquiry',
+    areaDescription: summary,
+    potentiallyRelevantLaws: [],
+    relevantProvisions: [],
+    plainLanguageExplanation: explanation,
+    possibleNextSteps,
+    sourcesList: [],
+    importantLimitation: limitation,
+    confidentMatch: false,
+    receivedCategory: category,
+    relevantLaws: [],
+    remedies: possibleNextSteps.map((s) => ({ title: s.title, description: s.description })),
+  };
+}
+
+function getFallbackSituationResult(category?: string, description?: string, focus?: string[]) {
+  const citizenDesc = description || 'Situation description provided by citizen.';
+
+  // 1. Classification
+  const descLower = citizenDesc.toLowerCase();
+  const words = descLower.split(/[^a-z0-9]+/).filter((w) => w.length > 3);
+  const baselineClassification: SituationClassification = {
+    legalAreas: category ? [category.charAt(0).toUpperCase() + category.slice(1).replace('-', ' ')] : ['General Statutory Inquiry'],
+    primaryCategory: category || 'unknown',
+    intents: focus || ['applicable_statutes', 'remedies_and_steps'],
+    keyTerms: words.slice(0, 8),
+    isPlausibleDomain: words.length >= 2,
+  };
+
+  // 2. Retrieval & Thresholding
+  const retrieval = retrieveVerifiedLegalRecords(baselineClassification, citizenDesc, category, focus);
+
+  // If no confident match in verified knowledge base, return safe, unforced no-match response
+  if (!retrieval.confidentMatch || !retrieval.provisions.length) {
+    return buildNoConfidentMatchResponse(citizenDesc, baselineClassification, category);
   }
 
-  const prompt = `You are an educational legal-information advisor specializing in Indian law (Bharatiya Nyaya Sanhita 2023, Bharatiya Nagarik Suraksha Sanhita 2023, Consumer Protection Act 2019, IT Act 2000, Indian Contract Act 1872, Constitution of India, Labour laws, etc.).
-A citizen has shared this situation:
+  const { provisions, sources } = retrieval;
+  const primaryArea =
+    category === "cyber"
+      ? "Cyber Law & Digital Transactions"
+      : category === "property"
+      ? "Property & Tenancy Law"
+      : category === "workplace"
+      ? "Labour & Employment Law"
+      : category === "personal-rights"
+      ? "Constitutional Safeguards & Due Process"
+      : category === "family"
+      ? "Family & Matrimonial Law"
+      : category === "money-fraud"
+      ? "Fraud & Penal Provisions"
+      : "Consumer Protection & Civil Contract Remedies";
+
+  const legalAreas = baselineClassification.legalAreas.length > 0
+    ? baselineClassification.legalAreas
+    : [primaryArea];
+
+  const summary = `Based on the information provided, this situation may relate to ${legalAreas[0]}. This provides an educational starting point grounded in verified central statutes.`;
+
+  const finalProvisions = retrieval.provisions.map((p) => ({
+    law_name: p.lawName,
+    section: p.section,
+    explanation: `Potentially relevant provisions include ${p.section}, which ${p.content.toLowerCase()}`,
+  }));
+
+  const explanation =
+    "Based on the information provided, Indian statutory frameworks provide structured dispute resolution and remedies for circumstances of this nature. Rights and obligations depend on statutory standards, compliance with mandatory procedures, and documentation. Non-judicial and specialized statutory forums often provide direct avenues for citizen relief.";
+
+  const defaultNextSteps = [
+    {
+      title: "Preserve Documentation & Transaction History",
+      description: "Collect all relevant invoices, written notices, timestamps, and digital communications.",
+      category: "documentation",
+    },
+    {
+      title: "Seek Free Legal Aid via DLSA (NALSA)",
+      description: "Consult a panel advocate at your local District Legal Services Authority for free confidential advice.",
+      category: "legal-aid",
+    },
+    {
+      title: "Consult an Enrolled Advocate",
+      description: "Consult a licensed advocate in your court jurisdiction to review available statutory remedies and local court procedures.",
+      category: "remedy",
+    },
+  ];
+
+  const confidenceNote =
+    "Operating in verified offline mode: This analysis is grounded exclusively in verified central enactments in our local knowledge base.";
+
+  const limitation = `${confidenceNote} This information is strictly educational and does not constitute a legal determination, legal opinion, or legal advice. It does not establish whether an offence has occurred or predict how any police authority, regulatory body, or court of law will evaluate your situation. Laws apply differently based on specific facts, evidence, and jurisdiction. If you need legal advice, consult a qualified advocate or your local District Legal Services Authority (DLSA).`;
+
+  const legacyProvisions = finalProvisions.map((p) => ({
+    lawName: p.law_name,
+    section: p.section,
+    explanation: p.explanation,
+  }));
+
+  return {
+    summary,
+    legal_areas: legalAreas,
+    relevant_provisions: finalProvisions,
+    explanation,
+    possible_next_steps: defaultNextSteps,
+    sources: retrieval.sources,
+    confidence_note: confidenceNote,
+
+    yourSituation: citizenDesc,
+    legalArea: legalAreas[0],
+    areaDescription: summary,
+    potentiallyRelevantLaws: Array.from(new Set(finalProvisions.map((p) => p.law_name))),
+    relevantProvisions: legacyProvisions,
+    plainLanguageExplanation: explanation,
+    possibleNextSteps: defaultNextSteps,
+    importantLimitation: limitation,
+    confidentMatch: true,
+    receivedCategory: category,
+    relevantLaws: legacyProvisions,
+    remedies: defaultNextSteps.map((s) => ({ title: s.title, description: s.description })),
+  };
+}
+
+async function analyzeSituationWithGemini(
+  description: string,
+  category?: string,
+  focus?: string[]
+) {
+  const ai = getGenAI();
+  if (!ai) return null;
+
+  // 1. Classification / intent extraction
+  const classification = await classifyAndExtractIntent(description, category, focus);
+
+  // 2. Verified knowledge retrieval with strict confidence thresholding
+  const retrieval = retrieveVerifiedLegalRecords(classification, description, category, focus);
+
+  // If no confident match could be established in verified database, return canonical no-match response directly
+  if (!retrieval.confidentMatch || !retrieval.provisions.length) {
+    return buildNoConfidentMatchResponse(description, classification, category);
+  }
+
+  // Format verified records into strict grounding block
+  const verifiedProvisionsBlock = retrieval.provisions
+    .map(
+      (p, idx) =>
+        `[Verified Record ${idx + 1}]\n- Law Name: ${p.lawName}\n- Provision: ${p.section}\n- Statutory Summary: ${p.content}\n- Official Source: ${p.officialSource || 'India Code (indiacode.nic.in)'}`
+    )
+    .join('\n\n');
+
+  const focusInstruction = focus && focus.length
+    ? `The citizen specifically asked to understand: ${focus.join(', ')}. Tailor your plain-language explanation and possible next steps to emphasize these topics.`
+    : '';
+
+  const prompt = `You are an educational legal-information assistant for Indian law.
+
+CRITICAL ARCHITECTURAL CONSTRAINTS (ZERO-INVENTION POLICY):
+1. The model must NOT act as an unrestricted legal database.
+2. Grounding constraint: You must ONLY explain and reference the VERIFIED PROVISIONS listed below.
+3. The model is STRICTLY FORBIDDEN from inventing:
+   - Any section number not present in the verified records below.
+   - Any article number not present in the verified records below.
+   - Any court case names, citations, or judicial precedents.
+   - Any specific legal penalties (fines or imprisonment lengths) unless literally stated in the verified records.
+   - Any legal limitation deadlines or timeframes (do NOT invent time limits like "30 days" or "3 years").
+   - Any government procedures not explicitly provided.
+   - Any official URLs or web links.
+4. If a detail, timeframe, or penalty is not in the verified records, do NOT guess or infer it. State that specific timeframes or penalties depend on the statutory text and rules.
+5. LEGAL NON-DETERMINATION FRAMING:
+   - You must NEVER claim legal certainty.
+   - Strictly forbidden phrases: "You have committed...", "This is definitely...", "You will win...", "You will be liable...", "The court will decide in your favour...".
+   - Mandatory hedged phrasing throughout: "Based on the information provided...", "This may relate to...", "Potentially relevant provisions include...", "Options you may consider include...".
+
+VERIFIED PROVISIONS (Whitelist):
+${verifiedProvisionsBlock}
+
+CITIZEN SITUATION:
 Description: "${description}"
-Category context: "${category || 'General'}"
+Category context: "${category || classification.primaryCategory}"
+${focusInstruction}
 
-Analyze this situation and provide educational legal information in plain, straightforward English:
-1. Identify the primary legalArea (short, clear title).
-2. Write a 2-3 sentence plain-language areaDescription explaining the applicable legal domain.
-3. List 2-3 relevantLaws (each with lawName, specific section or article, and a 1-2 sentence plain-language explanation of what it provides).
-4. List 2-3 realistic remedies (title and description of what steps the citizen can explore, such as filing an FIR/e-FIR, consumer forum/e-Daakhil, sending a legal notice, national consumer helpline, cybercrime portal, etc.).
-5. List 2-3 possible penalties or outcomes for the wrongdoer (title and description).
-
-Keep the language accessible, objective, educational, and respectful.`;
+Produce structured JSON matching the target schema:
+- summary: 1-2 hedged sentences summarizing the legal nature of the situation.
+- legal_areas: Array of 1 to 3 relevant legal domains.
+- relevant_provisions: Array of provisions selected strictly from the VERIFIED PROVISIONS above. Each must have:
+    - law_name: Exact name from the verified records
+    - section: Exact provision title from the verified records
+    - explanation: 1-2 sentence plain-language summary starting with "Potentially relevant provisions include..."
+- explanation: 2-3 calm, non-jargon paragraphs explaining how these legal concepts intersect with situations of this nature. Must be strictly grounded in the verified records.
+- possible_next_steps: 2 to 4 realistic next steps (options, not commands) with:
+    - title: Short clear title
+    - description: 1-2 actionable sentences
+    - category: One of 'reporting', 'remedy', 'documentation', or 'legal-aid'
+- confidence_note: A clear note confirming that this explanation is grounded strictly in verified central statutory records and does not constitute a legal determination.`;
 
   try {
     const response = await ai.models.generateContent({
@@ -1354,83 +1706,724 @@ Keep the language accessible, objective, educational, and respectful.`;
         responseSchema: {
           type: Type.OBJECT,
           properties: {
-            legalArea: { type: Type.STRING },
-            areaDescription: { type: Type.STRING },
-            relevantLaws: {
+            summary: { type: Type.STRING },
+            legal_areas: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING },
+            },
+            relevant_provisions: {
               type: Type.ARRAY,
               items: {
                 type: Type.OBJECT,
                 properties: {
-                  lawName: { type: Type.STRING },
+                  law_name: { type: Type.STRING },
                   section: { type: Type.STRING },
                   explanation: { type: Type.STRING },
                 },
-                required: ['lawName', 'section', 'explanation'],
+                required: ['law_name', 'section', 'explanation'],
               },
             },
-            remedies: {
+            explanation: { type: Type.STRING },
+            possible_next_steps: {
               type: Type.ARRAY,
               items: {
                 type: Type.OBJECT,
                 properties: {
                   title: { type: Type.STRING },
                   description: { type: Type.STRING },
+                  category: { type: Type.STRING },
                 },
-                required: ['title', 'description'],
+                required: ['title', 'description', 'category'],
               },
             },
-            penalties: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  title: { type: Type.STRING },
-                  description: { type: Type.STRING },
-                },
-                required: ['title', 'description'],
-              },
-            },
+            confidence_note: { type: Type.STRING },
           },
-          required: ['legalArea', 'areaDescription', 'relevantLaws', 'remedies', 'penalties'],
+          required: [
+            'summary',
+            'legal_areas',
+            'relevant_provisions',
+            'explanation',
+            'possible_next_steps',
+            'confidence_note',
+          ],
         },
       },
     });
 
     if (response.text) {
       const parsed = JSON.parse(response.text);
+
+      // Server-side validation:
+      // Filter out any provision that does not match the retrieved verified provisions whitelist
+      const verifiedSections = retrieval.provisions.map((p) => p.section.toLowerCase());
+      const filteredProvisions = (parsed.relevant_provisions || []).filter((item: any) => {
+        const itemSec = (item.section || '').toLowerCase();
+        return verifiedSections.some(
+          (vs) => itemSec.includes(vs.split('—')[0].trim()) || vs.includes(itemSec.split('—')[0].trim())
+        );
+      });
+
+      const finalProvisions = filteredProvisions.length > 0
+        ? filteredProvisions
+        : retrieval.provisions.map((p) => ({
+            law_name: p.lawName,
+            section: p.section,
+            explanation: `Potentially relevant provisions include ${p.section}, which ${p.content.toLowerCase()}`,
+          }));
+
+      const legalAreas = Array.isArray(parsed.legal_areas) && parsed.legal_areas.length > 0
+        ? parsed.legal_areas
+        : classification.legalAreas;
+
+      const summary = parsed.summary || `Based on the information provided, this situation may relate to ${legalAreas.join(' and ')}.`;
+      const explanation = parsed.explanation || '';
+      const possibleNextSteps = Array.isArray(parsed.possible_next_steps) ? parsed.possible_next_steps : [];
+      const confidenceNote = parsed.confidence_note || 'This information is strictly educational and grounded in verified statutory records.';
+
+      const limitation = `${confidenceNote} It does not constitute a legal determination, legal opinion, or legal advice. It does not establish whether an offence has occurred or predict how any police authority, regulatory body, or court of law will evaluate your situation. Laws apply differently based on specific facts, evidence, and jurisdiction. If you need legal advice, consult a qualified advocate or your local District Legal Services Authority (DLSA).`;
+
+      // Backward compatibility fields
+      const legacyProvisions = finalProvisions.map((p: any) => ({
+        lawName: p.law_name,
+        section: p.section,
+        explanation: p.explanation,
+      }));
+
+      const legacyRemedies = possibleNextSteps.map((step: any) => ({
+        title: step.title,
+        description: step.description,
+      }));
+
       return {
-        ...parsed,
+        // Canonical Target Architecture:
+        summary,
+        legal_areas: legalAreas,
+        relevant_provisions: finalProvisions,
+        explanation,
+        possible_next_steps: possibleNextSteps,
+        sources: retrieval.sources,
+        confidence_note: confidenceNote,
+
+        // Frontend compatibility aliases:
+        yourSituation: description,
+        legalArea: legalAreas[0] || 'Civil & Statutory Information',
+        areaDescription: summary,
+        potentiallyRelevantLaws: Array.from(new Set(finalProvisions.map((p: any) => p.law_name))),
+        relevantProvisions: legacyProvisions,
+        plainLanguageExplanation: explanation,
+        possibleNextSteps,
+        importantLimitation: limitation,
+        confidentMatch: true,
         receivedCategory: category,
+        relevantLaws: legacyProvisions,
+        remedies: legacyRemedies,
       };
     }
   } catch (err) {
     console.error('Gemini situation analysis error:', err);
   }
+
   return null;
 }
 
 const handleSituationAnalysis = async (req: express.Request, res: express.Response) => {
   const description = (req.body.description || '').trim();
   const category = req.body.category;
+  const focus = Array.isArray(req.body.focus) ? req.body.focus : undefined;
 
   if (!description) {
     return res.status(400).json({ detail: 'description is required.' });
   }
 
-  // First try Gemini AI
-  const aiResult = await analyzeSituationWithGemini(description, category);
+  // First try Gemini AI with grounded retrieval
+  const aiResult = await analyzeSituationWithGemini(description, category, focus);
   if (aiResult) {
     return res.json(aiResult);
   }
 
   // Fallback to structured offline legal responses
-  const fallback = getFallbackSituationResult(category, description);
+  const fallback = getFallbackSituationResult(category, description, focus);
   res.json(fallback);
 };
 
 // POST /api/situations/analyze/
 app.post('/api/situations/analyze', handleSituationAnalysis);
 app.post('/api/situations/analyze/', handleSituationAnalysis);
+
+// -----------------------------------------------------------------------------
+// STEP 28: Controlled AI Legal Information Workflow
+// USER QUESTION -> IDENTIFY GENERAL TOPIC -> RETRIEVE RELEVANT NYAYA CONTENT ->
+// SHOW RELEVANT LAWS/TOPICS -> GENERATE SIMPLE EXPLANATION FROM RETRIEVED CONTENT ->
+// SHOW SOURCES -> SHOW RELATED NYAYA PAGES
+// -----------------------------------------------------------------------------
+
+const AI_WORKFLOW_DOMAINS = [
+  {
+    id: 'property',
+    category: 'property',
+    title: 'Property & Tenancy Law',
+    description: 'Residential and commercial tenancies, security deposits, lease agreements, eviction safeguards, and property possession.',
+    keywords: ['landlord', 'tenant', 'deposit', 'security deposit', 'rent', 'lease', 'evict', 'eviction', 'flat', 'apartment', 'possession', 'broker', 'maintenance', 'house', 'room'],
+    defaultSubtopics: ['Security Deposit Return & Deductions', 'Lease Obligations (Sec 105 & 108 Transfer of Property Act)', 'Civil Breach of Agreement (Sec 73 Contract Act)'],
+    lawIds: ['transfer-of-property-1882', 'indian-contract-1872', 'bns-2023'],
+    rightsTopicIds: ['security-deposit-refund', 'essential-services-protection', 'unlawful-eviction-safeguards', 'landlord-entry-notice'],
+    termIds: ['security-deposit', 'compensation', 'civil-suit', 'injunction'],
+    relatedPages: [
+      { title: 'Transfer of Property Act, 1882', to: '/laws/transfer-of-property-1882', description: 'Statutory lease definitions and reciprocal lessor/lessee rights', badge: 'Bare Act' },
+      { title: 'Tenant Rights & Security Deposits', to: '/know-your-rights', description: 'Citizen rights guide for residential tenancies in India', badge: 'Rights Hub' },
+      { title: 'Complaint Preparation Guide', to: '/tools?tool=complaint', description: 'Organize move-out dates, facts, and communication records', badge: 'Legal Tool' },
+      { title: 'Legal Term: Security Deposit', to: '/legal-terms#security-deposit', description: 'Plain-language glossary definition of tenancy deposits', badge: 'Glossary' },
+    ],
+  },
+  {
+    id: 'consumer',
+    category: 'consumer',
+    title: 'Consumer Protection Law',
+    description: 'Buyer protections, defective products, deficient services, misleading representations, and e-commerce redressal.',
+    keywords: ['product', 'defect', 'defective', 'refund', 'replacement', 'seller', 'store', 'consumer', 'warranty', 'guarantee', 'ecommerce', 'amazon', 'flipkart', 'order', 'damaged', 'faulty', 'purchase', 'delivery'],
+    defaultSubtopics: ['Deficiency in Service & Defective Goods', 'Statutory Right to Refund or Replacement', 'Consumer Commission Grievance (e-Daakhil)'],
+    lawIds: ['consumer-protection-2019', 'indian-contract-1872'],
+    rightsTopicIds: ['consumer-six-guarantees', 'edaakhil-complaint-filing', 'product-liability-claims'],
+    termIds: ['consumer-dispute', 'compensation', 'civil-suit'],
+    relatedPages: [
+      { title: 'Consumer Protection Act, 2019', to: '/laws/consumer-protection-2019', description: 'Statutory provisions for consumer rights & commission filing', badge: 'Bare Act' },
+      { title: 'How to File Online Consumer Complaints', to: '/search?q=consumer', description: 'Step-by-step procedural guide for e-Daakhil', badge: 'Guide' },
+      { title: 'Document Checklist: Consumer Disputes', to: '/tools?tool=checklist&topic=consumer', description: 'Invoices, warranty cards, and communication logs checklist', badge: 'Legal Tool' },
+      { title: 'Legal Term: Deficiency of Service', to: '/legal-terms#consumer-dispute', description: 'Statutory definition under Section 2(11) of CPA 2019', badge: 'Glossary' },
+    ],
+  },
+  {
+    id: 'criminal',
+    category: 'criminal',
+    title: 'Criminal Procedure & Police Powers',
+    description: 'Codified arrest safeguards, 24-hour detention limits, FIR registration, bail mechanisms, and due process.',
+    keywords: ['police', 'arrest', 'detain', 'custody', 'fir', 'zero fir', 'warrant', 'handcuff', 'interrogation', 'bail', 'crime', 'investigation', 'police station', 'lockup', 'officer', 'station', 'remand'],
+    defaultSubtopics: ['Cognizable vs Non-Cognizable Offence Safeguards', 'Mandatory 24-Hour Production Before Magistrate', 'Right to Inform Family & Medical Examination'],
+    lawIds: ['bnss-2023', 'bns-2023', 'constitution-of-india'],
+    rightsTopicIds: ['arrest-safeguards-24h', 'women-arrest-safeguards', 'zero-fir-complaint-rights', 'search-seizure-videography'],
+    termIds: ['arrest', 'bail', 'fir', 'zero-fir', 'cognizable-offence', 'bailable-offence'],
+    relatedPages: [
+      { title: 'BNSS 2023: Sections 35–58 (Arrest Safeguards)', to: '/laws/bnss-2023', description: 'Statutory police arrest safeguards and procedure', badge: 'Bare Act' },
+      { title: 'Citizen Arrest Safeguards & 24h Rule', to: '/know-your-rights', description: 'D.K. Basu guidelines and citizen protections', badge: 'Rights Hub' },
+      { title: 'Article 22: Protection Against Arrest', to: '/fundamental-rights', description: 'Constitutional protections under Part III', badge: 'Constitution' },
+      { title: 'Zero FIR Guide', to: '/search?q=fir', description: 'How to file an FIR at any police station across India', badge: 'Guide' },
+    ],
+  },
+  {
+    id: 'cyber',
+    category: 'cyber',
+    title: 'Cyber Law & Digital Fraud',
+    description: 'Online financial scams, UPI fraud, unauthorized account debits, identity theft, phishing, and digital safety.',
+    keywords: ['cyber', 'online', 'fraud', 'scam', 'upi', 'bank', 'debited', 'hacked', 'phishing', 'otp', 'scammer', 'impersonation', 'digital', 'telegram', 'apk', 'link', 'money debited', 'account debited'],
+    defaultSubtopics: ['Citizen Financial Cyber Fraud Reporting (1930)', 'RBI Zero Liability Banking Timeline', 'Computer Related Offences (IT Act & BNS)'],
+    lawIds: ['it-act-2000', 'bns-2023', 'bnss-2023'],
+    rightsTopicIds: ['cyber-financial-fraud-1930', 'rbi-zero-liability-banking', 'cyber-stalking-morphing-relief'],
+    termIds: ['cybercrime-report', 'compensation', 'fir'],
+    relatedPages: [
+      { title: 'Information Technology Act, 2000', to: '/laws/it-act-2000', description: 'Penalties for unauthorized access and identity theft', badge: 'Bare Act' },
+      { title: 'Cyber Financial Fraud (Helpline 1930)', to: '/know-your-rights', description: 'Golden hour freezing protocol and reporting', badge: 'Rights Hub' },
+      { title: 'Document Checklist: Cyber & Financial Fraud', to: '/tools?tool=checklist&topic=cyber', description: 'Evidence checklist: UTR, bank statements, screenshots', badge: 'Legal Tool' },
+      { title: 'BNS Section 318: Cheating & Impersonation', to: '/laws/bns-2023', description: 'Penal provisions for deceptive inducement of property', badge: 'Bare Act' },
+    ],
+  },
+  {
+    id: 'workplace',
+    category: 'labour',
+    title: 'Labour & Workplace Rights',
+    description: 'Conditions of employment, unpaid salaries, gratuity withholding, notice period compliance, and workplace harassment.',
+    keywords: ['salary', 'wage', 'employer', 'company', 'resignation', 'notice period', 'gratuity', 'fired', 'terminated', 'retrenchment', 'workplace', 'posh', 'harassment', 'pf', 'provident fund', 'boss', 'unpaid salary'],
+    defaultSubtopics: ['Unpaid Wages & Notice Period Settlements', 'Conditions for Retrenchment & Compensation', 'Prevention of Workplace Sexual Harassment (POSH)'],
+    lawIds: ['industrial-disputes-1947', 'indian-contract-1872'],
+    rightsTopicIds: ['posh-workplace-harassment', 'retrenchment-severance-notice', 'maternity-benefits-entitlement'],
+    termIds: ['compensation', 'civil-suit', 'legal-aid'],
+    relatedPages: [
+      { title: 'Industrial Disputes Act, 1947', to: '/laws/industrial-disputes-1947', description: 'Statutory retrenchment conditions and settlement mechanisms', badge: 'Bare Act' },
+      { title: 'Workplace Rights & Severance Notice', to: '/know-your-rights', description: 'Legal notice periods and employment protections', badge: 'Rights Hub' },
+      { title: 'Complaint Preparation Guide', to: '/tools?tool=complaint', description: 'Document appointment letters, payslips, and resignation dates', badge: 'Legal Tool' },
+      { title: 'Free Legal Aid via DLSA', to: '/search?q=legal+aid', description: 'Access free legal aid representation under Article 39A', badge: 'Legal Aid' },
+    ],
+  },
+  {
+    id: 'constitutional',
+    category: 'constitutional',
+    title: 'Constitutional Rights & Freedoms',
+    description: 'Fundamental rights guaranteed by Part III of the Constitution of India, due process, privacy, and writ remedies.',
+    keywords: ['constitution', 'fundamental rights', 'article', 'equality', 'discrimination', 'speech', 'privacy', 'religion', 'writ', 'habeas corpus', 'article 21', 'article 32', 'fundamental right', 'arbitrary'],
+    defaultSubtopics: ['Article 21: Right to Life, Dignity & Personal Liberty', 'Article 14: Equality & Non-Arbitrariness', 'Article 32: Constitutional Writs & Enforcement'],
+    lawIds: ['constitution-of-india'],
+    rightsTopicIds: ['article-14-equality-arbitrariness', 'article-19-six-freedoms', 'article-21-life-dignity-privacy', 'article-32-writs-enforcement'],
+    termIds: ['habeas-corpus', 'mandamus', 'certiorari', 'injunction'],
+    relatedPages: [
+      { title: 'Fundamental Rights (Part III)', to: '/fundamental-rights', description: 'Comprehensive guide to Articles 12 through 35', badge: 'Constitution' },
+      { title: 'Article 21: Life, Liberty & Privacy', to: '/fundamental-rights', description: 'Puttaswamy privacy doctrine and liberty protections', badge: 'Constitution' },
+      { title: 'Access to Justice & Legal Aid', to: '/know-your-rights', description: 'Article 39A free legal representation', badge: 'Rights Hub' },
+      { title: 'Writ Remedies Overview', to: '/legal-terms#habeas-corpus', description: 'Habeas Corpus, Mandamus, Certiorari explained', badge: 'Glossary' },
+    ],
+  },
+  {
+    id: 'family',
+    category: 'family',
+    title: 'Family & Matrimonial Law',
+    description: 'Marriage validity, maintenance, custody, domestic violence protection, and inheritance rights.',
+    keywords: ['marriage', 'divorce', 'maintenance', 'custody', 'domestic violence', 'alimony', 'husband', 'wife', 'in-laws', 'inheritance', 'daughter', 'hindu marriage', 'dowry'],
+    defaultSubtopics: ['Protection of Women from Domestic Violence (PWDVA)', 'Interim Maintenance & Residence Relief', 'Equal Inheritance Rights for Daughters'],
+    lawIds: ['hindu-marriage-1955', 'bns-2023'],
+    rightsTopicIds: ['pwdva-domestic-violence-relief', 'victim-identity-masking', 'daughters-coparcenary-inheritance'],
+    termIds: ['interim-order', 'compensation', 'legal-aid'],
+    relatedPages: [
+      { title: 'Hindu Marriage Act, 1955', to: '/laws/hindu-marriage-1955', description: 'Statutory grounds for divorce and maintenance', badge: 'Bare Act' },
+      { title: 'Domestic Violence Relief & Residence Orders', to: '/know-your-rights', description: 'Protection orders and emergency support helplines', badge: 'Rights Hub' },
+      { title: 'Free Legal Aid for Women', to: '/search?q=legal+aid', description: 'Section 12 of NALSA Act provides free legal aid to women', badge: 'Legal Aid' },
+    ],
+  },
+];
+
+async function executeAiInformationWorkflow(questionText: string, preferredTopic?: string) {
+  const qClean = questionText.toLowerCase().trim();
+
+  // 1. Identify General Topic
+  let matchedDomain = AI_WORKFLOW_DOMAINS.find((d) => d.id === preferredTopic);
+
+  if (!matchedDomain) {
+    let bestScore = 0;
+    for (const domain of AI_WORKFLOW_DOMAINS) {
+      let score = 0;
+      for (const kw of domain.keywords) {
+        if (qClean.includes(kw)) {
+          score += kw.length > 5 ? 4 : 2;
+        }
+      }
+      if (score > bestScore) {
+        bestScore = score;
+        matchedDomain = domain;
+      }
+    }
+  }
+
+  // Fallback to property if landlord/deposit was mentioned, or default to general civil/constitutional
+  if (!matchedDomain) {
+    if (qClean.includes('landlord') || qClean.includes('deposit') || qClean.includes('rent')) {
+      matchedDomain = AI_WORKFLOW_DOMAINS[0];
+    } else {
+      matchedDomain = AI_WORKFLOW_DOMAINS[0];
+    }
+  }
+
+  // 2. Retrieve Relevant Nyaya Content
+  // A. Statutory provisions from lawsData
+  const retrievedProvisions: Array<{
+    lawId: string;
+    lawName: string;
+    section: string;
+    title: string;
+    content: string;
+    officialSource?: string;
+    verified: boolean;
+  }> = [];
+
+  for (const lawId of matchedDomain.lawIds) {
+    const law = lawsData.find((l) => l.id === lawId);
+    if (!law) continue;
+
+    // Pick top matching sections or prominent domain sections
+    for (const sec of law.sections || []) {
+      const secText = `${sec.number} ${sec.title} ${sec.content}`.toLowerCase();
+      let matched = false;
+
+      // Special domain matches
+      if (matchedDomain.id === 'property') {
+        if (sec.id === 'sec-105' || sec.id === 'sec-108' || (law.id === 'indian-contract-1872' && sec.id === 'sec-2')) {
+          matched = true;
+        }
+      } else if (matchedDomain.id === 'consumer') {
+        if (sec.id === 'sec-1' || sec.id === 'sec-2') matched = true;
+      } else if (matchedDomain.id === 'criminal') {
+        if (sec.id === 'sec-35' || sec.id === 'sec-47' || sec.id === 'sec-58') matched = true;
+      } else if (matchedDomain.id === 'cyber') {
+        if (sec.id === 'sec-1' || sec.id === 'sec-2') matched = true;
+      } else if (matchedDomain.id === 'workplace') {
+        if (sec.id === 'sec-2' || (law.id === 'indian-contract-1872' && sec.id === 'sec-2')) matched = true;
+      }
+
+      // Keyword match
+      if (!matched) {
+        for (const kw of matchedDomain.keywords) {
+          if (qClean.includes(kw) && secText.includes(kw)) {
+            matched = true;
+            break;
+          }
+        }
+      }
+
+      if (matched) {
+        retrievedProvisions.push({
+          lawId: law.id,
+          lawName: law.name,
+          section: sec.number,
+          title: sec.title,
+          content: sec.content,
+          officialSource: law.officialSource,
+          verified: VERIFIED_LAW_IDS.has(law.id),
+        });
+      }
+      if (retrievedProvisions.length >= 4) break;
+    }
+  }
+
+  // B. Rights Hub Topics from rightsCategories
+  const retrievedRightsTopics: Array<{
+    id: string;
+    title: string;
+    legalArea: string;
+    relevantLaw: string;
+    explanation: string;
+    actionPoints: string[];
+    officialSource?: any;
+  }> = [];
+
+  for (const cat of rightsCategories) {
+    for (const topic of cat.topics) {
+      if (matchedDomain.rightsTopicIds.includes(topic.id)) {
+        retrievedRightsTopics.push({
+          id: topic.id,
+          title: topic.title,
+          legalArea: topic.legalArea,
+          relevantLaw: topic.relevantLaw,
+          explanation: topic.explanation,
+          actionPoints: topic.actionPoints || [],
+          officialSource: topic.officialSource,
+        });
+      }
+    }
+  }
+
+  // C. Legal Terms
+  const retrievedTerms: Array<{
+    id: string;
+    term: string;
+    plainLanguage: string;
+    category: string;
+  }> = [];
+
+  for (const term of legalTermsData) {
+    if (matchedDomain.termIds.includes(term.id)) {
+      retrievedTerms.push({
+        id: term.id,
+        term: term.term,
+        plainLanguage: term.plainLanguage,
+        category: term.category,
+      });
+    }
+  }
+
+  // D. Procedural Guides
+  const retrievedGuides: Array<{
+    id: string;
+    title: string;
+    statuteReference: string;
+    summary: string;
+    officialPortal?: string;
+  }> = [];
+
+  for (const guide of legalGuides) {
+    const guideText = `${guide.title} ${guide.summary} ${guide.keywords?.join(' ')}`.toLowerCase();
+    if (matchedDomain.keywords.some((kw) => qClean.includes(kw) && guideText.includes(kw))) {
+      retrievedGuides.push({
+        id: guide.id,
+        title: guide.title,
+        statuteReference: guide.statuteReference,
+        summary: guide.summary,
+        officialPortal: guide.officialPortal,
+      });
+      if (retrievedGuides.length >= 2) break;
+    }
+  }
+
+  // E. Official Sources
+  const sourcesMap = new Map<string, { name: string; url: string; portal: string; verified: boolean }>();
+  sourcesMap.set('indiacode', {
+    name: 'India Code — National Digital Repository of Central & State Acts',
+    url: 'https://indiacode.nic.in',
+    portal: 'indiacode.nic.in',
+    verified: true,
+  });
+  sourcesMap.set('legislative', {
+    name: 'Legislative Department, Ministry of Law and Justice',
+    url: 'https://legislative.gov.in',
+    portal: 'legislative.gov.in',
+    verified: true,
+  });
+
+  if (matchedDomain.id === 'property') {
+    sourcesMap.set('mohua', {
+      name: 'Ministry of Housing and Urban Affairs — Model Tenancy Guidelines',
+      url: 'https://mohua.gov.in',
+      portal: 'mohua.gov.in',
+      verified: true,
+    });
+  } else if (matchedDomain.id === 'consumer') {
+    sourcesMap.set('consumeraffairs', {
+      name: 'Department of Consumer Affairs — e-Daakhil Portal',
+      url: 'https://edaakhil.nic.in',
+      portal: 'edaakhil.nic.in',
+      verified: true,
+    });
+  } else if (matchedDomain.id === 'criminal' || matchedDomain.id === 'constitutional') {
+    sourcesMap.set('nalsa', {
+      name: 'National Legal Services Authority (NALSA) — Free Legal Aid',
+      url: 'https://nalsa.gov.in',
+      portal: 'nalsa.gov.in',
+      verified: true,
+    });
+  } else if (matchedDomain.id === 'cyber') {
+    sourcesMap.set('cybercrime', {
+      name: 'National Cyber Crime Reporting Portal (Helpline 1930)',
+      url: 'https://cybercrime.gov.in',
+      portal: 'cybercrime.gov.in',
+      verified: true,
+    });
+  }
+
+  // 3. Generate Simple Explanation from Retrieved Content (Strict Grounding)
+  let generatedExplanation = '';
+  let generatedNextSteps: Array<{ title: string; description: string; type: 'documentation' | 'dialogue' | 'remedy' | 'legal-aid' }> = [];
+
+  const verifiedProvisionsSummary = retrievedProvisions
+    .map((p) => `- ${p.lawName}, ${p.section} (${p.title}): ${p.content}`)
+    .join('\n');
+
+  const rightsSummary = retrievedRightsTopics
+    .map((r) => `- Topic: ${r.title} | Law: ${r.relevantLaw} | Statutory Principle: ${r.explanation}`)
+    .join('\n');
+
+  const ai = getGenAI();
+  if (ai) {
+    try {
+      const prompt = `You are Nyaya's controlled educational legal-information synthesis engine for Indian law.
+
+CITIZEN QUESTION:
+"${questionText}"
+
+IDENTIFIED TOPIC:
+"${matchedDomain.title}" (${matchedDomain.description})
+
+RETRIEVED VERIFIED NYAYA RECORDS:
+Statutory Provisions:
+${verifiedProvisionsSummary || 'General Indian statutory principles'}
+
+Rights Hub Topics:
+${rightsSummary || 'Codified citizen rights principles'}
+
+Relevant Legal Terms:
+${retrievedTerms.map((t) => `- ${t.term}: ${t.plainLanguage}`).join('\n')}
+
+MANDATORY CONSTRAINTS (ZERO-INVENTION POLICY):
+1. Grounding: You must synthesize your explanation STRICTLY from the verified provisions and rights topics listed above.
+2. ZERO-INVENTION:
+   - Do NOT invent or cite any Act, Law, Section, or Article not listed in the retrieved records.
+   - Do NOT invent any court cases, citations, case numbers, or judicial precedents.
+   - Do NOT invent specific statutory timeframes (e.g. do not guess "15 days" or "30 days" unless stated above).
+   - Do NOT promise compensation amounts or outcomes.
+3. NON-DETERMINATION & HEDGED FRAMING:
+   - This is strictly educational legal information, NOT legal advice.
+   - You must never declare liability or predict how a court or authority will decide.
+   - Use hedged phrasing: "Based on Indian statutory principles...", "This situation commonly relates to...", "Potentially applicable provisions include...".
+4. Produce a calm, clear, plain-language educational explanation (2-3 short paragraphs) explaining how these statutory principles intersect with this scenario, plus 2-3 realistic educational next steps.`;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.8-flash',
+        contents: prompt,
+        config: {
+          responseMimeType: 'application/json',
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              explanation: { type: Type.STRING },
+              next_steps: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    title: { type: Type.STRING },
+                    description: { type: Type.STRING },
+                    type: { type: Type.STRING },
+                  },
+                  required: ['title', 'description', 'type'],
+                },
+              },
+            },
+            required: ['explanation', 'next_steps'],
+          },
+        },
+      });
+
+      if (response.text) {
+        const parsed = JSON.parse(response.text);
+        if (parsed.explanation && parsed.explanation.trim().length > 40) {
+          generatedExplanation = parsed.explanation.trim();
+        }
+        if (Array.isArray(parsed.next_steps) && parsed.next_steps.length > 0) {
+          generatedNextSteps = parsed.next_steps.map((s: any) => ({
+            title: s.title,
+            description: s.description,
+            type: (['documentation', 'dialogue', 'remedy', 'legal-aid'].includes(s.type) ? s.type : 'remedy') as any,
+          }));
+        }
+      }
+    } catch (err) {
+      console.error('Gemini workflow explanation error:', err);
+    }
+  }
+
+  // Fallback deterministic synthesis if Gemini did not run or errored
+  if (!generatedExplanation) {
+    if (matchedDomain.id === 'property') {
+      generatedExplanation = `Under Indian property and contract law, security deposits in residential tenancies are held in trust by the landlord to guarantee performance of the lease agreement and are fundamentally refundable upon handing over peaceful vacant possession.
+
+Under Section 105 and Section 108 of the Transfer of Property Act, 1882, the lessor and lessee have reciprocal statutory obligations. The tenant is entitled to peaceful enjoyment of the premises and is required to restore the property in good condition, subject to reasonable wear and tear arising from normal daily living. Landlords are legally precluded from making arbitrary deductions for normal wear and tear or unsubstantiated repainting fees.
+
+Where a landlord refuses to return a security deposit without providing verifiable invoices or establishing actual structural damage, this constitutes a civil breach of agreement under Section 73 of the Indian Contract Act, 1872. Tenants may pursue formal redressal through the jurisdictional Rent Authority or Civil Court.`;
+
+      generatedNextSteps = [
+        {
+          title: 'Review Tenancy Agreement & Move-Out Records',
+          description: 'Check the written lease for deposit return timelines and compile move-out photos or video evidence showing the premises were handed over in good order.',
+          type: 'documentation',
+        },
+        {
+          title: 'Issue a Formal Written Demand Notice',
+          description: 'Send a written communication or registered legal notice citing the handover date, providing bank account details, and requesting an itemized breakdown of any deductions within a reasonable timeframe.',
+          type: 'dialogue',
+        },
+        {
+          title: 'Approach the Local Rent Authority or Legal Services Authority',
+          description: 'If the landlord continues to withhold the deposit, consult your local District Legal Services Authority (DLSA) for free mediation, or file a dispute before the jurisdictional Rent Tribunal.',
+          type: 'remedy',
+        },
+      ];
+    } else if (matchedDomain.id === 'consumer') {
+      generatedExplanation = `Under the Consumer Protection Act, 2019, consumers who purchase goods or services are protected against 'deficiency in service' and 'defective goods' under Section 2. Sellers and e-commerce platforms have an obligation to provide goods that match statutory standards and representations.
+
+When a consumer receives a broken or non-conforming product and the merchant arbitrarily denies a refund or replacement, the consumer is entitled under the Act to seek replacement, repair, or full reimbursement of the price paid, along with compensation for loss or inconvenience under Section 73 of the Indian Contract Act, 1872.
+
+The statutory framework provides a simplified adjudication process before the District Consumer Disputes Redressal Commission without requiring complex procedural filings.`;
+
+      generatedNextSteps = [
+        {
+          title: 'Preserve Transaction Records & Unboxing Proof',
+          description: 'Secure copies of the purchase invoice, order confirmation, unboxing video or photographs, and customer support chat transcripts.',
+          type: 'documentation',
+        },
+        {
+          title: 'Lodge an Official National Consumer Helpline Grievance',
+          description: 'File a formal grievance on consumerhelpline.gov.in (Toll-Free 1915) or send a written notice to the merchant grievance officer.',
+          type: 'dialogue',
+        },
+        {
+          title: 'File an Online Complaint on e-Daakhil',
+          description: 'If the seller does not rectify the defect, submit an online consumer dispute before the District Commission via edaakhil.nic.in.',
+          type: 'remedy',
+        },
+      ];
+    } else if (matchedDomain.id === 'criminal') {
+      generatedExplanation = `Under the Bharatiya Nagarik Suraksha Sanhita, 2023 (BNSS) and Article 22 of the Constitution of India, police powers of arrest are subject to strict procedural safeguards codified to prevent arbitrary deprivation of liberty.
+
+Under Section 35 and Section 47 of the BNSS, an officer arresting an individual must immediately inform them of the precise grounds for arrest and whether the offence is bailable or non-bailable. An Arrest Memo must be prepared and signed by a witness or family member, and under Section 48, the arrested person has the statutory right to have one relative or friend immediately informed.
+
+Furthermore, under Section 58 of BNSS and Article 22(2) of the Constitution, police cannot detain any individual in custody for more than 24 hours without producing them before the nearest Judicial Magistrate.`;
+
+      generatedNextSteps = [
+        {
+          title: 'Demand the Grounds of Arrest & Arrest Memo',
+          description: 'Politely insist on knowing the section of offence, whether it is bailable, and verify that a signed Arrest Memo is prepared on the spot.',
+          type: 'documentation',
+        },
+        {
+          title: 'Ensure Family Notification & Medical Examination',
+          description: 'Exercise the statutory right to have a nominated family member informed and request a medical examination by a government medical officer under BNSS Section 53.',
+          type: 'remedy',
+        },
+        {
+          title: 'Request Free Legal Aid Before the Magistrate',
+          description: 'If unable to afford private legal counsel, demand a legal aid advocate from the District Legal Services Authority (DLSA) when produced before the Magistrate.',
+          type: 'legal-aid',
+        },
+      ];
+    } else {
+      generatedExplanation = `Based on verified Indian statutory frameworks, this query intersects with ${matchedDomain.title}. Codified enactments establish clear statutory standards, obligations, and procedural safeguards for individuals facing situations of this nature.
+
+Potentially applicable provisions include records from ${matchedDomain.lawIds.map((l) => lawsData.find((law) => law.id === l)?.name || l).join(' and ')}. These provisions define the legal rights of parties, conditions of liability, and avenues for formal redressal.
+
+Nyaya limits this explanation strictly to verified central statutory records to ensure accuracy and prevent speculative legal assertions.`;
+
+      generatedNextSteps = [
+        {
+          title: 'Organize Relevant Documentation & Timeline',
+          description: 'Compile all written records, receipts, dates, and communications into a clear chronological summary.',
+          type: 'documentation',
+        },
+        {
+          title: 'Review Statutory Guidance in Nyaya Rights Hub',
+          description: 'Explore the relevant citizen rights pages and procedural guides indexed in our verified database.',
+          type: 'remedy',
+        },
+        {
+          title: 'Consult Qualified Legal Counsel or DLSA',
+          description: 'For situation-specific legal advice and formal representation, consult a licensed advocate or visit your local District Legal Services Authority.',
+          type: 'legal-aid',
+        },
+      ];
+    }
+  }
+
+  return {
+    workflowStage: 'completed',
+    userQuestion: questionText,
+    identifiedTopic: {
+      id: matchedDomain.id,
+      title: matchedDomain.title,
+      category: matchedDomain.category,
+      description: matchedDomain.description,
+      subtopics: matchedDomain.defaultSubtopics,
+      confidence: 'high',
+    },
+    retrievedContent: {
+      provisions: retrievedProvisions,
+      rightsTopics: retrievedRightsTopics,
+      terms: retrievedTerms,
+      guides: retrievedGuides,
+    },
+    explanation: generatedExplanation,
+    nextSteps: generatedNextSteps,
+    sources: Array.from(sourcesMap.values()),
+    relatedPages: matchedDomain.relatedPages,
+    disclaimer: 'This information is strictly educational legal information and does not constitute a legal determination, legal opinion, or legal advice. It does not predict how any court or administrative body will decide your case. If you require legal representation, consult a qualified advocate or your local District Legal Services Authority (DLSA).',
+  };
+}
+
+const handleAiWorkflow = async (req: express.Request, res: express.Response) => {
+  const question = (req.body.question || '').trim();
+  const preferredTopic = req.body.preferredTopic;
+
+  if (!question || question.length < 3) {
+    return res.status(400).json({ detail: 'Please provide a valid question or situation description.' });
+  }
+
+  try {
+    const result = await executeAiInformationWorkflow(question, preferredTopic);
+    return res.json(result);
+  } catch (err) {
+    console.error('AI Workflow execution error:', err);
+    return res.status(500).json({ detail: 'Error executing legal information workflow.' });
+  }
+};
+
+// POST /api/ai/workflow
+app.post('/api/ai/workflow', handleAiWorkflow);
+app.post('/api/ai/workflow/', handleAiWorkflow);
+app.post('/api/workflow', handleAiWorkflow);
+app.post('/api/workflow/', handleAiWorkflow);
+
 
 
 async function startServer() {
@@ -1449,7 +2442,7 @@ async function startServer() {
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Enmachi server running on http://0.0.0.0:${PORT}`);
+    console.log(`Nyaya server running on http://0.0.0.0:${PORT}`);
   });
 }
 

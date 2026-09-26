@@ -1,17 +1,23 @@
-import { WifiOff } from 'lucide-react'
+import { Database } from 'lucide-react'
+import { useLanguage } from '../context/LanguageContext.jsx'
 
 /**
- * Small inline notice shown if a query could not reach the backend API
- * and fell back to cached educational reference data instead.
+ * Inline notice shown when a component relies on the verified local statutory database.
  */
-export default function OfflineNotice({ className = '' }) {
+export default function OfflineNotice({
+  message,
+  className = '',
+}) {
+  const { t } = useLanguage()
+  const displayMessage = message || t('disclaimers.offlineNotice', 'Operating with verified local statutory database.')
+
   return (
     <div
       role="status"
       className={`flex items-center gap-2 rounded-sm border border-brass/30 bg-brass/5 px-3 py-2 text-xs text-brass-dark ${className}`}
     >
-      <WifiOff size={13} aria-hidden="true" />
-      Showing local reference content — connecting to backend API...
+      <Database size={13} aria-hidden="true" />
+      <span>{displayMessage}</span>
     </div>
   )
 }

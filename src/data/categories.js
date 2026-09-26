@@ -1,4 +1,4 @@
-// Placeholder category list used across the Home page and Law Explorer.
+// Statutory law categories classified across Indian legal domains for Nyaya.
 
 export const categories = [
   {

@@ -1,20 +1,10 @@
 import React, { useState } from 'react'
-import { HelpCircle, CheckCircle, XCircle, RotateCcw, Award } from 'lucide-react'
-import { useApi } from '../hooks/useApi.js'
-import { fetchRightsQuiz } from '../api/client.js'
-import { practiceQuestions as fallbackQuestions } from '../data/rights.js'
+import { CheckCircle, XCircle, RotateCcw, Award } from 'lucide-react'
+import { practiceQuestions } from '../data/rights.js'
 
 export default function FundamentalRightsQuiz() {
   const [selectedAnswers, setSelectedAnswers] = useState({})
   const [revealed, setRevealed] = useState({})
-
-  const { data: questionsData } = useApi(
-    fetchRightsQuiz,
-    [],
-    fallbackQuestions
-  )
-
-  const practiceQuestions = questionsData || fallbackQuestions
 
   const handleSelect = (questionId, optionIndex) => {
     if (revealed[questionId]) return
@@ -45,18 +35,11 @@ export default function FundamentalRightsQuiz() {
   }, 0)
 
   return (
-    <section id="practice-questions" className="my-12 rounded-2xl border border-navy/15 bg-paper p-6 sm:p-9 shadow-xs">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border/80 pb-5">
+    <section id="practice-questions" className="my-12 border-b border-border pb-10">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-600/10 text-emerald-700">
-              <HelpCircle size={16} />
-            </span>
-            <span className="font-mono text-xs font-bold uppercase tracking-wider text-emerald-700">
-              Exam &amp; Awareness Preparation
-            </span>
-          </div>
-          <h2 className="mt-2 text-xl font-bold tracking-tight text-navy sm:text-2xl">
+          <span className="text-xs font-mono font-medium uppercase tracking-wider text-brass-dark mb-2 block">Knowledge Check &amp; Practical Application</span>
+          <h2 className="font-display text-xl font-semibold text-navy sm:text-2xl">
             Practice Multiple-Choice Questions
           </h2>
           <p className="mt-1 text-xs sm:text-sm text-ink/70">
@@ -66,7 +49,7 @@ export default function FundamentalRightsQuiz() {
 
         {totalAnswered > 0 && (
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 rounded-lg border border-navy/15 bg-navy/5 px-3 py-1.5 text-xs font-semibold text-navy">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-navy">
               <Award size={15} className="text-brass-dark" />
               Score: {correctCount} / {practiceQuestions.length}
             </div>
@@ -81,16 +64,13 @@ export default function FundamentalRightsQuiz() {
         )}
       </div>
 
-      <div className="mt-6 space-y-6">
+      <div className="mt-8 divide-y divide-border border-t border-border">
         {practiceQuestions.map((q, idx) => {
           const isSubmitted = !!revealed[q.id]
           const selected = selectedAnswers[q.id]
 
           return (
-            <div
-              key={q.id}
-              className="rounded-xl border border-border/80 bg-page/40 p-5 transition-all"
-            >
+            <div key={q.id} className="py-6 first:pt-6">
               <div className="flex items-start gap-2.5">
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-navy text-[11px] font-bold text-paper">
                   {idx + 1}
@@ -101,7 +81,11 @@ export default function FundamentalRightsQuiz() {
               </div>
 
               {/* Options */}
-              <div className="mt-4 grid gap-2 sm:grid-cols-2">
+              <div
+                role="group"
+                aria-label={`Options for question ${idx + 1}`}
+                className="mt-4 grid gap-2 sm:grid-cols-2"
+              >
                 {q.options.map((opt, oIdx) => {
                   const isSelected = selected === oIdx
                   const isCorrect = q.correctAnswer === oIdx
@@ -115,7 +99,7 @@ export default function FundamentalRightsQuiz() {
                         'border-emerald-600 bg-emerald-50 text-emerald-900 font-semibold'
                     } else if (isSelected && !isCorrect) {
                       buttonStyle =
-                        'border-rose-500 bg-rose-50 text-rose-900 line-through'
+                        'border-oxblood bg-oxblood-faint text-oxblood-dark line-through'
                     } else {
                       buttonStyle = 'border-border/50 bg-paper/50 text-ink/50'
                     }
@@ -129,15 +113,16 @@ export default function FundamentalRightsQuiz() {
                       key={oIdx}
                       type="button"
                       disabled={isSubmitted}
+                      aria-pressed={isSelected}
                       onClick={() => handleSelect(q.id, oIdx)}
-                      className={`flex items-center justify-between rounded-lg border p-3 text-left text-xs transition-all ${buttonStyle}`}
+                      className={`flex items-center justify-between min-h-[44px] rounded-lg border p-3 text-left text-xs transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brass ${buttonStyle}`}
                     >
                       <span>{opt}</span>
                       {isSubmitted && isCorrect && (
-                        <CheckCircle size={15} className="shrink-0 text-emerald-600" />
+                        <CheckCircle size={15} className="shrink-0 text-emerald-600" aria-hidden="true" />
                       )}
                       {isSubmitted && isSelected && !isCorrect && (
-                        <XCircle size={15} className="shrink-0 text-rose-500" />
+                        <XCircle size={15} className="shrink-0 text-oxblood" aria-hidden="true" />
                       )}
                     </button>
                   )
@@ -150,7 +135,7 @@ export default function FundamentalRightsQuiz() {
                   <button
                     type="button"
                     onClick={() => handleCheck(q.id)}
-                    className="rounded-md bg-navy px-3.5 py-1.5 text-xs font-semibold text-paper shadow-2xs hover:bg-navy/90 transition-colors"
+                    className="min-h-[40px] rounded-md bg-navy px-4 py-2 text-xs font-semibold text-paper shadow-2xs hover:bg-navy/90 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brass"
                   >
                     Check Answer
                   </button>
@@ -159,7 +144,7 @@ export default function FundamentalRightsQuiz() {
 
               {/* Explanation */}
               {isSubmitted && (
-                <div className="mt-3 rounded-lg border border-border/80 bg-paper p-3 text-xs leading-relaxed text-ink/75">
+                <div role="region" aria-live="polite" className="mt-3 border-l-2 border-border pl-3 text-xs leading-relaxed text-ink/75">
                   <span className="font-semibold text-navy">Explanation: </span>
                   {q.explanation}
                 </div>

@@ -2,9 +2,7 @@ import React, { useState, useMemo } from 'react'
 import {
   BookOpen,
   Scale,
-  FileText,
   ShieldCheck,
-  AlertTriangle,
   Search,
   Landmark,
   HelpCircle,
@@ -12,40 +10,25 @@ import {
   XCircle,
   RotateCcw,
   Award,
-  ArrowRight,
-  Sparkles,
   Layers,
   Gavel,
   ChevronDown,
   ChevronUp,
   ShieldAlert,
-  Users,
-  Car,
   Lock,
-  ExternalLink,
   Info,
 } from 'lucide-react'
-import { useApi } from '../hooks/useApi.js'
-import { fetchBnsData } from '../api/client.js'
 import {
-  bnsGazetteInfo as fallbackInfo,
-  bnsKeyReforms as fallbackReforms,
-  bnsChapters as fallbackChapters,
-  bnsCoreSections as fallbackSections,
-  ipcToBnsMatrix as fallbackMatrix,
-  bnsQuiz as fallbackQuiz,
+  bnsGazetteInfo,
+  bnsKeyReforms,
+  bnsChapters,
+  bnsCoreSections,
+  ipcToBnsMatrix,
+  bnsQuiz,
 } from '../data/bnsDetailedNotes.js'
+import SourceReference from './SourceReference.jsx'
 
-export default function BNSGazetteViewer() {
-  const { data: bnsData } = useApi(fetchBnsData, [], null)
-
-  const bnsGazetteInfo = bnsData?.gazetteInfo || fallbackInfo
-  const bnsKeyReforms = bnsData?.reforms || fallbackReforms
-  const bnsChapters = bnsData?.chapters || fallbackChapters
-  const bnsCoreSections = bnsData?.sections || fallbackSections
-  const ipcToBnsMatrix = bnsData?.matrix || fallbackMatrix
-  const bnsQuiz = bnsData?.quiz || fallbackQuiz
-
+export default function BNSGazetteViewer({ sourceLabel, sourceUrl, verifiedNote } = {}) {
   const [activeTab, setActiveTab] = useState('sections') // 'reforms', 'matrix', 'chapters', 'sections', 'defences', 'quiz'
   const [sectionSearch, setSectionSearch] = useState('')
   const [selectedChapterFilter, setSelectedChapterFilter] = useState('all')
@@ -168,7 +151,7 @@ export default function BNSGazetteViewer() {
   return (
     <div className="space-y-10">
       {/* Official Gazette Header Card */}
-      <div className="relative overflow-hidden rounded-2xl border border-navy/20 bg-gradient-to-br from-paper via-paper to-page p-6 sm:p-9 shadow-sm">
+      <div className="relative overflow-hidden rounded-md border border-navy/20 bg-paper p-6 sm:p-9 shadow-sm">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-3xl">
             <div className="flex flex-wrap items-center gap-2.5">
@@ -179,7 +162,7 @@ export default function BNSGazetteViewer() {
               <span className="rounded-md border border-navy/20 bg-navy/5 px-2.5 py-1 font-mono text-xs font-semibold text-navy">
                 {bnsGazetteInfo.actNo}
               </span>
-              <span className="rounded-md border border-amber-600/20 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-900">
+              <span className="rounded-md border border-brass/25 bg-brass/10 px-2.5 py-1 text-xs font-medium text-brass-dark">
                 Assented: {bnsGazetteInfo.enactmentDate}
               </span>
             </div>
@@ -197,36 +180,42 @@ export default function BNSGazetteViewer() {
               Enacted by the Parliament in the 74th Year of the Republic of India, completely repealing and replacing the colonial Indian Penal Code, 1860 (Act No. 45 of 1860) under Section 358.
             </p>
 
-            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 text-xs">
-              <div className="rounded-lg border border-border/80 bg-paper p-3 text-center">
-                <span className="block font-mono text-lg font-bold text-navy">20</span>
+            {(sourceLabel || sourceUrl) && (
+              <div className="mt-4 border-t border-border pt-3">
+                <SourceReference sourceLabel={sourceLabel} sourceUrl={sourceUrl} verifiedNote={verifiedNote} compact />
+              </div>
+            )}
+
+            <div className="mt-5 grid grid-cols-2 gap-y-3 border-t border-border pt-4 sm:grid-cols-4 sm:gap-0 sm:divide-x sm:divide-border text-xs">
+              <div className="sm:pr-4">
+                <span className="block font-mono text-lg font-semibold text-navy">20</span>
                 <span className="text-ink/60 font-medium">Chapters</span>
               </div>
-              <div className="rounded-lg border border-border/80 bg-paper p-3 text-center">
-                <span className="block font-mono text-lg font-bold text-navy">358</span>
+              <div className="sm:px-4">
+                <span className="block font-mono text-lg font-semibold text-navy">358</span>
                 <span className="text-ink/60 font-medium">Sections</span>
               </div>
-              <div className="rounded-lg border border-border/80 bg-paper p-3 text-center">
-                <span className="block font-mono text-lg font-bold text-emerald-700">1860 → 2023</span>
+              <div className="sm:px-4">
+                <span className="block font-mono text-lg font-semibold text-emerald-700">1860 → 2023</span>
                 <span className="text-ink/60 font-medium">IPC Modernised</span>
               </div>
-              <div className="rounded-lg border border-border/80 bg-paper p-3 text-center">
-                <span className="block font-mono text-lg font-bold text-brass-dark">Sec 4(f)</span>
+              <div className="sm:pl-4">
+                <span className="block font-mono text-lg font-semibold text-brass-dark">Sec 4(f)</span>
                 <span className="text-ink/60 font-medium">Community Service</span>
               </div>
             </div>
           </div>
 
-          {/* Quick Info Box */}
-          <div className="w-full lg:w-80 shrink-0 rounded-xl border border-navy/15 bg-navy/5 p-5">
-            <h3 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-navy">
+          {/* Quick Info */}
+          <div className="w-full lg:w-80 shrink-0 lg:border-l lg:border-border lg:pl-6">
+            <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-navy">
               <ShieldCheck size={16} className="text-navy" />
               Jurisdiction &amp; Reach
             </h3>
             <p className="mt-2.5 text-xs leading-relaxed text-ink/75">
               {bnsGazetteInfo.applicability}
             </p>
-            <div className="mt-3.5 border-t border-navy/10 pt-3 text-[11px] text-ink/60 space-y-1">
+            <div className="mt-3.5 border-t border-border pt-3 text-[11px] text-ink/60 space-y-1">
               <p>• Applies to citizens abroad</p>
               <p>• Ships &amp; aircraft registered in India</p>
               <p>• Cyber attacks targeting Indian servers</p>
@@ -235,83 +224,95 @@ export default function BNSGazetteViewer() {
         </div>
       </div>
 
-      {/* Navigation Tabs Bar */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-border/80 pb-4 text-xs">
+      {/* Navigation Tabs */}
+      <div role="tablist" aria-label="BNS Gazette Navigation" className="flex flex-wrap items-center gap-2 border-b border-border/80 pb-4 text-xs">
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === 'sections'}
           onClick={() => setActiveTab('sections')}
-          className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 font-semibold transition-all ${
+          className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 min-h-[42px] font-semibold transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brass ${
             activeTab === 'sections'
               ? 'bg-navy text-white shadow-2xs'
               : 'border border-border/80 bg-paper text-ink/75 hover:bg-page hover:text-navy'
           }`}
         >
-          <BookOpen size={14} />
+          <BookOpen size={14} aria-hidden="true" />
           Codified Sections &amp; Notes ({filteredSections.length})
         </button>
 
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === 'reforms'}
           onClick={() => setActiveTab('reforms')}
-          className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 font-semibold transition-all ${
+          className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 min-h-[42px] font-semibold transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brass ${
             activeTab === 'reforms'
               ? 'bg-navy text-white shadow-2xs'
               : 'border border-border/80 bg-paper text-ink/75 hover:bg-page hover:text-navy'
           }`}
         >
-          <Sparkles size={14} />
+          <Award size={14} aria-hidden="true" />
           Key Reforms &amp; Innovations
         </button>
 
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === 'matrix'}
           onClick={() => setActiveTab('matrix')}
-          className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 font-semibold transition-all ${
+          className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 min-h-[42px] font-semibold transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brass ${
             activeTab === 'matrix'
               ? 'bg-navy text-white shadow-2xs'
               : 'border border-border/80 bg-paper text-ink/75 hover:bg-page hover:text-navy'
           }`}
         >
-          <Scale size={14} />
+          <Scale size={14} aria-hidden="true" />
           IPC vs. BNS Conversion Matrix
         </button>
 
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === 'chapters'}
           onClick={() => setActiveTab('chapters')}
-          className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 font-semibold transition-all ${
+          className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 min-h-[42px] font-semibold transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brass ${
             activeTab === 'chapters'
               ? 'bg-navy text-white shadow-2xs'
               : 'border border-border/80 bg-paper text-ink/75 hover:bg-page hover:text-navy'
           }`}
         >
-          <Layers size={14} />
+          <Layers size={14} aria-hidden="true" />
           All 20 Chapters Overview
         </button>
 
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === 'defences'}
           onClick={() => setActiveTab('defences')}
-          className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 font-semibold transition-all ${
+          className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 min-h-[42px] font-semibold transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brass ${
             activeTab === 'defences'
               ? 'bg-navy text-white shadow-2xs'
               : 'border border-border/80 bg-paper text-ink/75 hover:bg-page hover:text-navy'
           }`}
         >
-          <ShieldCheck size={14} />
+          <ShieldCheck size={14} aria-hidden="true" />
           Private Defence &amp; Exceptions
         </button>
 
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === 'quiz'}
           onClick={() => setActiveTab('quiz')}
-          className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 font-semibold transition-all ${
+          className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 min-h-[42px] font-semibold transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brass ${
             activeTab === 'quiz'
               ? 'bg-emerald-700 text-white shadow-2xs'
               : 'border border-emerald-600/30 bg-emerald-50 text-emerald-900 hover:bg-emerald-100'
           }`}
         >
-          <HelpCircle size={14} />
+          <HelpCircle size={14} aria-hidden="true" />
           BNS Knowledge Quiz
         </button>
       </div>
@@ -319,29 +320,37 @@ export default function BNSGazetteViewer() {
       {/* TAB 1: CODIFIED SECTIONS BROWSER WITH OFFICIAL ILLUSTRATIONS */}
       {activeTab === 'sections' && (
         <section className="space-y-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-border/80 bg-paper p-4 shadow-2xs">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-md border border-border/80 bg-paper p-4 shadow-2xs">
             {/* Search Input */}
             <div className="relative flex-1">
+              <label htmlFor="bns-section-search" className="sr-only">
+                Search section number (e.g. 103, 304), title, or crime
+              </label>
               <Search
                 size={15}
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/40"
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/60"
+                aria-hidden="true"
               />
               <input
+                id="bns-section-search"
                 type="text"
                 value={sectionSearch}
                 onChange={(e) => setSectionSearch(e.target.value)}
                 placeholder="Search section number (e.g. 103, 304), title, or crime..."
-                className="w-full rounded-lg border border-border bg-page/50 py-2 pl-9 pr-3 text-xs text-ink placeholder:text-ink/40 focus:border-navy focus:bg-paper focus:outline-none focus:ring-1 focus:ring-navy"
+                className="w-full rounded-lg border border-border bg-page/50 py-2 pl-9 pr-3 text-xs text-ink placeholder:text-ink/60 focus:border-navy focus:bg-paper focus:outline-none focus:ring-1 focus:ring-navy min-h-[40px]"
               />
             </div>
 
             {/* Chapter Category Filter */}
             <div className="flex items-center gap-2 shrink-0">
-              <span className="text-xs font-medium text-ink/60">Chapter:</span>
+              <label htmlFor="bns-chapter-select" className="text-xs font-medium text-ink/75">
+                Chapter:
+              </label>
               <select
+                id="bns-chapter-select"
                 value={selectedChapterFilter}
                 onChange={(e) => setSelectedChapterFilter(e.target.value)}
-                className="rounded-lg border border-border bg-page/50 px-3 py-1.5 text-xs font-medium text-navy focus:border-navy focus:bg-paper focus:outline-none focus:ring-1 focus:ring-navy"
+                className="rounded-lg border border-border bg-page/50 px-3 py-1.5 text-xs font-medium text-navy focus:border-navy focus:bg-paper focus:outline-none focus:ring-1 focus:ring-navy min-h-[40px]"
               >
                 <option value="all">All Chapters ({bnsCoreSections.length} sections)</option>
                 {availableChapters.map(({ chapter, count }) => (
@@ -363,7 +372,7 @@ export default function BNSGazetteViewer() {
                   <button
                     type="button"
                     onClick={() => setSectionSearch('')}
-                    className="hover:text-rose-600 ml-1 font-bold"
+                    className="hover:text-oxblood ml-1 font-bold"
                   >
                     ×
                   </button>
@@ -375,7 +384,7 @@ export default function BNSGazetteViewer() {
                   <button
                     type="button"
                     onClick={() => setSelectedChapterFilter('all')}
-                    className="hover:text-rose-600 ml-1 font-bold"
+                    className="hover:text-oxblood ml-1 font-bold"
                   >
                     ×
                   </button>
@@ -394,31 +403,29 @@ export default function BNSGazetteViewer() {
             </div>
           )}
 
-          {/* Section Cards */}
-          <div className="space-y-4">
+          {/* Codified Sections — continuous document-style list */}
+          <div className="divide-y divide-border border-y border-border">
             {filteredSections.map((sec) => {
               const isExpanded = expandedSection === sec.section
+              const secNum = sec.section.replace(/[^0-9]/g, '')
 
               return (
-                <div
-                  key={sec.section}
-                  className="rounded-xl border border-navy/15 bg-paper p-5 shadow-xs transition-all hover:border-navy/30"
-                >
+                <div key={sec.section} id={`sec-${secNum}`} className="py-5 scroll-mt-24 transition-colors">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="inline-flex items-center rounded-md bg-navy px-2.5 py-0.5 font-mono text-xs font-bold text-paper">
+                        <span className="font-mono text-xs font-semibold text-navy">
                           {sec.section}
                         </span>
                         <span className="font-mono text-xs font-medium text-ink/60">
                           {sec.chapter}
                         </span>
-                        <span className="rounded-md border border-brass-dark/30 bg-brass-dark/10 px-2 py-0.5 font-mono text-[11px] font-semibold text-brass-dark">
+                        <span className="font-mono text-[11px] font-semibold text-brass-dark">
                           Formerly: {sec.ipcEquivalent}
                         </span>
                       </div>
 
-                      <h3 className="mt-2 text-base sm:text-lg font-bold text-navy">
+                      <h3 className="mt-2 text-base sm:text-lg font-semibold text-navy">
                         {sec.title}
                       </h3>
 
@@ -430,7 +437,7 @@ export default function BNSGazetteViewer() {
                     <button
                       type="button"
                       onClick={() => setExpandedSection(isExpanded ? null : sec.section)}
-                      className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-border/80 bg-page/60 px-3 py-1.5 text-xs font-medium text-navy hover:bg-page transition-colors"
+                      className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-navy hover:text-brass-dark transition-colors"
                     >
                       {isExpanded ? (
                         <>
@@ -444,21 +451,21 @@ export default function BNSGazetteViewer() {
                     </button>
                   </div>
 
-                  {/* Highlighted Punishment Banner */}
-                  <div className="mt-3.5 flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 text-xs">
-                    <Gavel size={15} className="mt-0.5 shrink-0 text-amber-700" />
+                  {/* Highlighted Punishment — inline, not a boxed callout */}
+                  <div className="mt-3 flex items-start gap-2 border-l-2 border-brass/50 pl-3 text-xs">
+                    <Gavel size={14} className="mt-0.5 shrink-0 text-brass-dark" />
                     <div>
-                      <strong className="font-semibold text-amber-950">Prescribed Punishment: </strong>
-                      <span className="text-amber-900">{sec.punishment}</span>
+                      <strong className="font-semibold text-brass-dark">Prescribed Punishment: </strong>
+                      <span className="text-ink/80">{sec.punishment}</span>
                     </div>
                   </div>
 
                   {/* Expanded Content: Official Illustration & Key Tags */}
                   {isExpanded && (
-                    <div className="mt-4 space-y-3 border-t border-border/70 pt-4 text-xs">
+                    <div className="mt-4 space-y-3 border-t border-border pt-4 text-xs">
                       {sec.keyIllustration && (
-                        <div className="rounded-xl border border-navy/10 bg-navy/5 p-4">
-                          <h4 className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-navy">
+                        <div className="border-l-2 border-navy/20 pl-3">
+                          <h4 className="flex items-center gap-1.5 font-semibold uppercase tracking-wide text-navy">
                             <Info size={14} className="text-navy" />
                             Official Gazette Illustration / Practical Example:
                           </h4>
@@ -473,7 +480,7 @@ export default function BNSGazetteViewer() {
                         {sec.tags.map((t, idx) => (
                           <span
                             key={idx}
-                            className="rounded-md bg-page px-2 py-0.5 font-mono text-[11px] text-ink/70"
+                            className="font-mono text-[11px] text-ink/60"
                           >
                             #{t}
                           </span>
@@ -486,7 +493,7 @@ export default function BNSGazetteViewer() {
             })}
 
             {filteredSections.length === 0 && (
-              <div className="rounded-xl border border-dashed border-border/90 bg-page/40 p-8 text-center sm:p-10">
+              <div className="border-dashed border-border/90 bg-page/40 p-8 text-center sm:p-10">
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-navy/5 text-navy">
                   <Search size={22} />
                 </div>
@@ -547,10 +554,10 @@ export default function BNSGazetteViewer() {
       {/* TAB 2: KEY REFORMS & INNOVATIONS */}
       {activeTab === 'reforms' && (
         <section className="space-y-6">
-          <div className="rounded-xl border border-navy/15 bg-paper p-6 sm:p-7 shadow-xs">
+          <div className="rounded-md border border-navy/15 bg-paper p-6 sm:p-7 shadow-xs">
             <div className="flex items-center gap-2">
               <span className="flex h-7 w-7 items-center justify-center rounded-md bg-navy/10 text-navy">
-                <Sparkles size={16} />
+                <Award size={16} />
               </span>
               <span className="font-mono text-xs font-bold uppercase tracking-wider text-brass-dark">
                 Transformative Architecture
@@ -563,28 +570,23 @@ export default function BNSGazetteViewer() {
               The Bharatiya Nyaya Sanhita departs significantly from Lord Macaulay's 1860 code by decolonising criminal jurisprudence, prioritising crimes against women and children, introducing restorative punishments, and addressing 21st-century digital threats.
             </p>
 
-            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-6 grid gap-6 border-t border-border pt-6 sm:grid-cols-2 lg:grid-cols-3 lg:divide-x lg:divide-border">
               {bnsKeyReforms.map((reform, idx) => (
-                <div
-                  key={idx}
-                  className="flex flex-col justify-between rounded-xl border border-border/80 bg-page/30 p-5 hover:border-navy/30 transition-all"
-                >
-                  <div>
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="rounded-md bg-navy/10 px-2 py-0.5 font-mono text-[11px] font-bold text-navy">
-                        {reform.section}
-                      </span>
-                      <span className="rounded-md bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-800 uppercase tracking-wider">
-                        {reform.badge}
-                      </span>
-                    </div>
-                    <h4 className="mt-3 text-sm font-bold text-navy">
-                      {reform.title}
-                    </h4>
-                    <p className="mt-2 text-xs leading-relaxed text-ink/75">
-                      {reform.description}
-                    </p>
+                <div key={idx} className="lg:px-5 lg:first:pl-0 lg:last:pr-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-mono text-[11px] font-semibold text-navy">
+                      {reform.section}
+                    </span>
+                    <span className="text-[10px] font-semibold text-brass-dark uppercase tracking-wide">
+                      {reform.badge}
+                    </span>
                   </div>
+                  <h4 className="mt-3 text-sm font-semibold text-navy">
+                    {reform.title}
+                  </h4>
+                  <p className="mt-2 text-xs leading-relaxed text-ink/75">
+                    {reform.description}
+                  </p>
                 </div>
               ))}
             </div>
@@ -595,7 +597,7 @@ export default function BNSGazetteViewer() {
       {/* TAB 3: IPC VS BNS CONVERSION MATRIX */}
       {activeTab === 'matrix' && (
         <section className="space-y-6">
-          <div className="rounded-xl border border-navy/15 bg-paper p-6 sm:p-7 shadow-xs">
+          <div className="rounded-md border border-navy/15 bg-paper p-6 sm:p-7 shadow-xs">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border/80 pb-5">
               <div>
                 <div className="flex items-center gap-2">
@@ -629,12 +631,12 @@ export default function BNSGazetteViewer() {
               </div>
             </div>
 
-            <div className="mt-6 overflow-x-auto rounded-xl border border-border/80 bg-page/30">
+            <div className="mt-6 overflow-x-auto rounded-md border border-border/80 bg-page/30">
               <table className="w-full border-collapse text-left text-xs">
                 <thead>
                   <tr className="border-b border-border/80 bg-page text-[11px] font-bold uppercase tracking-wider text-ink/60">
                     <th className="py-3.5 px-4 font-semibold text-navy">Offence / Subject</th>
-                    <th className="py-3.5 px-4 font-semibold text-rose-800">Old IPC (1860)</th>
+                    <th className="py-3.5 px-4 font-semibold text-oxblood-dark">Old IPC (1860)</th>
                     <th className="py-3.5 px-4 font-semibold text-navy">New BNS (2023)</th>
                     <th className="py-3.5 px-4 font-semibold text-navy">Prescribed Punishment</th>
                     <th className="py-3.5 px-4 font-semibold text-navy">Key Changes / Notes</th>
@@ -647,7 +649,7 @@ export default function BNSGazetteViewer() {
                         {row.offence}
                       </td>
                       <td className="py-3.5 px-4">
-                        <span className="inline-flex items-center rounded-md border border-rose-500/20 bg-rose-50 px-2.5 py-1 font-mono text-[11px] font-semibold text-rose-800">
+                        <span className="inline-flex items-center rounded-md border border-oxblood/20 bg-oxblood-faint px-2.5 py-1 font-mono text-[11px] font-semibold text-oxblood-dark">
                           {row.oldIpc}
                         </span>
                       </td>
@@ -674,7 +676,7 @@ export default function BNSGazetteViewer() {
       {/* TAB 4: ALL 20 CHAPTERS ARCHITECTURAL OVERVIEW */}
       {activeTab === 'chapters' && (
         <section className="space-y-6">
-          <div className="rounded-xl border border-navy/15 bg-paper p-6 sm:p-7 shadow-xs">
+          <div className="rounded-md border border-navy/15 bg-paper p-6 sm:p-7 shadow-xs">
             <div className="flex items-center gap-2">
               <span className="flex h-7 w-7 items-center justify-center rounded-md bg-navy/10 text-navy">
                 <Layers size={16} />
@@ -690,22 +692,19 @@ export default function BNSGazetteViewer() {
               The 358 sections of BNS are grouped logically into 20 comprehensive chapters.
             </p>
 
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <div className="mt-6 grid gap-6 border-t border-border pt-6 sm:grid-cols-2 sm:divide-x sm:divide-border">
               {bnsChapters.map((ch, idx) => (
-                <div
-                  key={idx}
-                  className="rounded-xl border border-border/80 bg-page/40 p-5 hover:border-navy/30 transition-all"
-                >
-                  <div className="flex items-center justify-between border-b border-border/60 pb-3">
-                    <span className="font-mono text-xs font-bold text-navy">
+                <div key={idx} className="border-b border-border pb-5 sm:border-b-0 sm:px-5 sm:first:pl-0 last:border-b-0">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-xs font-semibold text-navy">
                       {ch.number}
                     </span>
-                    <span className="rounded-md bg-navy/5 px-2 py-0.5 font-mono text-[11px] font-semibold text-brass-dark">
+                    <span className="font-mono text-[11px] font-semibold text-brass-dark">
                       {ch.sections}
                     </span>
                   </div>
 
-                  <h4 className="mt-3 text-sm font-bold text-navy">
+                  <h4 className="mt-2 text-sm font-semibold text-navy">
                     {ch.name}
                   </h4>
 
@@ -713,7 +712,7 @@ export default function BNSGazetteViewer() {
                     {ch.summary}
                   </p>
 
-                  <ul className="mt-3 space-y-1 text-[11px] text-ink/65 border-t border-border/50 pt-2.5">
+                  <ul className="mt-3 space-y-1 text-[11px] text-ink/65">
                     {ch.keyPoints.map((pt, pIdx) => (
                       <li key={pIdx} className="flex items-start gap-1.5">
                         <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-navy/60" />
@@ -731,7 +730,7 @@ export default function BNSGazetteViewer() {
       {/* TAB 5: GENERAL EXCEPTIONS & PRIVATE DEFENCE (SECTIONS 14 - 44) */}
       {activeTab === 'defences' && (
         <section className="space-y-6">
-          <div className="rounded-xl border border-navy/15 bg-paper p-6 sm:p-7 shadow-xs">
+          <div className="rounded-md border border-navy/15 bg-paper p-6 sm:p-7 shadow-xs">
             <div className="flex items-center gap-2">
               <span className="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-600/10 text-emerald-700">
                 <ShieldCheck size={16} />
@@ -747,12 +746,12 @@ export default function BNSGazetteViewer() {
               Chapter III (Sections 14 to 44) provides complete legal defences. Under Section 3(1), every single offence in BNS is statutorily read subject to these general exceptions.
             </p>
 
-            <div className="mt-6 grid gap-6 md:grid-cols-2">
+            <div className="mt-6 grid gap-8 border-t border-border pt-6 md:grid-cols-2 md:gap-0 md:divide-x md:divide-border">
               {/* Private Defence of Body - When Death May Be Caused */}
-              <div className="rounded-xl border border-navy/20 bg-page/40 p-5">
-                <div className="flex items-center gap-2 text-navy border-b border-border/80 pb-3">
+              <div className="md:pr-6">
+                <div className="flex items-center gap-2 text-navy">
                   <ShieldAlert size={18} className="text-navy" />
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-navy">
+                  <h4 className="text-xs font-semibold uppercase tracking-wide text-navy">
                     Section 38: Defence of Body (Causing Death)
                   </h4>
                 </div>
@@ -766,17 +765,17 @@ export default function BNSGazetteViewer() {
                   <li>Assault with intention of gratifying unnatural lust</li>
                   <li>Assault with intention of kidnapping or abducting</li>
                   <li>Assault with intention of wrongfully confining a person without recourse to public authorities</li>
-                  <li className="text-navy font-bold">
+                  <li className="text-navy font-semibold">
                     Throwing or administering acid (or attempts) reasonably causing apprehension of grievous hurt (New BNS Specifics)
                   </li>
                 </ol>
               </div>
 
               {/* Private Defence of Property - When Death May Be Caused */}
-              <div className="rounded-xl border border-brass-dark/20 bg-page/40 p-5">
-                <div className="flex items-center gap-2 text-brass-dark border-b border-border/80 pb-3">
+              <div className="md:pl-6">
+                <div className="flex items-center gap-2 text-brass-dark">
                   <Lock size={18} className="text-brass-dark" />
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-navy">
+                  <h4 className="text-xs font-semibold uppercase tracking-wide text-navy">
                     Section 41: Defence of Property (Causing Death)
                   </h4>
                 </div>
@@ -790,46 +789,46 @@ export default function BNSGazetteViewer() {
                   <li>Theft, mischief, or house-trespass under circumstances causing apprehension of death or grievous hurt</li>
                 </ol>
 
-                <div className="mt-4 rounded-lg bg-paper p-3 text-[11px] text-ink/70 border border-border/70">
+                <div className="mt-4 border-l-2 border-border pl-3 text-[11px] text-ink/70">
                   <strong className="text-navy">Proportionality Rule (Section 37):</strong> The right in no case extends to inflicting more harm than is necessary to inflict for the purpose of defence.
                 </div>
               </div>
             </div>
 
-            {/* General Exceptions Grid */}
-            <div className="mt-6 border-t border-border/80 pt-6">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-navy mb-4">
+            {/* General Exceptions List */}
+            <div className="mt-6 border-t border-border pt-6">
+              <h4 className="text-xs font-semibold uppercase tracking-wide text-navy mb-4">
                 Other Primary Exceptions in Chapter III
               </h4>
-              <div className="grid gap-3 sm:grid-cols-3 text-xs">
-                <div className="rounded-lg border border-border/80 bg-paper p-3.5">
-                  <span className="font-mono text-[11px] font-bold text-navy">Section 20</span>
-                  <h5 className="mt-1 font-bold text-navy">Child Under 7 (Doli Incapax)</h5>
+              <div className="grid gap-5 sm:grid-cols-3 text-xs">
+                <div>
+                  <span className="font-mono text-[11px] font-semibold text-navy">Section 20</span>
+                  <h5 className="mt-1 font-semibold text-navy">Child Under 7 (Doli Incapax)</h5>
                   <p className="mt-1 text-[11px] text-ink/70">Absolute immunity: nothing is an offence done by a child under seven.</p>
                 </div>
-                <div className="rounded-lg border border-border/80 bg-paper p-3.5">
-                  <span className="font-mono text-[11px] font-bold text-navy">Section 22</span>
-                  <h5 className="mt-1 font-bold text-navy">Unsoundness of Mind</h5>
+                <div>
+                  <span className="font-mono text-[11px] font-semibold text-navy">Section 22</span>
+                  <h5 className="mt-1 font-semibold text-navy">Unsoundness of Mind</h5>
                   <p className="mt-1 text-[11px] text-ink/70">Incapability of knowing the nature of the act or that it is contrary to law.</p>
                 </div>
-                <div className="rounded-lg border border-border/80 bg-paper p-3.5">
-                  <span className="font-mono text-[11px] font-bold text-navy">Section 23</span>
-                  <h5 className="mt-1 font-bold text-navy">Involuntary Intoxication</h5>
+                <div>
+                  <span className="font-mono text-[11px] font-semibold text-navy">Section 23</span>
+                  <h5 className="mt-1 font-semibold text-navy">Involuntary Intoxication</h5>
                   <p className="mt-1 text-[11px] text-ink/70">Intoxication administered without knowledge or against one's will.</p>
                 </div>
-                <div className="rounded-lg border border-border/80 bg-paper p-3.5">
-                  <span className="font-mono text-[11px] font-bold text-navy">Section 19</span>
-                  <h5 className="mt-1 font-bold text-navy">Doctrine of Necessity</h5>
+                <div>
+                  <span className="font-mono text-[11px] font-semibold text-navy">Section 19</span>
+                  <h5 className="mt-1 font-semibold text-navy">Doctrine of Necessity</h5>
                   <p className="mt-1 text-[11px] text-ink/70">Act done in good faith without criminal intent to prevent greater harm.</p>
                 </div>
-                <div className="rounded-lg border border-border/80 bg-paper p-3.5">
-                  <span className="font-mono text-[11px] font-bold text-navy">Section 30</span>
-                  <h5 className="mt-1 font-bold text-navy">Emergency Surgery</h5>
+                <div>
+                  <span className="font-mono text-[11px] font-semibold text-navy">Section 30</span>
+                  <h5 className="mt-1 font-semibold text-navy">Emergency Surgery</h5>
                   <p className="mt-1 text-[11px] text-ink/70">Surgeon acting in good faith for patient benefit when consent is impossible.</p>
                 </div>
-                <div className="rounded-lg border border-border/80 bg-paper p-3.5">
-                  <span className="font-mono text-[11px] font-bold text-navy">Section 33</span>
-                  <h5 className="mt-1 font-bold text-navy">Act Causing Slight Harm</h5>
+                <div>
+                  <span className="font-mono text-[11px] font-semibold text-navy">Section 33</span>
+                  <h5 className="mt-1 font-semibold text-navy">Act Causing Slight Harm</h5>
                   <p className="mt-1 text-[11px] text-ink/70">Harm so slight that no person of ordinary sense and temper would complain.</p>
                 </div>
               </div>
@@ -841,7 +840,7 @@ export default function BNSGazetteViewer() {
       {/* TAB 6: BNS KNOWLEDGE ASSESSMENT QUIZ */}
       {activeTab === 'quiz' && (
         <section className="space-y-6">
-          <div className="rounded-xl border border-navy/15 bg-paper p-6 sm:p-7 shadow-xs">
+          <div className="rounded-md border border-navy/15 bg-paper p-6 sm:p-7 shadow-xs">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border/80 pb-5">
               <div>
                 <div className="flex items-center gap-2">
@@ -877,18 +876,15 @@ export default function BNSGazetteViewer() {
               )}
             </div>
 
-            <div className="mt-6 space-y-6">
+            <div className="mt-6 divide-y divide-border border-t border-border">
               {bnsQuiz.map((q, idx) => {
                 const isSubmitted = !!quizRevealed[q.id]
                 const selected = quizAnswers[q.id]
 
                 return (
-                  <div
-                    key={q.id}
-                    className="rounded-xl border border-border/80 bg-page/40 p-5 transition-all"
-                  >
+                  <div key={q.id} className="py-6 first:pt-6">
                     <div className="flex items-start gap-2.5">
-                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-navy text-[11px] font-bold text-paper">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-navy text-[11px] font-semibold text-paper">
                         {idx + 1}
                       </span>
                       <h4 className="text-xs sm:text-sm font-semibold text-navy leading-relaxed">
@@ -910,7 +906,7 @@ export default function BNSGazetteViewer() {
                               'border-emerald-600 bg-emerald-50 text-emerald-900 font-semibold'
                           } else if (isSelected && !isCorrect) {
                             buttonStyle =
-                              'border-rose-500 bg-rose-50 text-rose-900 line-through'
+                              'border-oxblood bg-oxblood-faint text-oxblood-dark line-through'
                           } else {
                             buttonStyle = 'border-border/50 bg-paper/50 text-ink/50'
                           }
@@ -925,14 +921,14 @@ export default function BNSGazetteViewer() {
                             type="button"
                             disabled={isSubmitted}
                             onClick={() => handleQuizSelect(q.id, oIdx)}
-                            className={`flex items-center justify-between rounded-lg border p-3 text-left text-xs transition-all ${buttonStyle}`}
+                            className={`flex items-center justify-between rounded-md border p-3 text-left text-xs transition-all ${buttonStyle}`}
                           >
                             <span>{opt}</span>
                             {isSubmitted && isCorrect && (
                               <CheckCircle size={15} className="shrink-0 text-emerald-600" />
                             )}
                             {isSubmitted && isSelected && !isCorrect && (
-                              <XCircle size={15} className="shrink-0 text-rose-500" />
+                              <XCircle size={15} className="shrink-0 text-oxblood" />
                             )}
                           </button>
                         )
@@ -944,7 +940,7 @@ export default function BNSGazetteViewer() {
                         <button
                           type="button"
                           onClick={() => handleQuizCheck(q.id)}
-                          className="rounded-md bg-navy px-3.5 py-1.5 text-xs font-semibold text-paper shadow-2xs hover:bg-navy/90 transition-colors"
+                          className="rounded-md bg-navy px-3.5 py-1.5 text-xs font-semibold text-paper hover:bg-navy/90 transition-colors"
                         >
                           Check Answer
                         </button>
@@ -952,10 +948,10 @@ export default function BNSGazetteViewer() {
                     )}
 
                     {isSubmitted && (
-                      <div className="mt-3 rounded-lg border border-border/80 bg-paper p-3 text-xs leading-relaxed text-ink/75">
+                      <p className="mt-3 border-l-2 border-border pl-3 text-xs leading-relaxed text-ink/75">
                         <span className="font-semibold text-navy">Gazette Explanation: </span>
                         {q.explanation}
-                      </div>
+                      </p>
                     )}
                   </div>
                 )

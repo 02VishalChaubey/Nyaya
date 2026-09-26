@@ -13,16 +13,12 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
   Radar,
-  Cell,
 } from 'recharts'
 import {
-  ShieldAlert,
   Scale,
   Gavel,
   AlertTriangle,
-  Info,
   CheckCircle2,
-  FileText,
 } from 'lucide-react'
 
 // Prepare comparative charting dataset from fundamental rights
@@ -137,16 +133,16 @@ function CustomComparativeTooltip({ active, payload, label }) {
         <p className="font-bold text-navy">{dataItem.fullName || label}</p>
         <div className="mt-2 space-y-1">
           <p className="text-ink/70">
-            <span className="font-semibold text-cyan-800">Operative Articles:</span> {dataItem.articleSpan}
+            <span className="font-semibold text-navy">Operative Articles:</span> {dataItem.articleSpan}
           </p>
           <p className="text-ink/70">
-            <span className="font-semibold text-amber-700">Restriction Scope (1–10):</span> {dataItem.restrictionLatitude}/10
+            <span className="font-semibold text-brass-dark">Restriction Scope (1–10):</span> {dataItem.restrictionLatitude}/10
           </p>
           <p className="text-ink/70">
             <span className="font-semibold text-navy">Judicial Scrutiny (1–10):</span> {dataItem.judicialScrutiny}/10
           </p>
           <p className="text-ink/70">
-            <span className="font-semibold text-rose-700">Violation Severity:</span> {dataItem.violationSeverity}/10
+            <span className="font-semibold text-oxblood-dark">Violation Severity:</span> {dataItem.violationSeverity}/10
           </p>
         </div>
         <div className="mt-2.5 border-t border-border/60 pt-2 text-[11px] text-ink/60">
@@ -162,7 +158,7 @@ export default function FundamentalRightsCharts({ activeRightId, onSelectRight }
   const [chartTab, setChartTab] = useState('comparison') // 'comparison' | 'radar' | 'writs'
 
   return (
-    <div className="rounded-2xl border border-navy/15 bg-linear-to-b from-paper via-navy/5 to-paper p-6 sm:p-8 shadow-xs">
+    <div className="rounded-md border border-navy/15 bg-paper p-6 sm:p-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
@@ -182,11 +178,11 @@ export default function FundamentalRightsCharts({ activeRightId, onSelectRight }
         </div>
 
         {/* View Switcher Tabs */}
-        <div className="inline-flex rounded-lg border border-border/80 bg-paper/80 p-1 text-xs">
+        <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0 scrollbar-none rounded-lg border border-border/80 bg-paper/80 p-1 text-xs max-w-full">
           <button
             type="button"
             onClick={() => setChartTab('comparison')}
-            className={`rounded-md px-3 py-1.5 font-medium transition-all ${
+            className={`rounded-md px-3 py-1.5 font-medium transition-all whitespace-nowrap min-h-[36px] ${
               chartTab === 'comparison'
                 ? 'bg-navy text-paper shadow-2xs font-semibold'
                 : 'text-ink/70 hover:text-navy'
@@ -197,7 +193,7 @@ export default function FundamentalRightsCharts({ activeRightId, onSelectRight }
           <button
             type="button"
             onClick={() => setChartTab('radar')}
-            className={`rounded-md px-3 py-1.5 font-medium transition-all ${
+            className={`rounded-md px-3 py-1.5 font-medium transition-all whitespace-nowrap min-h-[36px] ${
               chartTab === 'radar'
                 ? 'bg-navy text-paper shadow-2xs font-semibold'
                 : 'text-ink/70 hover:text-navy'
@@ -208,7 +204,7 @@ export default function FundamentalRightsCharts({ activeRightId, onSelectRight }
           <button
             type="button"
             onClick={() => setChartTab('writs')}
-            className={`rounded-md px-3 py-1.5 font-medium transition-all ${
+            className={`rounded-md px-3 py-1.5 font-medium transition-all whitespace-nowrap min-h-[36px] ${
               chartTab === 'writs'
                 ? 'bg-navy text-paper shadow-2xs font-semibold'
                 : 'text-ink/70 hover:text-navy'
@@ -220,21 +216,21 @@ export default function FundamentalRightsCharts({ activeRightId, onSelectRight }
       </div>
 
       {/* Chart Canvas Area */}
-      <div className="mt-6 rounded-xl border border-border/70 bg-paper p-4 sm:p-6 shadow-2xs">
+      <div className="mt-6 rounded-md border border-border/70 bg-paper p-3.5 sm:p-6 shadow-2xs">
         {chartTab === 'comparison' && (
           <div>
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 text-xs">
-              <div className="flex items-center gap-4">
-                <span className="inline-flex items-center gap-1.5 text-ink/70 font-medium">
-                  <span className="h-2.5 w-2.5 rounded-xs bg-[#d97706]" />
+            <div className="mb-4 flex flex-col gap-2 text-xs sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                <span className="inline-flex items-center gap-1.5 text-ink/70 font-medium text-[11px] sm:text-xs">
+                  <span className="h-2.5 w-2.5 rounded-xs bg-[#d97706] shrink-0" />
                   State Restriction Scope (1–10)
                 </span>
-                <span className="inline-flex items-center gap-1.5 text-ink/70 font-medium">
-                  <span className="h-2.5 w-2.5 rounded-xs bg-[#0f172a]" />
+                <span className="inline-flex items-center gap-1.5 text-ink/70 font-medium text-[11px] sm:text-xs">
+                  <span className="h-2.5 w-2.5 rounded-xs bg-[#0f172a] shrink-0" />
                   Judicial Scrutiny Strictness (1–10)
                 </span>
-                <span className="inline-flex items-center gap-1.5 text-ink/70 font-medium">
-                  <span className="h-2.5 w-2.5 rounded-xs bg-[#0284c7]" />
+                <span className="inline-flex items-center gap-1.5 text-ink/70 font-medium text-[11px] sm:text-xs">
+                  <span className="h-2.5 w-2.5 rounded-xs bg-[#0284c7] shrink-0" />
                   Operative Articles Count
                 </span>
               </div>
@@ -243,18 +239,19 @@ export default function FundamentalRightsCharts({ activeRightId, onSelectRight }
               </span>
             </div>
 
-            <div className="h-72 w-full sm:h-80">
+            <div className="h-64 w-full sm:h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={COMPARATIVE_DATA}
-                  margin={{ top: 10, right: 10, left: -20, bottom: 20 }}
+                  margin={{ top: 10, right: 10, left: -25, bottom: 10 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                   <XAxis
                     dataKey="name"
-                    tick={{ fill: '#334155', fontSize: 11, fontWeight: 500 }}
+                    tick={{ fill: '#334155', fontSize: 10, fontWeight: 500 }}
                     axisLine={{ stroke: '#cbd5e1' }}
                     tickLine={false}
+                    interval={0}
                   />
                   <YAxis
                     domain={[0, 10]}
@@ -339,7 +336,7 @@ export default function FundamentalRightsCharts({ activeRightId, onSelectRight }
 
         {chartTab === 'writs' && (
           <div>
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-xs">
               <span className="font-semibold text-navy">
                 The 5 Prerogative Constitutional Writs (Articles 32 &amp; 226)
               </span>
@@ -348,75 +345,98 @@ export default function FundamentalRightsCharts({ activeRightId, onSelectRight }
               </span>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {/* Mobile Stacked Writs View (< sm) */}
+            <div className="space-y-3 sm:hidden">
               {WRIT_DISTRIBUTION_DATA.map((w) => (
                 <div
-                  key={w.writ}
-                  className="flex flex-col justify-between rounded-lg border border-border/80 bg-paper/60 p-4 transition-all hover:border-navy/40 hover:shadow-2xs"
+                  key={`mobile-${w.writ}`}
+                  className="rounded-sm border border-border bg-page/50 p-3.5 space-y-1.5"
                 >
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <span className="rounded-full bg-navy/10 px-2 py-0.5 font-mono text-[10px] font-bold text-navy">
-                        {w.writ}
-                      </span>
-                      <span className="text-[11px] font-semibold text-brass-dark">
-                        {w.speed}
-                      </span>
-                    </div>
-                    <h5 className="mt-2 text-sm font-bold text-navy">{w.fullName}</h5>
-                    <p className="mt-1 text-xs text-ink/70">
-                      <span className="font-semibold text-ink/90">Primary Target:</span> {w.typicalTarget}
-                    </p>
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-xs font-bold text-navy">
+                      {w.writ}
+                    </span>
+                    <span className="font-mono text-[10px] font-semibold text-brass-dark bg-brass/10 px-2 py-0.5 rounded">
+                      {w.speed}
+                    </span>
                   </div>
-                  <div className="mt-3 border-t border-border/60 pt-2 text-[11px] text-ink/60">
-                    Invoked in: Illegal custody, unperformed public duty, jurisdictional excess, or ultra vires acts.
+                  <p className="text-xs font-medium text-ink/90">
+                    {w.fullName}
+                  </p>
+                  <div className="text-[11px] text-ink/65 pt-1 border-t border-border/50">
+                    <span className="font-semibold text-navy/70">Target: </span>
+                    {w.typicalTarget}
                   </div>
                 </div>
               ))}
-
-              <div className="flex flex-col justify-center rounded-lg border border-dashed border-navy/30 bg-navy/5 p-4 text-center">
-                <span className="text-xs font-bold text-navy">Article 13 Doctrine</span>
-                <p className="mt-1 text-[11px] leading-relaxed text-ink/70">
-                  Any law, police rule, or executive notification inconsistent with Fundamental Rights is automatically <strong>void ab initio</strong>.
-                </p>
-              </div>
             </div>
+
+            {/* Desktop / Tablet Scrollable Table (>= sm) */}
+            <div className="hidden sm:block overflow-x-auto rounded-md border border-border">
+              <table className="w-full border-collapse text-left text-xs min-w-[500px]">
+                <thead>
+                  <tr className="border-b border-border bg-paper-dim text-[11px] font-semibold uppercase tracking-wide text-ink/60">
+                    <th className="py-3 px-4 font-semibold text-navy">Writ</th>
+                    <th className="py-3 px-4 font-semibold text-navy">Meaning</th>
+                    <th className="py-3 px-4 font-semibold text-navy">Primary Target</th>
+                    <th className="py-3 px-4 font-semibold text-navy">Speed</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border bg-paper">
+                  {WRIT_DISTRIBUTION_DATA.map((w) => (
+                    <tr key={w.writ} className="hover:bg-paper-dim/50 transition-colors">
+                      <td className="py-3 px-4 align-top font-mono text-[11px] font-semibold text-navy">
+                        {w.writ}
+                      </td>
+                      <td className="py-3 px-4 align-top">
+                        <span className="font-medium text-ink/90">{w.fullName}</span>
+                      </td>
+                      <td className="py-3 px-4 align-top text-ink/70">{w.typicalTarget}</td>
+                      <td className="py-3 px-4 align-top text-brass-dark font-semibold">{w.speed}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <p className="mt-4 text-xs leading-relaxed text-ink/60">
+              These writs are typically invoked in cases of illegal custody, an unperformed public duty, jurisdictional excess, or ultra vires acts.
+            </p>
+
+            <p className="mt-3 border-l-2 border-navy/30 pl-3 text-xs leading-relaxed text-ink/70">
+              <strong className="font-semibold text-navy">Article 13 doctrine: </strong>
+              Any law, police rule, or executive notification inconsistent with Fundamental Rights is automatically void ab initio.
+            </p>
           </div>
         )}
       </div>
 
       {/* Doctrinal Insight Bar */}
-      <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        <div className="flex items-start gap-3 rounded-xl border border-border/80 bg-paper p-3.5 shadow-2xs">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-700">
-            <CheckCircle2 size={16} />
-          </span>
+      <div className="mt-8 grid gap-6 border-t border-border pt-6 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-border">
+        <div className="flex items-start gap-3 sm:pr-5">
+          <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-navy" />
           <div>
-            <h6 className="text-xs font-bold text-navy">Non-Suspendable Articles</h6>
+            <h6 className="text-xs font-semibold text-navy">Non-Suspendable Articles</h6>
             <p className="mt-0.5 text-[11px] leading-relaxed text-ink/70">
               Articles 20 &amp; 21 can <em>never</em> be suspended, even during a Proclamation of National Emergency (44th Amendment).
             </p>
           </div>
         </div>
 
-        <div className="flex items-start gap-3 rounded-xl border border-border/80 bg-paper p-3.5 shadow-2xs">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-700">
-            <AlertTriangle size={16} />
-          </span>
+        <div className="flex items-start gap-3 sm:px-5">
+          <AlertTriangle size={16} className="mt-0.5 shrink-0 text-brass-dark" />
           <div>
-            <h6 className="text-xs font-bold text-navy">Reasonable Restrictions</h6>
+            <h6 className="text-xs font-semibold text-navy">Reasonable Restrictions</h6>
             <p className="mt-0.5 text-[11px] leading-relaxed text-ink/70">
               Rights are not absolute. State restrictions must satisfy the <strong>Proportionality Test</strong> and statutory grounds.
             </p>
           </div>
         </div>
 
-        <div className="flex items-start gap-3 rounded-xl border border-border/80 bg-paper p-3.5 shadow-2xs">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-navy/10 text-navy">
-            <Gavel size={16} />
-          </span>
+        <div className="flex items-start gap-3 sm:pl-5">
+          <Gavel size={16} className="mt-0.5 shrink-0 text-navy" />
           <div>
-            <h6 className="text-xs font-bold text-navy">Writ Jurisdiction</h6>
+            <h6 className="text-xs font-semibold text-navy">Writ Jurisdiction</h6>
             <p className="mt-0.5 text-[11px] leading-relaxed text-ink/70">
               Direct access to High Court (Art. 226) or Supreme Court (Art. 32) without undergoing protracted trial court delays.
             </p>
