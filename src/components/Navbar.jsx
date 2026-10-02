@@ -111,7 +111,7 @@ export default function Navbar() {
           className="flex items-center gap-2.5 font-display text-lg font-semibold text-navy group"
           onClick={() => setOpen(false)}
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-sm bg-navy text-brass-light border border-navy group-hover:bg-navy-light transition-colors">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xs bg-navy text-brass-light border border-navy group-hover:bg-navy-light transition-colors">
             <Scale size={18} aria-hidden="true" />
           </span>
           <div className="flex flex-col">
@@ -123,7 +123,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <nav aria-label="Primary" className="hidden items-center gap-4 xl:gap-6 lg:flex h-full">
+        <nav aria-label="Primary" className="hidden items-center gap-3.5 xl:gap-5 lg:flex h-full">
           {LINKS.map((link) => {
             const active = isLinkActive(link.to, location.pathname)
             return (
@@ -131,10 +131,10 @@ export default function Navbar() {
                 key={link.to}
                 to={link.to}
                 aria-current={active ? 'page' : undefined}
-                className={`text-sm transition-colors py-1 relative focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brass rounded-xs ${
+                className={`text-[13px] transition-colors py-1 relative focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-navy rounded-xs ${
                   active
-                    ? 'text-navy font-semibold after:absolute after:bottom-[-22px] after:left-0 after:right-0 after:h-[2px] after:bg-navy after:rounded-full'
-                    : 'text-ink/65 hover:text-navy font-medium'
+                    ? 'text-navy font-semibold after:absolute after:bottom-[-21px] after:left-0 after:right-0 after:h-[2px] after:bg-maroon'
+                    : 'text-ink/70 hover:text-navy font-medium'
                 }`}
               >
                 {t(link.navKey, link.label)}
@@ -148,15 +148,15 @@ export default function Navbar() {
           <Link
             to="/search"
             aria-label={t('nav.legalSearch', 'Search Legal Database')}
-            className={`flex items-center gap-2 h-9 px-3 rounded-sm border transition-colors text-xs font-medium ${
+            className={`flex items-center gap-2 h-9 px-3 rounded-xs border transition-colors text-xs font-medium ${
               location.pathname === '/search'
                 ? 'border-navy text-navy bg-navy/5 font-semibold'
-                : 'border-border text-navy/75 hover:border-brass hover:text-navy bg-page/60'
+                : 'border-border text-navy/75 hover:border-navy hover:text-navy bg-page/60'
             }`}
           >
             <Search size={14} />
             <span className="hidden xl:inline">{t('nav.legalSearch', 'Legal Search')}</span>
-            <kbd className="font-mono text-[10px] text-ink/45 bg-paper px-1 rounded border border-border/80 shadow-2xs">
+            <kbd className="font-mono text-[10px] text-ink/45 bg-paper px-1 rounded-xs border border-border/80 shadow-2xs">
               /
             </kbd>
           </Link>
@@ -166,15 +166,15 @@ export default function Navbar() {
             to="/saved"
             aria-label={t('nav.saved', 'Saved Legal Content')}
             title={t('nav.saved', 'Saved Legal Content')}
-            className={`flex items-center gap-1.5 h-9 px-3 rounded-sm border transition-colors text-xs font-medium ${
+            className={`flex items-center gap-1.5 h-9 px-3 rounded-xs border transition-colors text-xs font-medium ${
               location.pathname.startsWith('/saved') || location.pathname.startsWith('/bookmarks')
                 ? 'border-navy text-navy bg-navy/5 font-semibold'
-                : 'border-border text-navy/75 hover:border-brass hover:text-navy bg-page/60'
+                : 'border-border text-navy/75 hover:border-navy hover:text-navy bg-page/60'
             }`}
           >
             <Bookmark
               size={14}
-              className={count > 0 ? 'fill-brass-dark text-brass-dark' : 'text-current'}
+              className={count > 0 ? 'fill-maroon text-maroon' : 'text-current'}
               aria-hidden="true"
             />
             <span>{t('nav.saved', 'Saved')}</span>

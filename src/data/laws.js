@@ -1,5 +1,8 @@
 // Canonical Indian statutory reference dataset for Nyaya legal awareness platform.
 // Verified against official Union Gazettes and primary bare act texts.
+import { hmaSections } from './hmaDetailedNotes.js'
+import { dmmaSections } from './dmmaDetailedNotes.js'
+import { itGazetteRules } from './itRulesDetailedNotes.js'
 
 export const laws = [
   {
@@ -508,52 +511,154 @@ export const laws = [
   {
     id: 'it-act-2000',
     name: 'Information Technology Act, 2000',
+    shortName: 'IT Act',
+    aliases: [
+      'IT Act',
+      'IT Act 2000',
+      'Information Technology Act',
+      'Act 21 of 2000',
+      'Cyber Law',
+      'IT Rules 2000',
+      'Certifying Authorities Rules',
+    ],
     year: 2000,
     category: 'cyber',
+    jurisdiction: 'India',
+    type: 'Central Act',
     description:
-      'Covers electronic governance, cybercrime, electronic records, digital signatures, and data-related offences.',
+      'The foundational cyber law statute of India (Act No. 21 of 2000, commenced on 17 October 2000 via G.S.R. 788(E)). Lays down the legal framework for electronic governance, legal validity of digital signatures, licensing and security guidelines for Certifying Authorities (G.S.R. 789(E)), Cyber Appellate Tribunal procedures (G.S.R. 791(E)), and penalizes cybercrimes, hacking, identity theft, and digital fraud.',
     sections: [
+      ...itGazetteRules.map((r) => ({
+        id: r.id,
+        number: r.number,
+        title: r.title,
+        content: r.explainedSimply,
+        explainedSimply: r.explainedSimply,
+        statutoryText: r.statutoryText,
+        otherLawsNote: r.otherLawsNote,
+      })),
       {
-        id: 'sec-1',
+        id: 'sec-43',
         number: 'Section 43',
-        title: 'Penalty for damage to computer systems',
-        content: 'Prescribes civil compensation for unauthorised access, downloading data, introduction of viruses, and denial of access.',
+        title: 'Penalty and compensation for damage to computer system',
+        statutoryText: `If any person without permission of the owner or any other person who is incharge of a computer, computer system or computer network,—
+(a) accesses or secures access to such computer, computer system or computer network;
+(b) downloads, copies or extracts any data, computer data base or information from such computer;
+(c) introduces or causes to be introduced any computer contaminant or computer virus into any computer;
+(d) damages or causes to be damaged any computer, computer system or computer network, data or database;
+(e) disrupts or causes disruption of any computer system;
+(f) denies or causes the denial of access to any person authorised to access any computer;
+(g) provides any assistance to any person to facilitate access to a computer in contravention of the provisions of this Act;
+(h) charges the services availed of by a person to the account of another person by tampering with or manipulating any computer,
+he shall be liable to pay damage by way of compensation to the person so affected.`,
+        content: 'Prescribes civil compensation and liability for unauthorised access, downloading data, introduction of viruses, data tampering, and denial of access.',
+        explainedSimply: 'Imposes civil financial compensation on anyone who accesses, copies data from, infects with a virus, damages, or disrupts another person\'s computer or network without permission.',
+        otherLawsNote: 'Adjudicated by State IT Secretaries acting as Adjudicating Officers under Section 46 of the Act.',
       },
       {
-        id: 'sec-2',
+        id: 'sec-66',
         number: 'Section 66',
-        title: 'Computer-related offences',
-        content: 'Outlines punishments for dishonest or fraudulent digital actions, identity theft, and cheating by personation using computer devices.',
+        title: 'Computer related offences',
+        statutoryText: `If any person, dishonestly or fraudulently, does any act referred to in section 43, he shall be punishable with imprisonment for a term which may extend to three years or with fine which may extend to five lakh rupees or with both.
+Explanation.—For the purposes of this section,—
+(a) the word "dishonestly" shall have the meaning assigned to it in section 24 of the Indian Penal Code (now Section 2(7) of BNS 2023);
+(b) the word "fraudulently" shall have the meaning assigned to it in section 25 of the Indian Penal Code (now Section 2(9) of BNS 2023).`,
+        content: 'Criminalizes acts in Section 43 done dishonestly or fraudulently with imprisonment up to 3 years and/or fine up to ₹5 lakh.',
+        explainedSimply: 'Makes intentional, dishonest, or fraudulent computer damage, unauthorized data copying, or system hacking a cognizable criminal offense punishable with up to 3 years in prison and ₹5 lakh fine.',
+        otherLawsNote: 'Works concurrently with cheating and computer fraud under Section 318 of Bharatiya Nyaya Sanhita, 2023.',
+      },
+      {
+        id: 'sec-66c',
+        number: 'Section 66C',
+        title: 'Punishment for identity theft',
+        statutoryText: `Whoever, fraudulently or dishonestly make use of the electronic signature, password or any other unique identification feature of any other person, shall be punished with imprisonment of either description for a term which may extend to three years and shall also be liable to fine which may extend to rupees one lakh.`,
+        content: 'Penalises fraudulent use of another person\'s digital signature, password, or biometric/unique identification with up to 3 years imprisonment and ₹1 lakh fine.',
+        explainedSimply: 'Protects citizens against password theft, stolen credentials, OTP theft, and unauthorized use of digital IDs or electronic signatures.',
+        otherLawsNote: 'Key provision for prosecuting phishing, account takeovers, and unauthorized credential reuse.',
+      },
+      {
+        id: 'sec-66d',
+        number: 'Section 66D',
+        title: 'Punishment for cheating by personation by using computer resource',
+        statutoryText: `Whoever, by means of any communication device or computer resource cheats by personation, shall be punished with imprisonment of either description for a term which may extend to three years and shall also be liable to fine which may extend to one lakh rupees.`,
+        content: 'Punishes cheating by impersonation over computer or communication devices with up to 3 years imprisonment and ₹1 lakh fine.',
+        explainedSimply: 'Specifically penalizes cyber scammers who impersonate bank officials, government departments, police officers, or acquaintances using computers, phones, or messaging apps.',
+        otherLawsNote: 'Regularly invoked alongside BNS Section 318 for digital financial fraud and fake customer-care scams.',
       },
     ],
-    officialSource: 'meity.gov.in',
-    lastVerified: 'Ministry of Electronics and Information Technology',
-    relatedLaws: ['consumer-protection-2019', 'bns-2023'],
+    officialSource: 'Gazette of India Extraordinary (17 Oct 2000) / MeitY (meity.gov.in)',
+    officialDocumentUrl: '/docs/it-certifying-authorities-rules-2000.pdf',
+    externalSourceUrl: 'https://www.meity.gov.in/content/information-technology-act-2000',
+    lastVerified: 'Ministry of Electronics and Information Technology (MeitY)',
+    relatedLaws: ['bns-2023', 'bnss-2023', 'consumer-protection-2019'],
   },
   {
     id: 'hindu-marriage-1955',
     name: 'Hindu Marriage Act, 1955',
+    shortName: 'HMA',
+    aliases: [
+      'HMA',
+      'Hindu Marriage Act',
+      'Act 25 of 1955',
+      'Hindu Marriage Act 1955',
+      'HMA 1955',
+      'Marriage Act',
+      'Divorce Law',
+    ],
     year: 1955,
     category: 'family',
+    jurisdiction: 'India',
+    type: 'Central Act',
     description:
-      'Governs marriage, divorce, restitution of conjugal rights, and judicial separation for Hindus, Buddhists, Jains, and Sikhs.',
-    sections: [
-      {
-        id: 'sec-1',
-        number: 'Section 5',
-        title: 'Conditions for a Hindu marriage',
-        content: 'Sets out valid conditions including age requirements, mental capacity, and monogamy.',
-      },
-      {
-        id: 'sec-2',
-        number: 'Section 13',
-        title: 'Divorce',
-        content: 'Describes statutory grounds on which divorce or dissolution of marriage may be sought by either spouse.',
-      },
+      'The foundational Central Act (Act No. 25 of 1955) enacted on 18th May, 1955 to amend and codify the law relating to marriage among Hindus, Buddhists, Jains, and Sikhs in India. Regulates conditions for valid marriage, registration, restitution of conjugal rights, judicial separation, void and voidable marriages, divorce (fault grounds and mutual consent), interim and permanent maintenance, and custody of children.',
+    sections: hmaSections.map((s) => ({
+      id: s.id,
+      number: s.number,
+      title: s.title,
+      content: s.explainedSimply,
+      explainedSimply: s.explainedSimply,
+      statutoryText: s.statutoryText,
+      otherLawsNote: s.otherLawsNote,
+    })),
+    officialSource: 'India Code (indiacode.nic.in) / Ministry of Law and Justice',
+    officialDocumentUrl: '/docs/hindu-marriage-act-1955.pdf',
+    externalSourceUrl: 'https://www.indiacode.nic.in/handle/123456789/1560',
+    lastVerified: 'Ministry of Law and Justice (Legislative Department)',
+    relatedLaws: ['bns-2023', 'bnss-2023', 'constitution-of-india'],
+  },
+  {
+    id: 'dissolution-of-muslim-marriages-1939',
+    name: 'Dissolution of Muslim Marriages Act, 1939',
+    shortName: 'DMMA',
+    aliases: [
+      'DMMA',
+      'Dissolution of Muslim Marriages Act',
+      'Act 8 of 1939',
+      'Act 08 of 1939',
+      'Muslim Marriage Act 1939',
+      'Muslim Divorce Act',
+      'DMMA 1939',
     ],
-    officialSource: 'indiacode.nic.in',
-    lastVerified: 'India Code legislative database',
-    relatedLaws: [],
+    year: 1939,
+    category: 'family',
+    jurisdiction: 'India',
+    type: 'Central Act',
+    description:
+      'An Act to consolidate and clarify the provisions of Muslim law relating to suits for dissolution of marriage by women married under Muslim law (Act No. 8 of 1939, published 17 March 1939). Codifies 9 distinct statutory grounds for divorce by Muslim wives—including non-maintenance for 2 years, husband missing for 4 years, imprisonment, failure of marital obligations, cruelty, option of puberty, and preserves the absolute right to dower (Mahr).',
+    sections: dmmaSections.map((s) => ({
+      id: s.id,
+      number: s.number,
+      title: s.title,
+      content: s.explainedSimply,
+      explainedSimply: s.explainedSimply,
+      statutoryText: s.statutoryText,
+      otherLawsNote: s.otherLawsNote,
+    })),
+    officialSource: 'Gazette of India (17 March 1939) / India Code (indiacode.nic.in)',
+    officialDocumentUrl: '/docs/dissolution-of-muslim-marriages-act-1939.pdf',
+    externalSourceUrl: 'https://www.indiacode.nic.in/handle/123456789/2415',
+    lastVerified: 'Ministry of Law and Justice (Legislative Department)',
+    relatedLaws: ['hindu-marriage-1955', 'bnss-2023', 'constitution-of-india'],
   },
   {
     id: 'industrial-disputes-1947',

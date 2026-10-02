@@ -659,4 +659,36 @@ export const legalTerms = [
     relatedTerms: ['compensation', 'civil-suit', 'injunction'],
     source: 'Model Tenancy Act, 2021; Transfer of Property Act, 1882 (indiacode.nic.in)',
   },
+  {
+    id: 'digital-signature',
+    term: 'Digital Signature & Public Key Cryptography',
+    fullForm: 'Cryptographic authentication under Section 3 IT Act & Rule 3 Rules 2000',
+    category: 'Cyber Law',
+    plainLanguage:
+      'A secure mathematical code generated using an asymmetric key pair and a hash function that binds a signer\'s identity to an electronic document and proves the document has not been altered.',
+    legalMeaning:
+      'Defined under Section 2(1)(p) and Section 3 of the Information Technology Act, 2000 and Rule 3 of the Information Technology (Certifying Authorities) Rules, 2000. Uses asymmetric cryptography: a private key creates the signature from a unique document hash, and the corresponding public key verifies it. Under Section 65B of Evidence Act / Section 61 BSA 2023, properly signed digital records carry statutory legal recognition and non-repudiation.',
+    example:
+      'An enterprise director digitally signs a company board resolution using an ITU X.509 v3 USB cryptographic token. Any third party or registrar can verify the validity of the certificate via the issuing Certifying Authority\'s public directory and confirm the document has remained tamper-proof.',
+    relevantLaw: 'Information Technology Act, 2000 (Section 3 & 35); IT (Certifying Authorities) Rules, 2000 (Rules 3, 4, 5)',
+    relatedLaws: ['it-act-2000'],
+    relatedTerms: ['cybercrime-report', 'compensation'],
+    source: 'Information Technology (Certifying Authorities) Rules, 2000, Schedule-V (Glossary) & Gazette Notification G.S.R. 789(E)',
+  },
+  {
+    id: 'certifying-authority',
+    term: 'Certifying Authority (CA)',
+    fullForm: 'Licensed issuer of Digital Signature Certificates under Section 24 IT Act',
+    category: 'Cyber Law',
+    plainLanguage:
+      'A trusted institution licensed by the Central Government\'s Controller of Certifying Authorities (CCA) to issue, manage, suspend, and revoke Digital Signature Certificates.',
+    legalMeaning:
+      'Defined under Section 2(1)(q) and Section 24 of the Information Technology Act, 2000 and Rule 8 of the IT (Certifying Authorities) Rules, 2000. CAs must meet strict financial thresholds (₹5 Cr paid-up capital, ₹50 Cr net worth, ₹5 Cr performance bond), operate multi-tiered high-security data centers under Schedule-III, undergo annual independent security audits under Rule 31, and publish Certificate Revocation Lists (CRLs).',
+    example:
+      'An advocate or chartered accountant applies to a licensed Certifying Authority (such as NIC, eMudhra, or Capricorn) to obtain a Class 3 Digital Signature Certificate after completing in-person or video identity verification.',
+    relevantLaw: 'Information Technology Act, 2000 (Sections 17–34); IT (Certifying Authorities) Rules, 2000 (Rules 8, 16, 21, 29)',
+    relatedLaws: ['it-act-2000'],
+    relatedTerms: ['digital-signature'],
+    source: 'Ministry of Information Technology Notification G.S.R. 789(E), Gazette of India (17 Oct 2000)',
+  },
 ]

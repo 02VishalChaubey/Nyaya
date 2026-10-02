@@ -317,7 +317,7 @@ export default function Saved() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={isHindi ? 'सहेजी गई सूची में खोजें...' : 'Filter saved list...'}
-                    className="w-full pl-8 pr-3 py-1.5 text-xs bg-page/60 border border-border rounded-sm focus:outline-hidden focus:ring-1 focus:ring-brass focus:bg-paper"
+                    className="w-full pl-8 pr-3 py-1.5 text-xs bg-page/60 border border-border rounded-xs focus:outline-hidden focus:ring-1 focus:ring-navy focus:bg-paper"
                   />
                 </div>
               )}
@@ -325,7 +325,7 @@ export default function Saved() {
 
             {/* Bookmarks Grid / List */}
             {filteredBookmarks.length === 0 ? (
-              <div className="rounded-sm border border-border bg-page p-8 text-center text-xs sm:text-sm text-ink/60">
+              <div className="rounded-xs border border-border bg-page p-8 text-center text-xs sm:text-sm text-ink/60">
                 {isHindi
                   ? 'चयनित श्रेणी या खोज के अनुसार कोई बुकमार्क नहीं मिला।'
                   : 'No bookmarks matching your filter criteria.'}
@@ -339,7 +339,7 @@ export default function Saved() {
                   return (
                     <article
                       key={item.id}
-                      className="rounded-sm border border-border/90 bg-white p-5 sm:p-6 shadow-2xs hover:border-navy/40 transition-colors flex flex-col justify-between"
+                      className="rounded-xs border border-border/80 bg-paper p-5 sm:p-6 shadow-2xs hover:border-navy/40 transition-colors flex flex-col justify-between"
                     >
                       <div>
                         {/* Meta row: Category + Type + Date */}

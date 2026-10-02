@@ -181,67 +181,81 @@ export default function RightsHub() {
       {usingFallback && <OfflineNotice context="Rights Hub" />}
 
       {/* Header Section */}
-      <header className="border-b border-border/80 bg-paper pt-10 pb-8 sm:pt-14 sm:pb-12 shadow-xs">
+      <header className="border-b border-border/80 bg-paper pt-10 pb-8 sm:pt-14 sm:pb-12">
         <div className="container-content max-w-5xl">
-          <span className="text-xs font-mono font-medium uppercase tracking-wider text-brass-dark mb-2 block">
-            {isHindi ? 'नागरिक कानूनी संदर्भ · अपने अधिकार जानें' : 'Citizen Legal Reference · Know Your Rights'}
-          </span>
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+            <div className="md:col-span-8">
+              <span className="text-xs font-mono font-semibold uppercase tracking-widest text-maroon mb-2 block">
+                {isHindi ? 'नागरिक कानूनी संदर्भ · अपने अधिकार जानें' : 'Citizen Legal Reference · Know Your Rights'}
+              </span>
 
-          <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold text-navy tracking-tight leading-tight">
-            {isHindi ? 'अपने अधिकार जानें' : 'Know Your Rights'}
-          </h1>
+              <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold text-navy tracking-tight leading-tight">
+                {isHindi ? 'अपने अधिकार जानें' : 'Know Your Rights'}
+              </h1>
 
-          <p className="mt-4 text-base sm:text-lg text-ink/75 leading-relaxed max-w-3xl">
-            {isHindi
-              ? 'भारत में अपने दैनिक वैधानिक और संवैधानिक अधिकारों का स्पष्ट, नागरिक-अनुकूल संकलन। पुलिस पूछताछ, कार्यस्थल, किरायेदारी, उपभोक्ता विवाद और न्यायालयों में अपने कानूनी अधिकारों को जानें।'
-              : 'A clear, citizen-friendly reference to your everyday statutory and constitutional protections in India. Explore what the law guarantees you during police encounters, at work, as a tenant or consumer, online, and before the courts.'}
-          </p>
+              <p className="mt-4 text-base sm:text-lg text-ink/75 leading-relaxed max-w-2xl">
+                {isHindi
+                  ? 'भारत में अपने दैनिक वैधानिक और संवैधानिक अधिकारों का स्पष्ट, नागरिक-अनुकूल संकलन। पुलिस पूछताछ, कार्यस्थल, किरायेदारी, उपभोक्ता विवाद और न्यायालयों में अपने कानूनी अधिकारों को जानें।'
+                  : 'A clear, citizen-friendly reference to your everyday statutory and constitutional protections in India. Explore what the law guarantees you during police encounters, at work, as a tenant or consumer, online, and before the courts.'}
+              </p>
 
-          {/* Search Input Bar */}
-          <div className="mt-8 max-w-2xl">
-            <div className="relative flex items-center">
-              <label htmlFor="rights-hub-search" className="sr-only">
-                {isHindi ? 'अधिकार, कानून या स्थिति खोजें' : 'Search rights, statutes, or everyday situations'}
-              </label>
-              <Search
-                size={18}
-                className="absolute left-3.5 text-ink/45 pointer-events-none"
-                aria-hidden="true"
-              />
-              <input
-                id="rights-hub-search"
-                type="text"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                placeholder={
-                  isHindi
-                    ? 'अधिकार खोजें, जैसे "गिरफ्तारी", "किरायेदार बिजली", "मातृत्व अवकाश", "ज़ीरो एफआईआर"...'
-                    : 'Search rights, e.g. "arrest", "landlord electricity", "maternity", "zero fir"...'
-                }
-                className="w-full rounded-sm border border-border bg-page py-3 pl-10 pr-10 text-sm text-ink placeholder:text-ink/45 focus:border-navy focus:bg-paper focus:outline-hidden focus:ring-1 focus:ring-brass transition-colors"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={clearSearch}
-                  aria-label={isHindi ? 'खोज साफ़ करें' : 'Clear search'}
-                  className="absolute right-3 p-1 text-ink/45 hover:text-navy transition-colors"
-                >
-                  <X size={16} />
-                </button>
-              )}
+              {/* Search Input Bar */}
+              <div className="mt-8 max-w-xl">
+                <div className="relative flex items-center">
+                  <label htmlFor="rights-hub-search" className="sr-only">
+                    {isHindi ? 'अधिकार, कानून या स्थिति खोजें' : 'Search rights, statutes, or everyday situations'}
+                  </label>
+                  <Search
+                    size={18}
+                    className="absolute left-3.5 text-ink/45 pointer-events-none"
+                    aria-hidden="true"
+                  />
+                  <input
+                    id="rights-hub-search"
+                    type="text"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    placeholder={
+                      isHindi
+                        ? 'अधिकार खोजें, जैसे "गिरफ्तारी", "किरायेदार बिजली", "मातृत्व अवकाश", "ज़ीरो एफआईआर"...'
+                        : 'Search rights, e.g. "arrest", "landlord electricity", "maternity", "zero fir"...'
+                    }
+                    className="w-full rounded-xs border border-border bg-page py-3 pl-10 pr-10 text-sm text-ink placeholder:text-ink/45 focus:border-navy focus:bg-paper focus:outline-hidden focus:ring-1 focus:ring-navy transition-colors"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={clearSearch}
+                      aria-label={isHindi ? 'खोज साफ़ करें' : 'Clear search'}
+                      className="absolute right-3 p-1 text-ink/45 hover:text-navy transition-colors"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
+                </div>
+                <div className="mt-2 flex items-center justify-between text-xs text-ink/60">
+                  <span>
+                    {isHindi
+                      ? `${totalTopicsCount} में से ${visibleTopicsCount} वैधानिक अधिकार प्रदर्शित`
+                      : `Showing ${visibleTopicsCount} of ${totalTopicsCount} codified rights`}
+                  </span>
+                  <span className="hidden sm:inline">
+                    {isHindi
+                      ? 'केंद्रीय अधिनियमों और सर्वोच्च न्यायालय के निर्णयों से सत्यापित'
+                      : 'Verified against Central Acts & SC Precedents'}
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className="mt-2 flex items-center justify-between text-xs text-ink/60">
-              <span>
-                {isHindi
-                  ? `${totalTopicsCount} में से ${visibleTopicsCount} वैधानिक अधिकार प्रदर्शित`
-                  : `Showing ${visibleTopicsCount} of ${totalTopicsCount} codified rights`}
-              </span>
-              <span className="hidden sm:inline">
-                {isHindi
-                  ? 'केंद्रीय अधिनियमों और सर्वोच्च न्यायालय के निर्णयों से सत्यापित'
-                  : 'Verified against Central Acts & Supreme Court Precedents'}
-              </span>
+
+            {/* Visual Anchor: Legal Shield Illustration */}
+            <div className="md:col-span-4 flex justify-center md:justify-end">
+              <img
+                src="/images/3d-legal-shield.svg"
+                alt="Legal Protections Shield illustration"
+                className="w-36 sm:w-44 lg:w-52 h-auto object-contain select-none"
+                loading="eager"
+              />
             </div>
           </div>
         </div>
@@ -302,6 +316,50 @@ export default function RightsHub() {
             })}
           </div>
         </nav>
+
+        {/* Codified Spheres Editorial Index when viewing all */}
+        {selectedCategory === 'all' && !searchQuery && (
+          <div className="mb-12 border border-border/80 bg-paper p-6 sm:p-8 rounded-xs shadow-2xs">
+            <div className="border-b border-border/80 pb-3 mb-4 flex items-center justify-between">
+              <h2 className="font-display text-xl sm:text-2xl font-semibold text-navy">
+                {isHindi ? 'नागरिक अधिकारों की संहिताबद्ध अनुक्रमणिका' : 'Index of Codified Spheres'}
+              </h2>
+              <span className="font-mono text-xs text-maroon font-bold">
+                8 {isHindi ? 'कानूनी क्षेत्र' : 'Spheres'} · {totalTopicsCount} {isHindi ? 'अधिकार' : 'Codified Rights'}
+              </span>
+            </div>
+            <div className="divide-y divide-border/60">
+              {categories.map((cat, idx) => {
+                const count = cat.topics?.length || 0
+                const label = isHindi && CATEGORY_HINDI[cat.id] ? CATEGORY_HINDI[cat.id].title : cat.title
+                const num = String(idx + 1).padStart(2, '0')
+                return (
+                  <a
+                    key={cat.id}
+                    href={`#${cat.id}`}
+                    className="group flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-3.5 hover:bg-page/70 px-2 transition-colors rounded-xs"
+                  >
+                    <div className="flex items-start sm:items-center gap-3">
+                      <span className="font-mono text-xs font-bold text-maroon shrink-0 pt-0.5 sm:pt-0">{num}</span>
+                      <div>
+                        <span className="font-display font-semibold text-navy group-hover:text-maroon transition-colors text-base sm:text-lg block">
+                          {label}
+                        </span>
+                        <span className="text-xs text-ink/65 line-clamp-1">{cat.description}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                      <span className="font-mono text-[11px] text-ink/50 bg-page px-2 py-0.5 rounded-xs border border-border/60">
+                        {count} {isHindi ? 'अधिकार' : 'rights'}
+                      </span>
+                      <ArrowRight size={13} className="text-ink/40 group-hover:text-maroon group-hover:translate-x-0.5 transition-all" />
+                    </div>
+                  </a>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Results Area */}
         {filteredCategories.length === 0 ? (

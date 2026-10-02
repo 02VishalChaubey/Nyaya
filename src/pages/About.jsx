@@ -309,6 +309,21 @@ export default function About() {
               </Link>
             </div>
           </section>
+
+          {/* Closing Editorial Visual: Court Pillars */}
+          <div className="border-t border-border/80 pt-10 pb-4 text-center">
+            <div className="flex flex-col items-center justify-center">
+              <img
+                src="/images/3d-court-pillars.svg"
+                alt="Institutions of Justice Pillars"
+                className="w-32 sm:w-40 h-auto object-contain opacity-85 select-none"
+                loading="lazy"
+              />
+              <p className="mt-4 font-serif text-sm italic text-ink/60 max-w-md">
+                Dedicated to accessible, verified, and transparent public legal awareness under the rule of law.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

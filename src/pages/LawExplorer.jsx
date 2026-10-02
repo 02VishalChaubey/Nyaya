@@ -77,6 +77,14 @@ export default function LawExplorer() {
         title="Explore Indian Laws"
         subtitle="Browse by category, or search for a specific statute, section, or topic."
         size="md"
+        image={
+          <img
+            src="/images/3d-legal-tree.svg"
+            alt="Legal Tree of Indian Statutes"
+            className="w-36 sm:w-44 lg:w-52 h-auto object-contain select-none"
+            loading="eager"
+          />
+        }
       >
         <SearchBar
           size="lg"

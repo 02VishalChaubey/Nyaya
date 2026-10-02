@@ -30,8 +30,8 @@ export default function Button({
   className = '',
   ...rest
 }) {
-  const classes = `inline-flex items-center justify-center gap-2 rounded font-body font-medium
-    transition-colors duration-150 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-1
+  const classes = `inline-flex items-center justify-center gap-2 rounded-xs font-body font-medium
+    transition-colors duration-150 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-navy focus-visible:ring-offset-1
     disabled:opacity-50 disabled:cursor-not-allowed ${VARIANTS[variant]} ${SIZES[size]} ${className}`
 
   const content = (

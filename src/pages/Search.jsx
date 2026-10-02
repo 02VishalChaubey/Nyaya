@@ -719,14 +719,14 @@ function LegalResultCard({ item }) {
 
   return (
     <article
-      className={`rounded-md border bg-paper p-5 sm:p-6 transition-all hover:border-brass hover:shadow-cardHover ${
-        isConversion ? 'border-brass/50 bg-brass-faint/15' : 'border-border'
+      className={`rounded-xs border bg-paper p-5 sm:p-6 transition-all hover:border-navy/50 shadow-2xs ${
+        isConversion ? 'border-maroon/30 bg-maroon-faint/30' : 'border-border/80'
       }`}
     >
       {/* Header with Type & Subtitle */}
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-mono font-medium tracking-wide uppercase text-brass-dark">
+          <span className="text-xs font-mono font-semibold tracking-wide uppercase text-maroon">
             {item.type}
           </span>
           {item.subtitle && (
@@ -738,7 +738,7 @@ function LegalResultCard({ item }) {
         </div>
         <div className="flex items-center gap-2">
           {item.badge && (
-            <span className="text-[11px] font-mono uppercase tracking-wider text-ink/60 bg-paper-dim border border-border px-1.5 py-0.5 rounded-xs">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-ink/60 bg-page border border-border px-1.5 py-0.5 rounded-xs">
               {item.badge}
             </span>
           )}
@@ -770,12 +770,12 @@ function LegalResultCard({ item }) {
       <h3 className="mt-2 font-display text-base sm:text-lg font-semibold text-navy leading-snug">
         <Link
           to={item.url}
-          className="hover:text-brass-dark transition-colors inline-flex items-center gap-1.5 group"
+          className="hover:text-maroon transition-colors inline-flex items-center gap-1.5 group"
         >
           <span>{item.title}</span>
           <ArrowUpRight
             size={15}
-            className="text-ink/40 group-hover:text-brass-dark transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 shrink-0"
+            className="text-ink/40 group-hover:text-maroon transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 shrink-0"
           />
         </Link>
       </h3>
@@ -785,7 +785,7 @@ function LegalResultCard({ item }) {
 
       {/* Why It Matches (Transparent Legal Rationale) */}
       {item.whyItMatches && (
-        <div className="mt-3.5 flex items-start gap-2 rounded bg-paper-dim/80 border border-border/70 p-2.5 sm:px-3 text-xs text-ink/75">
+        <div className="mt-3.5 flex items-start gap-2 rounded-xs bg-page border border-border/70 p-2.5 sm:px-3 text-xs text-ink/75">
           <span className="font-semibold text-navy shrink-0">Why this matches:</span>
           <span className="leading-relaxed">{item.whyItMatches}</span>
         </div>
@@ -798,7 +798,7 @@ function LegalResultCard({ item }) {
         </span>
         <Link
           to={item.url}
-          className="font-medium text-navy hover:text-brass-dark transition-colors flex items-center gap-1"
+          className="font-medium text-navy hover:text-maroon transition-colors flex items-center gap-1"
         >
           <span>View full statutory text</span>
           <ChevronRight size={13} />
@@ -815,10 +815,10 @@ function QuickLinkCard({ to, title, subtitle, desc }) {
   return (
     <Link
       to={to}
-      className="group block rounded-md border border-border bg-paper p-5 transition-all hover:border-brass hover:shadow-card"
+      className="group block rounded-xs border border-border/80 bg-paper p-5 transition-all hover:border-navy hover:shadow-2xs"
     >
-      <div className="text-[11px] font-mono uppercase text-brass-dark tracking-wide">{subtitle}</div>
-      <h3 className="mt-1 font-display text-base font-semibold text-navy group-hover:text-brass-dark transition-colors">
+      <div className="text-[11px] font-mono font-semibold uppercase text-maroon tracking-wide">{subtitle}</div>
+      <h3 className="mt-1 font-display text-base font-semibold text-navy group-hover:text-maroon transition-colors">
         {title}
       </h3>
       <p className="mt-1.5 text-xs text-ink/65 leading-relaxed">{desc}</p>

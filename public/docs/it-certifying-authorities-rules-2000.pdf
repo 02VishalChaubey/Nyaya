@@ -1,0 +1,67 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 5 0 R /Resources << /Font << /F1 3 0 R >> >> >>
+endobj
+5 0 obj
+<< /Length 2713 >>
+stream
+BT
+/F1 15 Tf
+40 750 Td
+(IT ACT, 2000: GAZETTE NOTIFICATIONS & CERTIFYING AUTHORITIES RULES, 2000) Tj
+ET
+BT
+/F1 9 Tf
+40 725 Td
+13 TL
+(MINISTRY OF INFORMATION TECHNOLOGY, GOVERNMENT OF INDIA) '
+(Gazette of India, Extraordinary, Part II, Section 3, Sub-section i - New Delhi, 17th October, 2000) '
+(--------------------------------------------------------------------------------------------------------) '
+(1. NOTIFICATION G.S.R. 788 E:) '
+(   Commencement of the Information Technology Act, 2000 Act No. 21 of 2000 appointed as 17th October 2000.) '
+(2. NOTIFICATION G.S.R. 789 E:) '
+(   Information Technology Certifying Authorities Rules, 2000 under Section 87 of IT Act, 2000.) '
+(   - Rule 3: Manner in which information is authenticated by means of Digital Signature Public Key Cryptography & Hash Functions.) '
+(   - Rule 4: Creation of Digital Signature Private Key transformation of unique document hash.) '
+(   - Rule 5: Verification of Digital Signature Public Key matching and integrity check.) '
+(   - Rule 6: Open Standards PKIX, ITU X.509 v3, RFC 1422, X.500 LDAP, DSA/RSA, MD5/SHA-1, PKCS#1 to #12.) '
+(   - Rule 7: Digital Signature Certificate Standard Serial number, algorithm identifier, issuer, validity, subscriber key.) '
+(   - Rule 8: Licensing of Certifying Authorities Capital requirement Rs 5 Crores, net worth Rs 50 Crores, performance bond.) '
+(   - Rules 9-22: Location of facilities in India, fees, cross certification, 5-year validity, database of CAs.) '
+(   - Rules 23-30: DSC issue procedure, non-compromised check, 7-year archival, revocation CRL, fee schedules.) '
+(   - Rules 31-34: Annual independent audit, confidentiality of subscriber agreements, need-to-know access.) '
+(   - Schedule-II: Information Technology Security Guidelines Physical, operational, network, access control, disaster recovery.) '
+(   - Schedule-III: Security Guidelines for Certifying Authorities Multi-tiered security zones, key management, key compromise.) '
+(   - Schedule-IV: Application Form for issue of Digital Signature Certificate Individual / Company / Govt.) '
+(   - Schedule-V: Statutory Glossary Asymmetric crypto system, digital signature, hash function, nonrepudiation, PKI.) '
+(3. NOTIFICATION G.S.R. 790 E:) '
+(   Constitution of the Cyber Regulation Advisory Committee under Section 88 of the IT Act, 2000.) '
+(4. NOTIFICATION G.S.R. 791 E:) '
+(   Cyber Regulations Appellate Tribunal Procedure Rules, 2000 governing appeals under Section 57 of the IT Act.) '
+(--------------------------------------------------------------------------------------------------------) '
+(DISCLAIMER: Nyaya provides official statutory documents for public legal education under the rule of law.) '
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000185 00000 n 
+0000000311 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+3075
+%%EOF

@@ -63,8 +63,8 @@ export default function SearchBar({
     <form
       onSubmit={handleSubmit}
       role="search"
-      className={`flex w-full items-stretch overflow-hidden rounded-md border border-border bg-paper
-        focus-within:border-brass focus-within:ring-1 focus-within:ring-brass/30 shadow-card transition-all ${className}`}
+      className={`flex w-full items-stretch overflow-hidden rounded-xs border border-border bg-paper
+        focus-within:border-navy focus-within:ring-1 focus-within:ring-navy/20 shadow-2xs transition-all ${className}`}
     >
       <label htmlFor={inputId} className="sr-only">
         {placeholder}

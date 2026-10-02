@@ -175,6 +175,14 @@ export default function FundamentalRights() {
         title="Fundamental Rights, Restrictions & Violation Remedies"
         subtitle="Explore India's constitutional guarantees, the precise legal grounds under which the State can restrict them, and what happens when an authority or individual violates these rights."
         size="md"
+        image={
+          <img
+            src="/images/3d-scales.svg"
+            alt="Scales of Justice"
+            className="w-32 sm:w-40 lg:w-48 h-auto object-contain select-none"
+            loading="eager"
+          />
+        }
       />
 
       <section className="container-content py-10 sm:py-14">

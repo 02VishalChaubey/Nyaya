@@ -109,37 +109,75 @@ export default function SectionCard({
       {isOpen && (
         <div id={panelId} className="mt-4 space-y-4 pl-1 text-sm">
           <div>
-            <h3 className="text-xs font-semibold text-navy/70">
-              Official title
+            <h3 className="text-xs font-semibold text-navy/70 uppercase tracking-wide">
+              Official Title
             </h3>
-            <p className="mt-1 font-medium text-navy">
+            <p className="mt-1 font-display font-medium text-navy text-base">
               {section.number} — {section.title}
             </p>
           </div>
 
+          {/* Original Statutory Text (when available) */}
+          {section.statutoryText ? (
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <h3 className="text-xs font-semibold text-maroon uppercase tracking-wide flex items-center gap-1.5">
+                  <span className="inline-block w-2 h-2 rounded-full bg-maroon"></span>
+                  <span>Law / Statutory Text (Original Legal Wording)</span>
+                </h3>
+                <span className="font-mono text-[11px] text-ink/50 bg-paper-dim px-2 py-0.5 rounded border border-border">
+                  Verbatim Act
+                </span>
+              </div>
+              <div className="rounded-xs border-l-3 border-maroon bg-paper-dim/60 p-3.5 font-serif text-[13px] leading-relaxed text-ink/90 whitespace-pre-line select-text">
+                {section.statutoryText}
+              </div>
+            </div>
+          ) : null}
+
+          {/* Explained Simply */}
           <div>
-            <h3 className="text-xs font-semibold text-navy/70">
-              Plain-language explanation
+            <h3 className="text-xs font-semibold text-navy/80 uppercase tracking-wide flex items-center gap-1.5">
+              <span className="inline-block w-2 h-2 rounded-full bg-brass"></span>
+              <span>Explained Simply</span>
             </h3>
-            <p className="mt-1 leading-relaxed text-ink/80">{section.content}</p>
+            <p className="mt-1.5 leading-relaxed text-ink/80 text-sm">
+              {section.explainedSimply || section.content}
+            </p>
           </div>
 
-          <p className="border-l-2 border-border pl-3 text-xs leading-relaxed text-ink/65">
-            <strong className="font-semibold text-ink/75">Legal text: </strong>
-            The verbatim statutory wording is not reproduced here — the explanation above is a
-            plain-language paraphrase. Consult the official source below for the exact legal text.
-          </p>
+          {section.statutoryText ? (
+            <div className="rounded-xs border border-border/70 bg-paper-dim/40 px-3 py-2 text-xs leading-relaxed text-ink/65">
+              <strong className="font-semibold text-navy">Legal Distinction: </strong>
+              The statutory box above reproduces the enacted Central Act text. The &ldquo;Explained Simply&rdquo; commentary is provided for citizen understanding and does not substitute for judicial interpretation.
+              {section.otherLawsNote && (
+                <p className="mt-1 text-ink/80">
+                  <strong className="font-medium text-navy">Note on Other Laws: </strong>
+                  {section.otherLawsNote}
+                </p>
+              )}
+            </div>
+          ) : (
+            <p className="border-l-2 border-border pl-3 text-xs leading-relaxed text-ink/65">
+              <strong className="font-semibold text-ink/75">Legal text: </strong>
+              The verbatim statutory wording is not reproduced here — the explanation above is a
+              plain-language paraphrase. Consult the official source below for the exact legal text.
+            </p>
+          )}
 
           <div>
-            <h3 className="text-xs font-semibold text-navy/70">
-              Source
+            <h3 className="text-xs font-semibold text-navy/70 uppercase tracking-wide">
+              Source &amp; Section
             </h3>
+            <p className="mt-1 font-mono text-xs text-ink/70">
+              {lawName} • {section.number}
+            </p>
             {sourceUrl ? (
               <div className="mt-1">
                 <OfficialSourceLink url={sourceUrl} label={sourceLabel} className="text-sm font-normal" />
               </div>
             ) : (
-              <p className="mt-1 text-ink/70">{sourceLabel || 'Not yet verified'}</p>
+              <p className="mt-1 text-ink/70">{sourceLabel || 'India Code (indiacode.nic.in)'}</p>
             )}
             <LastVerified note={verifiedNote} className="mt-1.5" />
           </div>

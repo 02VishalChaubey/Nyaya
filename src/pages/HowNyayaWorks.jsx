@@ -97,7 +97,7 @@ export default function HowNyayaWorks() {
           </section>
 
           <section className="border-t border-border/70 pt-10">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-sm border border-border bg-white p-5 sm:p-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-xs border border-border bg-page/50 p-5 sm:p-6">
               <div>
                 <h3 className="font-display text-base font-semibold text-navy">
                   Learn more about our verified sources
@@ -113,6 +113,24 @@ export default function HowNyayaWorks() {
                 <span>Sources &amp; Methodology</span>
                 <ArrowRight size={13} />
               </Link>
+            </div>
+          </section>
+
+          {/* Court Pillars Closing Visual */}
+          <section className="border-t border-border/70 pt-12 pb-4 text-center">
+            <div className="flex flex-col items-center justify-center">
+              <img
+                src="/images/3d-court-pillars.svg"
+                alt="Indian Judiciary and Legal Heritage"
+                className="w-36 sm:w-44 h-auto object-contain mb-4 select-none"
+                loading="lazy"
+              />
+              <p className="font-display text-base text-navy font-semibold">
+                Anchored in the Rule of Law
+              </p>
+              <p className="text-xs text-ink/65 mt-1 max-w-md">
+                Serving citizen awareness through primary statutory sources, gazette records, and constitutional jurisprudence.
+              </p>
             </div>
           </section>
         </div>

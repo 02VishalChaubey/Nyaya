@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, FileText, Download, ExternalLink, BookOpen } from 'lucide-react'
 import SearchBar from '../components/SearchBar.jsx'
 import SectionCard from '../components/SectionCard.jsx'
 import LoadingState from '../components/LoadingState.jsx'
@@ -259,6 +259,58 @@ export default function LawDetails({ forcedId }) {
               </h2>
               <p className="mt-2 max-w-2xl text-ink/70 leading-relaxed">{law.description}</p>
             </section>
+
+            {/* Official Legal Reference Document & PDF Source */}
+            {(law.officialDocumentUrl || law.id === 'hindu-marriage-1955') && (
+              <div className="mt-6 rounded-xs border border-border/80 bg-paper-dim/60 p-4 sm:p-5 shadow-2xs">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <div className="rounded-xs border border-maroon/30 bg-maroon/10 p-2 text-maroon shrink-0 mt-0.5">
+                      <FileText size={20} aria-hidden="true" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs font-semibold uppercase tracking-wider text-maroon">
+                          Official Legal Reference Document
+                        </span>
+                        <span className="inline-flex items-center rounded-xs bg-navy/10 px-2 py-0.5 text-[11px] font-mono text-navy border border-navy/20">
+                          PDF Available
+                        </span>
+                      </div>
+                      <h3 className="mt-1 font-display text-base font-semibold text-navy">
+                        {law.name} (Act No. 25 of 1955)
+                      </h3>
+                      <p className="mt-1 text-xs text-ink/75 leading-relaxed">
+                        Searchable statutory text with intact legal wording alongside plain-language &ldquo;Explained Simply&rdquo; commentary.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <a
+                      href={law.officialDocumentUrl || '/docs/hindu-marriage-act-1955.pdf'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-xs border border-navy bg-navy px-3.5 py-2 text-xs font-semibold text-paper hover:bg-navy/90 transition-colors shadow-2xs min-h-[36px]"
+                    >
+                      <Download size={13} aria-hidden="true" />
+                      <span>Download PDF</span>
+                    </a>
+                    {law.externalSourceUrl && (
+                      <a
+                        href={law.externalSourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-xs border border-border bg-paper px-3 py-2 text-xs font-semibold text-ink/80 hover:text-navy hover:border-navy transition-colors min-h-[36px]"
+                        title="View on India Code"
+                      >
+                        <ExternalLink size={13} aria-hidden="true" />
+                        <span className="hidden sm:inline">India Code</span>
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Chapters / Sections */}
             <section className="mt-10">

@@ -175,7 +175,7 @@ export default function SituationForm() {
               ? 'उदाहरण: मैंने मकान रंगाई ठेकेदार को सोमवार से काम शुरू करने के लिए ₹20,000 अग्रिम दिए थे। तीन सप्ताह हो चुके हैं, ठेकेदार ने नंबर ब्लॉक कर दिया है और पैसे लौटाने से मना कर रहा है...'
               : 'For example: I paid an advance of ₹20,000 to a home painting contractor who promised to start work on Monday. It has been three weeks, they have blocked my number, and refused to return the money...'
           }
-          className="mt-3 w-full resize-y rounded-md border border-border bg-page/40 p-4 font-sans text-sm leading-relaxed text-ink outline-none transition focus:border-brass focus:bg-page focus:ring-1 focus:ring-brass placeholder:text-ink/60"
+          className="mt-3 w-full resize-y rounded-xs border border-border bg-page/40 p-4 font-sans text-sm leading-relaxed text-ink outline-none transition focus:border-navy focus:bg-paper focus:ring-1 focus:ring-navy/20 placeholder:text-ink/50"
           required
         />
         <p id="situation-hint" className="mt-2 text-xs text-ink/65">
@@ -189,7 +189,7 @@ export default function SituationForm() {
       <fieldset className="mt-9 border-t border-border pt-7">
         <legend className="w-full">
           <div className="flex items-baseline justify-between">
-            <span className="font-mono text-xs font-bold uppercase tracking-wider text-brass-dark">
+            <span className="font-mono text-xs font-bold uppercase tracking-wider text-maroon">
               {isHindi ? 'चरण 2' : 'STEP 2'}
             </span>
             <span className="text-xs text-ink/60">{isHindi ? 'वैकल्पिक' : 'Optional'}</span>
@@ -214,13 +214,13 @@ export default function SituationForm() {
                 type="button"
                 aria-pressed={active}
                 onClick={() => setSelectedCategory(active ? null : cat.id)}
-                className={`flex items-center gap-2.5 rounded-md border p-3 text-left text-xs font-medium transition min-h-[44px] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brass ${
+                className={`flex items-center gap-2.5 rounded-xs border p-3 text-left text-xs font-medium transition min-h-[44px] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-navy ${
                   active
-                    ? 'border-navy bg-navy text-paper shadow-sm font-semibold'
+                    ? 'border-navy bg-navy text-paper shadow-2xs font-semibold'
                     : 'border-border/80 bg-paper/60 text-ink/75 hover:border-navy/40 hover:text-navy'
                 }`}
               >
-                <Icon size={16} className={`shrink-0 ${active ? 'text-brass-light' : 'text-brass-dark/70'}`} aria-hidden="true" />
+                <Icon size={16} className={`shrink-0 ${active ? 'text-paper' : 'text-navy/70'}`} aria-hidden="true" />
                 <span className="truncate">{labelText}</span>
               </button>
             )
@@ -232,7 +232,7 @@ export default function SituationForm() {
       <fieldset className="mt-9 border-t border-border pt-7">
         <legend className="w-full">
           <div className="flex items-baseline justify-between">
-            <span className="font-mono text-xs font-bold uppercase tracking-wider text-brass-dark">
+            <span className="font-mono text-xs font-bold uppercase tracking-wider text-maroon">
               {isHindi ? 'चरण 3' : 'STEP 3'}
             </span>
             <span className="text-xs text-ink/60">

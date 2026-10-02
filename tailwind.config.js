@@ -5,66 +5,78 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Institutional high-clarity palette
+        // Professional legal publication palette
+        page: {
+          DEFAULT: '#FAF8F5', // warm off-white
+          warm: '#F6F3EC',
+          dim: '#F2EDE3',
+        },
+        ink: {
+          DEFAULT: '#0C131F', // deep black / dark navy
+          dark: '#080D15',
+          navy: '#0F1A2C',
+          muted: '#414958',
+          faint: '#667085',
+        },
+        maroon: {
+          DEFAULT: '#6E1B24', // deep red
+          dark: '#4E1118',
+          light: '#8D2430',
+          faint: '#FAF0F2',
+        },
+        navy: {
+          DEFAULT: '#133054', // rich blue
+          light: '#1C4376',
+          dark: '#0C1F38',
+          muted: '#2A5288',
+        },
+        brass: {
+          DEFAULT: '#967428', // muted gold accent
+          light: '#C8A34E',
+          dark: '#6E5218',
+          faint: '#FBF7EE',
+        },
         primary: {
-          DEFAULT: '#041627',
-          container: '#1a2b3c',
-          light: '#24374b',
-          dark: '#020b14',
+          DEFAULT: '#133054',
+          container: '#1C4376',
+          light: '#255594',
+          dark: '#0C1F38',
         },
         secondary: {
-          DEFAULT: '#735c00',
+          DEFAULT: '#967428',
           container: '#fed65b',
           fixed: '#ffe088',
           'fixed-dim': '#e9c349',
         },
-        tertiary: {
-          DEFAULT: '#00531b',
-          container: '#00320d',
-          fixed: '#99f89e',
-          'fixed-dim': '#7edb85',
-        },
-        ink: {
-          DEFAULT: '#161c22',
-          muted: '#44474c',
-          faint: '#74777d',
-        },
-        navy: {
-          DEFAULT: '#041627',
-          light: '#1a2b3c',
-          dark: '#020b14',
-          muted: '#2b3d66',
-        },
         paper: {
-          DEFAULT: '#ffffff',
-          dim: '#eff4fd',
-          light: '#f7f9ff',
-          card: '#ffffff',
+          DEFAULT: '#FFFFFF',
+          dim: '#F4F2EC',
+          light: '#FDFCF9',
+          card: '#FFFFFF',
         },
-        page: '#f7f9ff',
-        brass: {
-          DEFAULT: '#735c00',
-          light: '#e9c349',
-          dark: '#574500',
-          faint: '#fff6dd',
+        red: {
+          DEFAULT: '#B91C1C',
+          dark: '#881337',
+          light: '#DC2626',
+          faint: '#FEF2F2',
         },
         oxblood: {
-          DEFAULT: '#ba1a1a',
-          light: '#de3730',
-          dark: '#93000a',
-          faint: '#ffdad6',
+          DEFAULT: '#6E1B24',
+          light: '#8D2430',
+          dark: '#4E1118',
+          faint: '#FAF0F2',
         },
         forest: {
-          DEFAULT: '#00531b',
-          light: '#48a354',
-          dark: '#00320d',
-          faint: '#e8f7ea',
+          DEFAULT: '#14532D',
+          light: '#16A34A',
+          dark: '#052E16',
+          faint: '#F0FDF4',
         },
         border: {
-          DEFAULT: '#c4c6cd',
-          dark: '#74777d',
-          light: '#dde3ec',
-          subtle: '#EDE9E3',
+          DEFAULT: '#DCD8D0',
+          dark: '#787D87',
+          light: '#EDEAE4',
+          subtle: '#F2EFEB',
         },
       },
       fontFamily: {
@@ -82,8 +94,10 @@ export default {
         xl: '12px',
       },
       boxShadow: {
+        '2xs': '0 1px 2px rgba(17, 24, 39, 0.04)',
+        xs: '0 1px 3px rgba(17, 24, 39, 0.05), 0 1px 2px rgba(17, 24, 39, 0.03)',
         card: '0 1px 3px rgba(20, 30, 51, 0.05), 0 1px 2px rgba(20, 30, 51, 0.03)',
-        cardHover: '0 6px 18px rgba(20, 30, 51, 0.08), 0 2px 4px rgba(20, 30, 51, 0.04)',
+        cardHover: '0 4px 12px rgba(20, 30, 51, 0.06), 0 1px 3px rgba(20, 30, 51, 0.03)',
         elevation: '0 12px 32px rgba(20, 30, 51, 0.12)',
       },
       maxWidth: {

@@ -57,16 +57,16 @@ export default function BookmarkButton({
         onClick={handleToggle}
         aria-pressed={isSaved}
         aria-label={accessibleLabel}
-        className={`inline-flex items-center gap-1.5 min-h-[36px] px-3 py-1.5 rounded-sm text-xs font-semibold transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brass ${
+        className={`inline-flex items-center gap-1.5 min-h-[36px] px-3 py-1.5 rounded-xs text-xs font-semibold transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-navy ${
           isSaved
-            ? 'bg-brass/15 text-brass-dark hover:bg-brass/25 border border-brass/30'
+            ? 'bg-maroon-faint text-maroon hover:bg-maroon/15 border border-maroon/30'
             : 'border border-border/80 bg-paper text-ink/75 hover:text-navy hover:border-navy hover:bg-page'
         } ${className}`}
       >
         <Bookmark
           size={iconSize}
           className={`transition-transform duration-200 ${
-            isSaved ? 'fill-brass-dark text-brass-dark scale-105' : 'text-current'
+            isSaved ? 'fill-maroon text-maroon scale-105' : 'text-current'
           }`}
           aria-hidden="true"
         />
@@ -87,16 +87,16 @@ export default function BookmarkButton({
         onClick={handleToggle}
         aria-pressed={isSaved}
         aria-label={accessibleLabel}
-        className={`inline-flex items-center gap-1.5 min-h-[32px] px-2.5 py-1 rounded-sm text-xs font-medium transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brass ${
+        className={`inline-flex items-center gap-1.5 min-h-[32px] px-2.5 py-1 rounded-xs text-xs font-medium transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-navy ${
           isSaved
-            ? 'bg-navy/10 text-navy font-semibold border border-navy/20'
+            ? 'bg-maroon-faint text-maroon font-semibold border border-maroon/20'
             : 'text-ink/65 hover:text-navy hover:bg-navy/5 border border-transparent'
         } ${className}`}
       >
         <Bookmark
           size={iconSize}
           className={`transition-colors ${
-            isSaved ? 'fill-navy text-navy' : 'text-current'
+            isSaved ? 'fill-maroon text-maroon' : 'text-current'
           }`}
           aria-hidden="true"
         />
@@ -113,9 +113,9 @@ export default function BookmarkButton({
       aria-pressed={isSaved}
       aria-label={accessibleLabel}
       title={isSaved ? (isHindi ? 'सहेजा गया' : 'Saved to bookmarks') : (isHindi ? 'सहेजें' : 'Save bookmark')}
-      className={`group relative flex items-center justify-center shrink-0 rounded-sm min-h-[36px] min-w-[36px] sm:min-h-[32px] sm:min-w-[32px] p-1.5 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brass ${
+      className={`group relative flex items-center justify-center shrink-0 rounded-xs min-h-[36px] min-w-[36px] sm:min-h-[32px] sm:min-w-[32px] p-1.5 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-navy ${
         isSaved
-          ? 'text-brass-dark hover:bg-brass/10'
+          ? 'text-maroon hover:bg-maroon/10'
           : 'text-ink/40 hover:text-navy hover:bg-navy/5'
       } ${className}`}
     >
@@ -123,7 +123,7 @@ export default function BookmarkButton({
         size={iconSize}
         className={`transition-all duration-200 ${
           isSaved
-            ? 'fill-brass-dark text-brass-dark scale-110 drop-shadow-2xs'
+            ? 'fill-maroon text-maroon scale-110'
             : 'group-hover:scale-105'
         }`}
         aria-hidden="true"

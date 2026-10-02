@@ -177,11 +177,11 @@ export default function AiWorkflow() {
           {/* Question Input Card */}
           <section
             aria-labelledby="workflow-input-heading"
-            className="rounded-sm border border-border bg-page p-5 sm:p-7 shadow-xs"
+            className="rounded-xs border border-border/80 bg-paper p-5 sm:p-7 shadow-2xs"
           >
             <div className="flex items-center justify-between gap-4 mb-3">
               <h2 id="workflow-input-heading" className="font-display text-lg font-semibold text-navy flex items-center gap-2">
-                <Sparkles size={18} className="text-brass-dark" aria-hidden="true" />
+                <Scale size={18} className="text-maroon" aria-hidden="true" />
                 <span>{isHindi ? 'कानूनी प्रश्न दर्ज करें' : 'Describe What You Want to Understand'}</span>
               </h2>
               {status === 'success' && (
@@ -217,7 +217,7 @@ export default function AiWorkflow() {
                       ? 'उदा. "मेरा मकान मालिक मेरी जमा राशि वापस नहीं कर रहा है" या "क्या पुलिस बिना वारंट के गिरफ्तार कर सकती है?"'
                       : 'e.g. "My landlord isn\'t returning my deposit." or "Can police arrest without a warrant?"'
                   }
-                  className="w-full rounded-sm border border-border bg-paper p-3.5 text-sm sm:text-base text-ink placeholder:text-ink/40 focus:border-navy focus:outline-hidden focus:ring-1 focus:ring-navy leading-relaxed"
+                  className="w-full rounded-xs border border-border bg-page/50 p-3.5 text-sm sm:text-base text-ink placeholder:text-ink/40 focus:border-navy focus:bg-paper focus:outline-hidden focus:ring-1 focus:ring-navy leading-relaxed"
                   disabled={status === 'loading'}
                 />
               </div>
